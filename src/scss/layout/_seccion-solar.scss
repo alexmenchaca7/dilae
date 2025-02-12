@@ -1,0 +1,67 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.no-webp .seccion-solar {
+    background-image: url(/build/img/imagen_solar.png);
+}
+
+.webp .seccion-solar {
+    background-image: url(/build/img/imagen_solar.webp);
+}
+
+.seccion-solar {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    height: 48rem;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    
+    .contenido-solar {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 2rem;
+        border-radius: 2rem;
+        margin: 0 auto;
+
+        @include m.tablet {
+            padding: 4rem;
+        }
+
+        @include m.desktop {
+            margin-left: 14rem;
+        }
+    }
+}
+
+.contenido-solar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 70rem;
+    margin: 0 auto;
+
+    @include m.tablet {
+        text-align: left;
+    }
+
+    h2 {
+        font-size: 4rem;
+        color: v.$blanco;
+        margin-top: 0;
+        margin-bottom: 0;
+        
+        span {
+            color: v.$primario;
+        }
+    }
+
+    p {
+        font-size: 1.6rem;
+        color: v.$blanco;
+        margin-top: 0;
+    }
+}

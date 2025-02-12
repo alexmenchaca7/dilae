@@ -1,0 +1,32 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'sass:color';
+
+
+.blog {
+    @include m.tablet {
+        @include m.grid(2, 10rem, 5rem);
+    }
+}
+
+.entrada-blog {
+    .texto-entrada {
+        margin-bottom: 5rem;
+
+        a {
+            text-transform: uppercase;
+            font-weight: v.$black;
+            color: v.$primario;
+            transition: all 0.3s ease;
+
+            &:hover {
+                color: color.adjust(v.$primario, $lightness: -10%);
+            }
+        }
+
+        @include m.tablet {
+            margin-bottom: 0;
+        }
+    }
+
+}

@@ -1,0 +1,63 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.carrusel-logos {
+    overflow: hidden;
+    padding: 6rem 0;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+
+    .logos-slide {
+        display: inline-block;
+        animation: 200s slide infinite linear;
+    
+        img {
+            display: inline-block;
+            width: auto;
+            height: 5rem;
+            margin: 0 3rem;
+
+            @include m.tablet {
+                height: 8rem;
+                margin: 0 5rem;
+            }
+        }
+    }
+
+    &:hover {
+        .logos-slide {
+            animation-play-state: paused;
+        }
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        width: 15rem;
+        height: 100%;
+    }
+
+    &::before {
+        left: 0;
+        background: linear-gradient(to left, rgba(255,255,255,0), v.$blanco);
+    }
+
+    &::after {
+        right: 0;
+        background: linear-gradient(to right, rgba(255,255,255,0), v.$blanco);
+    }
+}
+
+
+@keyframes slide {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
