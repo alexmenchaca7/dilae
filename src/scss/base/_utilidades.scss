@@ -1,0 +1,72 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+@use 'sass:color';
+
+.seccion {
+    margin-top: 5rem;
+}
+.contenido-centrado {
+    max-width: 800px;
+}
+.alinear-derecha {
+    display: flex;
+    justify-content: flex-end;
+}
+.margen-abajo {
+    margin-bottom: 2rem;
+}
+.w-100 {
+    width: 100%;
+}
+.p-bold {
+    font-weight: v.$bold;
+}
+.t-align-center {
+    text-align: center;
+}
+
+
+/** Margenes **/
+.mt-0 {
+    margin-top: 0;
+}
+.mt-10 {
+    margin-top: 10rem;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+
+/** Enlaces **/
+.enlace-verde {
+    color: v.$primario;
+    font-size: 1.8rem;
+    text-decoration: underline;
+    font-weight: v.$bold;
+    position: relative;
+    display: inline-flex;
+    align-items: center; // Asegura que el texto y la flecha estén alineados
+    transition: all 0.3s ease;
+
+    &:after {
+        content: '';
+        display: inline-block;
+        background: url(/src/img/arrow-right-primary.svg) no-repeat center;
+        width: 2rem;
+        height: 2rem;
+        margin-left: 0.5rem; // Espaciado entre el texto y la flecha
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    &:hover {
+        color: color.adjust(v.$primario, $lightness: -10%);
+        
+        &:after {
+            background: url(/src/img/arrow-right-shade-3.svg) no-repeat center;
+            margin-left: 0.7rem;
+        }
+    }
+}

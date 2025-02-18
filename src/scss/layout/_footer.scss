@@ -1,22 +1,103 @@
 @use 'base/variables' as v;
+@use 'base/mixins' as m;
 
 .footer {
-    padding: 2rem 0;
-    margin-bottom: 0;
-    background-color: v.$negro;
-    
-    .contenedor-footer {
-        padding-top: 2rem;
+    background-color: v.$gris-oscuro;
+    padding: 4rem 0;
+
+    h2, h3 {
+        color: v.$blanco;
     }
-    
-    .navegacion {
-        a {
-            color: v.$blanco;
+
+    a, p {
+        color: v.$gris-claro
+    }
+
+    a:hover {
+        color: v.$blanco;
+    }
+}
+
+.footer-contenedor {
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 1.5rem;
+
+        &:last-of-type {
+            border: none;
         }
     }
 
-    .copyright {
-        text-align: center;
-        color: v.$blanco;
+    @include m.tablet {
+        @include m.grid(2, 4rem);
+
+        & > * {
+            border: none;
+        }
+    }
+
+    @include m.desktop {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+}
+
+
+.footer-logo {
+    p {
+       margin: 0 auto;
+    }
+
+    .footer-social {
+        display: flex;
+        gap: 3rem;
+        align-items: center;
+        margin-top: 3rem;
+
+        a {
+            img {
+                height: 2rem;
+            }
+        }
+    }
+    
+}
+
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.footer-subscribe {
+    form {
+        display: flex;
+        border: 1px solid #444;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    input {
+        border: none;
+        padding: 10px;
+        flex: 1;
+        font-size: 14px;
+    }
+
+    button {
+        background: #444;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    img {
+        width: 18px;
     }
 }
