@@ -1,0 +1,208 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'sass:color';
+
+.titulo-categorias {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.layout {
+    display: flex;
+    gap: 10rem;
+    align-items: flex-start;
+}
+
+.barra-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+    width: 20rem;
+    flex-shrink: 0; /* Evita que la barra lateral se reduzca */
+
+    h2 {
+        margin: 0;
+    }
+
+    nav {
+        width: 100%;
+
+        a {
+            color: v.$negro;
+            display: block;
+            padding: 0.6rem 0;
+            transition: 0.3s color;
+
+            &:hover {
+                color: v.$primario;
+            }
+        }
+
+        .lista {
+            display: flex;
+            flex-direction: column;
+            padding: 0; /* Elimina cualquier padding */
+            margin: 0; /* Asegura que no haya margen extra */
+            width: 100%; /* Ocupar todo el ancho del contenedor */
+            list-style: none;
+
+            .lista-item {
+                width: 100%;
+                overflow: hidden;
+            }
+
+            .lista-boton {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%; /* Ajusta al ancho total */
+                cursor: pointer;
+
+                a {
+                    font-weight: v.$bold;
+                    text-transform: uppercase;
+                    color: v.$negro;
+                    text-decoration: none;
+                    flex-grow: 1; /* Hace que el texto ocupe el espacio disponible */
+
+                }
+
+                .lista-boton-clic {
+                    height: 2rem;
+                    width: 2rem;
+                    transition: transform 0.3s;
+                }
+
+                .arrow {
+                    transform: rotate(90deg);
+                }
+    
+
+            }
+
+            .lista-show {
+                width: 85%;
+                border-left: 2px solid v.$primario;
+                height: 0;
+                transition: height 0.3s ease-out;
+
+                li {
+                    list-style: none;
+                }
+
+                a {
+                    font-weight: normal;
+                    text-transform: none;
+                }
+            }
+        }
+    }
+}
+
+
+.layout-productos {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+
+    .barra-superior {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: 5.5rem;
+
+
+        .filtros {
+            width: 25rem;
+            height: 3.5rem;
+        
+            .filtros-contenedor {
+                display: flex;
+                align-items: center;
+                position: relative;
+        
+                select {
+                    width: 100%;
+                    padding: 0.5rem 0 0.5rem 3rem;
+                    font-size: 14px;
+                    border: 1px solid v.$gris-oscuro;
+                    border-radius: 5px;
+                    outline: none;
+                    cursor: pointer;
+                }
+        
+                &::before {
+                    content: '';
+                    position: absolute;
+                    background: url(/src/img/icon_filter.svg) no-repeat;
+                    background-size: contain;
+                    height: 2rem;
+                    width: 2rem;
+                    left: 0.5rem; /* Coloca el icono dentro del espacio */
+                }
+            }
+        }
+    }
+}
+
+.productos {
+    @include m.grid(2, 10rem);
+
+    @include m.desktop {
+        @include m.grid(3, 5rem);
+    }
+
+    .producto {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    
+        // Imagen del producto
+        img {
+            max-width: 20rem;
+            height: 15rem;
+            object-fit: contain;
+        }
+    
+        // Nombre del producto
+        h3 {
+            font-size: 2rem;
+            font-weight: v.$bold;
+            color: v.$negro;
+            margin: 0 auto 5rem auto;
+        }
+    
+        // Línea divisoria
+        .linea {
+            width: 10rem;
+            height: 2px;
+            background-color: v.$primario;
+            margin: 1.5rem auto;
+        }
+    
+        // Detalles del producto (Potencias, Temperatura)
+        .detalles {
+            background-color: color.adjust(v.$gris-claro, $lightness: 13%);
+            @include m.grid(2, 5rem);
+            padding: 1.5rem;
+        }
+    
+        .detalle {
+            font-size: 1.5rem;
+    
+            p {
+                margin: 1rem 0;
+            }
+    
+            .detalle-titulo {
+                font-weight: v.$bold;
+                margin: 0;
+            }
+    
+        }
+    }
+}

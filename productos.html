@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dilae</title>
+    <title>Productos - Dilae</title>
     <link rel="stylesheet" href="build/css/app.css">
 </head>
 
@@ -23,11 +23,84 @@
                 </a>
 
                 <nav class="navegacion">
-                    <a href="nosotros.html">Nosotros</a>             
-                    <a href="productos.html">Productos</a>         
-                    <a href="#">Paneles Solares</a>          
-                    <a href="proyectos.html">Proyectos</a>         
-                    <a href="blog.html">Blog</a>        
+                    <a href="nosotros.html">Nosotros</a>
+                
+                    <!-- Contenedor de Productos con Submenú -->
+                    <div class="submenu-contenedor">
+                        <div class="submenu-toggle">
+                            <a href="productos.html">Productos</a>
+                            <button class="submenu-btn">
+                                <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                            </button>
+                        </div>
+                        <ul class="submenu">
+                            <!-- ILUMINACIÓN -->
+                            <li class="submenu-item">
+                                <div class="submenu-toggle">
+                                    <a href="productos/iluminacion.html">Iluminación</a>
+                                    <button class="subsubmenu-btn">
+                                        <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                    </button>
+                                </div>
+                                <ul class="subsubmenu">
+                                    <li><a href="productos/iluminacion/reflectores.html">Reflectores</a></li>
+                                    <li><a href="productos/iluminacion/campanas-ufo.html">Campanas UFO</a></li>
+                                    <li><a href="productos/iluminacion/banadores.html">Bañadores</a></li>
+                                    <li><a href="productos/iluminacion/panel-led.html">Panel LED</a></li>
+                                    <li><a href="productos/iluminacion/downlight.html">Downlight</a></li>
+                                    <li><a href="productos/iluminacion/lamparas.html">Lámparas</a></li>
+                                    <li><a href="productos/iluminacion/tubos.html">Tubos</a></li>
+                                    <li><a href="productos/iluminacion/decorativos.html">Decorativos</a></li>
+                                    <li><a href="productos/iluminacion/tiras-mangueras.html">Tiras y Mangueras</a></li>
+                                </ul>
+                            </li>
+                
+                            <!-- GABINETES -->
+                            <li class="submenu-item">
+                                <div class="submenu-toggle">
+                                    <a href="productos/gabinetes.html">Gabinetes</a>
+                                    <button class="subsubmenu-btn">
+                                        <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                    </button>
+                                </div>
+                                <ul class="subsubmenu">
+                                    <li><a href="productos/gabinetes/iluminacion.html">Gabinetes Iluminación</a></li>
+                                    <li><a href="productos/gabinetes/electricos.html">Gabinetes Eléctricos</a></li>
+                                    <li><a href="productos/gabinetes/ccm-armarios.html">CCM Armarios de Distribución</a></li>
+                                    <li><a href="productos/gabinetes/ducto-portacable.html">Ducto Porta Cable</a></li>
+                                </ul>
+                            </li>
+                
+                            <!-- VIALIDADES -->
+                            <li class="submenu-item">
+                                <div class="submenu-toggle">
+                                    <a href="productos/vialidades.html">Vialidades</a>
+                                    <button class="subsubmenu-btn">
+                                        <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                    </button>
+                                </div>
+                                <ul class="subsubmenu">
+                                    <li><a href="productos/vialidades/alumbrado-publico.html">Alumbrado Público</a></li>
+                                    <li><a href="productos/vialidades/luminarias-solares.html">Luminarias Solares Calle</a></li>
+                                    <li><a href="productos/vialidades/punta-poste.html">Punta Poste</a></li>
+                                    <li><a href="productos/vialidades/punta-poste-solar.html">Punta Poste Solar</a></li>
+                                    <li><a href="productos/vialidades/urbanos.html">Urbanos</a></li>
+                                    <li><a href="productos/vialidades/postes-accesorios.html">Postes y Accesorios</a></li>
+                                </ul>
+                            </li>
+                
+                            <!-- VENTILADORES -->
+                            <li class="submenu-item">
+                                <div class="submenu-toggle">
+                                    <a href="productos/ventiladores.html">Ventiladores</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                
+                    <a href="#">Paneles Solares</a>
+                    <a href="proyectos.html">Proyectos</a>
+                    <a href="blog.html">Blog</a>
                     <a href="contacto.html">Contacto</a>
                 </nav>
 
@@ -41,35 +114,242 @@
 
         <section class="hero">
             <div class="contenido-header contenedor">
-                <h1>Iluminación que transforma <span>cada proyecto</span></h1>
-                <p>Hablando de iluminación, nosotros apreciamos los diferentes factores que deben tenerse en cuenta para
-                    que la luz sea un protagonista en cada proyecto</p>
+                <h1>Productos</h1>
+                <nav>
+                    <a href="/">Inicio</a>
+                    <img src="src/img/arrow-right-white.svg" alt="Icono flecha">
+                    <a href="/productos.html">Productos</a>
+                </nav>
             </div>
         </section>
     </header>
 
-    <main class="contenedor seccion">
-        <div class="contenido-nosotros">
-            <section>
-                <h2>¿Quienes somos?</h2>
 
-                <p>Somos una empresa mexicana que contamos con un servicio profesional de proyección, diseño y
-                    consultoría en iluminación y ahorro de energía; el cual ofrece un departamento especializado que
-                    estudia, define y propone las estrategias lumínicas mas adecuadas para cada planteamiento, ya sean
-                    para interior o exterior.</p>
+    <main class="contenedor seccion mb-10 ">
+        <div class="layout">
+            <!-- Barra lateral de categorías -->
+            <aside class="barra-lateral">
+                <h2>Categorías</h2>
 
-                <p>Realizamos proyectos autosustentables creando los recursos de los mismos ahorros que se generan,
-                    siendo así una empresa que da solución integral a cualquier tipo de proyecto en iluminación y ahorro
-                    de energía.</p>
+                <nav>
+                    <ul class="lista">
+                        <li class="lista-item">
+                            <div class="lista-boton">
+                                <a href="#">Iluminación</a>
+                                <img class="lista-boton-clic" src="src/img/chevron-right.svg" alt="Icono flecha">
+                            </div>
+                            <ul class="lista-show">
+                                <li><a href="#">Reflectores</a></li>
+                                <li><a href="#">Campanas UFO</a></li>
+                                <li><a href="#">Bañadores</a></li>
+                                <li><a href="#">Panel LED</a></li>
+                                <li><a href="#">Downlight</a></li>
+                                <li><a href="#">Lamparas</a></li>
+                                <li><a href="#">Tubos</a></li>
+                                <li><a href="#">Decorativos</a></li>
+                                <li><a href="#">Tiras y Mangueras</a></li>
+                            </ul>
+                        </li>
+                        <li class="lista-item">
+                            <div class="lista-boton">
+                                <a href="#">Gabinetes</a>
+                                <img class="lista-boton-clic" src="src/img/chevron-right.svg" alt="Icono flecha">
+                            </div>
+                            <ul class="lista-show">
+                                <li><a href="#">Gabinetes Iluminación</a></li>
+                                <li><a href="#">Gabinetes Eléctricos</a></li>
+                                <li><a href="#">CCM Armarios de Distribución</a></li>
+                                <li><a href="#">Ducto Porta Cable</a></li>
+                            </ul>
+                        </li>
+                        <li class="lista-item">
+                            <div class="lista-boton">
+                                <a href="#">Vialidades</a>
+                                <img class="lista-boton-clic" src="src/img/chevron-right.svg" alt="Icono flecha">
+                            </div>
+                            <ul class="lista-show">
+                                <li><a href="#">Alumbrado Publico</a></li>
+                                <li><a href="#">Luminarias Solares Calle</a></li>
+                                <li><a href="#">Punta Poste</a></li>
+                                <li><a href="#">Punta Poste Solar</a></li>
+                                <li><a href="#">Urbanos</a></li>
+                                <li><a href="#">Postes y Accesorios</a></li>
+                            </ul>
+                        </li>
+                        <li class="lista-item">
+                            <div class="lista-boton">
+                                <a href="#">Ventiladores</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
 
-                <div class="logo-container">
-                    <a class="enlace-verde" href="nosotros.html">Conoce más acerca de nosotros</a>
+            <div class="layout-productos">
+                <!-- Barra de filtros y búsqueda -->
+                <div class="barra-superior">
+                    <div class="filtros">
+                        <div class="filtros-contenedor">
+                            <select id="categoria" name="categoria">
+                                <option value="popularidad">Ordenar por popularidad</option>
+                                <option value="calificacion">Ordenar por calificación media</option>
+                                <option value="ultimas">Ordenar por las últimas</option>
+                                <option value="precio">Ordenar por precio</option>
+                            </select>
+                        </div>
+                    </div>
+            
+                    <div class="busqueda">
+                        <input type="text" placeholder="Introduce aquí tu búsqueda...">
+                        <button type="submit">Buscar</button>
+                    </div>
                 </div>
-            </section>
-
-            <img loading="lazy" src="build/img/nosotros.jpg" alt="Imagen nosotros">
+            
+                <!-- Contenedor de productos -->
+                <div class="productos">
+                    <div class="producto">
+                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                        <!-- Línea divisoria -->
+                        <div class="linea"></div>
+    
+                        <h3>DL-CAM-200W5YUF</h3>
+    
+                        <!-- Detalles del producto -->
+                        <div class="detalles">
+                            <div class="detalle">
+                                <p class="detalle-titulo">Potencias</p>
+                                <p>120W</p>
+                                <p>150W</p>
+                                <p>200W</p>
+                            </div>
+                            <div class="detalle">
+                                <p class="detalle-titulo">Temperatura</p>
+                                <p>4000K</p>
+                                <p>5300K</p>
+                                <p>6500K</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="producto">
+                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                        <!-- Línea divisoria -->
+                        <div class="linea"></div>
+    
+                        <h3>DL-CAM-200W5YUF</h3>
+    
+                        <!-- Detalles del producto -->
+                        <div class="detalles">
+                            <div class="detalle">
+                                <p class="detalle-titulo">Potencias</p>
+                                <p>120W</p>
+                                <p>150W</p>
+                                <p>200W</p>
+                            </div>
+                            <div class="detalle">
+                                <p class="detalle-titulo">Temperatura</p>
+                                <p>4000K</p>
+                                <p>5300K</p>
+                                <p>6500K</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="producto">
+                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                        <!-- Línea divisoria -->
+                        <div class="linea"></div>
+    
+                        <h3>DL-CAM-200W5YUF</h3>
+    
+                        <!-- Detalles del producto -->
+                        <div class="detalles">
+                            <div class="detalle">
+                                <p class="detalle-titulo">Potencias</p>
+                                <p>120W</p>
+                                <p>150W</p>
+                                <p>200W</p>
+                            </div>
+                            <div class="detalle">
+                                <p class="detalle-titulo">Temperatura</p>
+                                <p>4000K</p>
+                                <p>5300K</p>
+                                <p>6500K</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="producto">
+                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                        <!-- Línea divisoria -->
+                        <div class="linea"></div>
+    
+                        <h3>DL-CAM-200W5YUF</h3>
+    
+                        <!-- Detalles del producto -->
+                        <div class="detalles">
+                            <div class="detalle">
+                                <p class="detalle-titulo">Potencias</p>
+                                <p>120W</p>
+                                <p>150W</p>
+                                <p>200W</p>
+                            </div>
+                            <div class="detalle">
+                                <p class="detalle-titulo">Temperatura</p>
+                                <p>4000K</p>
+                                <p>5300K</p>
+                                <p>6500K</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="producto">
+                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                        <!-- Línea divisoria -->
+                        <div class="linea"></div>
+    
+                        <h3>DL-CAM-200W5YUF</h3>
+    
+                        <!-- Detalles del producto -->
+                        <div class="detalles">
+                            <div class="detalle">
+                                <p class="detalle-titulo">Potencias</p>
+                                <p>120W</p>
+                                <p>150W</p>
+                                <p>200W</p>
+                            </div>
+                            <div class="detalle">
+                                <p class="detalle-titulo">Temperatura</p>
+                                <p>4000K</p>
+                                <p>5300K</p>
+                                <p>6500K</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="producto">
+                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                        <!-- Línea divisoria -->
+                        <div class="linea"></div>
+    
+                        <h3>DL-CAM-200W5YUF</h3>
+    
+                        <!-- Detalles del producto -->
+                        <div class="detalles">
+                            <div class="detalle">
+                                <p class="detalle-titulo">Potencias</p>
+                                <p>120W</p>
+                                <p>150W</p>
+                                <p>200W</p>
+                            </div>
+                            <div class="detalle">
+                                <p class="detalle-titulo">Temperatura</p>
+                                <p>4000K</p>
+                                <p>5300K</p>
+                                <p>6500K</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+    
 
     <footer class="footer">
         <div class="contenedor footer-contenedor">

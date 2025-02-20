@@ -10,31 +10,16 @@
 }
 
 
-.hero {
-    background-color: v.$negro;
-    &.inicio {
-        background-position: center center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        min-height: 48rem;
-
-        .contenido-header {
-            min-height: 48rem;
-        }
-    }
-
-    
-}
 .header {
     .contenido-header {
+        padding: 5rem 0;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        text-align: center;
 
         h1, p {
             color: v.$blanco;
-            text-align: left;
-            max-width: 83rem;
             margin: 0;
 
             span {
@@ -51,6 +36,21 @@
         p {
             margin-bottom: 3.2rem;
         }
+
+        nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 0.5rem;
+
+            a {
+                color: v.$blanco;
+            }
+
+            img {
+                width: 1.6rem;
+            }
+        }
     }
 }
 
@@ -58,4 +58,33 @@
 .boton-contenedor {
     display: flex;
     justify-content: flex-start; // Alinea el botón a la izquierda
+}
+
+
+.hero {
+    background-color: v.$negro;
+    &.inicio {
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 48rem;
+
+        .contenido-header {
+            min-height: 48rem;
+            text-align: left;
+
+            h1, p {
+                max-width: 83rem;
+                margin: 0;
+            }
+
+            h1 {
+                margin-bottom: 1.6rem;
+            }
+    
+            p {
+                margin-bottom: 3.2rem;
+            }
+        }
+    }
 }

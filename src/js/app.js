@@ -39,8 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /** DUPLICANDO LAS MARCAS PARA EFECTO INFINITO DEL CARRUSEL EN PAGINA DE INICIO**/
-    let copy = document.querySelector(".logos-slide").cloneNode(true);
-    document.querySelector('.carrusel-logos').appendChild(copy);
+    const logosSlide = document.querySelector(".logos-slide");
+
+    if (logosSlide) {
+        let copy = logosSlide.cloneNode(true);
+        document.querySelector('.carrusel-logos').appendChild(copy);
+    } else {
+        console.log("El elemento .logos-slide no está presente en esta página.");
+    }
 
 
 
@@ -50,7 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const submenuBtn = submenuContenedor.querySelector(".submenu-btn");
 
     submenuBtn.addEventListener("click", function (event) {
+        console.log("Submenu button clicked"); // Verificar si se está activando el evento
         event.preventDefault();
+
 
         // Cierra cualquier otro submenú activo antes de abrir este
         document.querySelectorAll(".submenu-contenedor.activo").forEach((item) => {
@@ -94,5 +102,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 item.classList.remove("activo");
             });
         }
+    });
+
+
+
+    /** LISTA DE ELEMENTOS EN EL SIDEBAR DE LA PAGINA DE PRODUCTOS **/
+    let listElements = document.querySelectorAll('.lista-boton-clic');
+
+    listElements.forEach(listElement => {
+        listElement.addEventListener('click', () => {
+            listElement.classList.toggle('arrow');
+
+            let height = 0;
+
+            // Encuentra el elemento padre más cercano con la clase 'lista-item'
+            let parentItem = listElement.closest('.lista-item');
+
+            // Selecciona el 'ul.lista-show' dentro de ese elemento padre
+            let menu = parentItem.querySelector('.lista-show');
+            
+            if(menu.clientHeight == 0){ // Calculando el height dinamicamente por cada submenu con scrollheight
+                height = menu.scrollHeight;
+            }
+
+            menu.style.height = height + "px";
+        });
     });
 });
