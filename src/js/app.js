@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** CONTADORES ANIMADOS DE LA PAGINA DE INICIO **/
     const contadores = document.querySelectorAll(".contador");
-    const duracion = 2000; // Duración total en milisegundos (2 segundos)
+    const duracion = 750; // Duración total en milisegundos (2 segundos)
 
     const iniciarContador = (contador) => {
         const objetivo = +contador.dataset.target;

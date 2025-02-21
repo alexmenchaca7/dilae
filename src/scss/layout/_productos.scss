@@ -26,6 +26,7 @@
     }
 
     nav {
+        border: 1px solid v.$gris-claro;
         width: 100%;
 
         a {
@@ -33,7 +34,9 @@
             display: block;
             padding: 0.6rem 0;
             transition: 0.3s color;
-
+            padding: 1rem;
+            
+            // Cambiar color del enlace cuando se haga hover
             &:hover {
                 color: v.$primario;
             }
@@ -57,7 +60,30 @@
                 align-items: center;
                 justify-content: space-between;
                 width: 100%; /* Ajusta al ancho total */
+                border-bottom: 1px solid v.$gris-claro; // Borde inferior para cada categoría principal
                 cursor: pointer;
+
+                // Cambiar color del enlace e icono de flecha cuando esté activo
+                &.activo {
+                    a {
+                        color: v.$primario;
+                    }
+
+                    img {
+                        filter: invert(33%) sepia(100%) saturate(160%) hue-rotate(93deg); /* Cambiar color a verde */
+                    }
+                }
+
+                // Cambiar color del enlace e icono de flecha cuando se haga hover
+                &:hover {
+                    a {
+                        color: v.$primario;
+                    }
+
+                    img {
+                        filter: invert(33%) sepia(100%) saturate(160%) hue-rotate(93deg); /* Cambiar color a verde */
+                    }
+                }
 
                 a {
                     font-weight: v.$bold;
@@ -65,7 +91,6 @@
                     color: v.$negro;
                     text-decoration: none;
                     flex-grow: 1; /* Hace que el texto ocupe el espacio disponible */
-
                 }
 
                 .lista-boton-clic {
@@ -82,9 +107,8 @@
             }
 
             .lista-show {
-                width: 85%;
-                border-left: 2px solid v.$primario;
                 height: 0;
+                padding-left: 0;
                 transition: height 0.3s ease-out;
 
                 li {
@@ -92,8 +116,36 @@
                 }
 
                 a {
+                    display: flex;
+                    border-bottom: 1px solid v.$gris-claro; // Borde inferior para cada categoría principal
+                    align-items: center;
                     font-weight: normal;
-                    text-transform: none;
+                    position: relative;
+
+                    // Agregar el icono rectangular a la izquierda del enlace del submenu
+                    &::before {
+                        content: "";
+                        display: inline-block;
+                        width: 1rem; 
+                        height: 1rem; 
+                        margin-right: 1rem; /* Separación entre el cuadro y el texto */
+                        flex-shrink: 0;  // Evita que el cuadrado se deforme en tamaños pequeños
+                        background-color: v.$gris-claro;
+                        transition: background-color 0.3s;
+                    }
+
+                    &:hover {
+                        &::before {
+                            background-color: v.$primario;
+                        }
+                    }
+
+                    // Cambiar color del cuadrado cuando esté activo
+                    &.activo {
+                        &::before {
+                            background-color: v.$primario;
+                        }
+                    }
                 }
             }
         }
@@ -127,9 +179,7 @@
                     width: 100%;
                     padding: 0.5rem 0 0.5rem 3rem;
                     font-size: 14px;
-                    border: 1px solid v.$gris-oscuro;
-                    border-radius: 5px;
-                    outline: none;
+                    border: 1px solid v.$gris-claro;
                     cursor: pointer;
                 }
         
@@ -159,7 +209,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+        border: 1px solid v.$gris-claro;
     
         // Imagen del producto
         img {
