@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos - Dilae</title>
+    <title>Reflector Industrial DL-CTN - Dilae</title>
     <link rel="stylesheet" href="build/css/app.css">
 </head>
 
@@ -114,11 +114,13 @@
 
         <section class="hero">
             <div class="contenido-header contenedor">
-                <h1>Productos</h1>
+                <h1>Reflector Industrial DL-CTN</h1>
                 <nav>
                     <a href="/">Inicio</a>
                     <img src="src/img/arrow-right-white.svg" alt="Icono flecha">
                     <a href="/productos.html">Productos</a>
+                    <img src="src/img/arrow-right-white.svg" alt="Icono flecha">
+                    <a href="/productos.html">Reflector Industrial DL-CTN</a>
                 </nav>
             </div>
         </section>
@@ -207,165 +209,101 @@
                     </div>
                 </div>
             
-                <!-- Contenedor de productos -->
-                <div class="productos">
-                    <a class="producto" href="producto.html">
-                        <div class="imagen">
-                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                            
-                            <!-- Línea divisoria -->
-                            <div class="linea"></div>
-                            
-                            <h3>DL-CAM-200W5YUF</h3>
-                        </div>
-    
-                        <!-- Detalles del producto -->
-                        <div class="detalles">
-                            <div class="detalle">
-                                <p class="detalle-titulo">Potencias</p>
-                                <p>120W</p>
-                                <p>150W</p>
-                                <p>200W</p>
+                <div class="contenedor-producto">
+                    <div class="producto-imagenes">
+
+                        <div class="contenedor-imagenes">
+                            <!-- Imagen Principal -->
+                            <div class="imagen-principal">
+                                <img id="imagenGrande" src="src/img/productos/producto2-1.png" alt="Producto imagen principal">
+                                <button id="prev" class="flecha prev">&lt;</button>
+                                <button id="next" class="flecha next">&gt;</button>
                             </div>
-                            <div class="detalle">
-                                <p class="detalle-titulo">Temperatura</p>
-                                <p>4000K</p>
-                                <p>5300K</p>
+    
+                            <!-- Miniaturas -->
+                            <div class="miniaturas">
+                                <img class="miniatura active" src="src/img/productos/producto2-1.png" alt="Miniatura 1" onclick="cambiarImagen(this)">
+                                <img class="miniatura" src="src/img/productos/producto2-2.png" alt="Miniatura 2" onclick="cambiarImagen(this)">
+                                <img class="miniatura" src="src/img/productos/producto2-3.png" alt="Miniatura 3" onclick="cambiarImagen(this)">
+                                <img class="miniatura" src="src/img/productos/producto2-4.png" alt="Miniatura 4" onclick="cambiarImagen(this)">
+                            </div>
+                        </div> <!-- contenedor-imagenes -->
+                    </div> <!-- producto-imagenes -->
+
+                    <div class="producto-info">
+                        <h3 class="titulo">Reflector Industrial DL-CTN</h3>
+
+                        <p class="descripcion">Reflector de alta potencia con Tecnología LED apto para uso en entornos exteriores, resistente a la corrosión, de fácil instalación, esmaltado en color negro.</p>
+
+                        <div class="atributo">
+                            <h4>Potencia</h4>
+
+                            <div class="valores">
+                                <p>100W</p>
+                                <p>200W</p>
+                                <p>300W</p>
+                                <p>400W</p>
+                                <p>500W</p>
+                                <p>600W</p>
+                            </div>
+                        </div> <!-- atributo -->
+
+                        <div class="atributo">
+                            <h4>Temperatura</h4>
+
+                            <div class="valores">
                                 <p>6500K</p>
                             </div>
-                        </div>
-                    </a>
-                    <a class="producto" href="producto.html">
-                        <div class="imagen">
-                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                            
-                            <!-- Línea divisoria -->
-                            <div class="linea"></div>
-                            
-                            <h3>DL-CAM-200W5YUF</h3>
-                        </div>
-    
-                        <!-- Detalles del producto -->
-                        <div class="detalles">
-                            <div class="detalle">
-                                <p class="detalle-titulo">Potencias</p>
-                                <p>120W</p>
-                                <p>150W</p>
-                                <p>200W</p>
+                        </div> <!-- atributo -->
+
+                        <div class="atributo">
+                            <h4>Garantía</h4>
+
+                            <div class="valores">
+                                <p>3 años</p>
                             </div>
-                            <div class="detalle">
-                                <p class="detalle-titulo">Temperatura</p>
-                                <p>4000K</p>
-                                <p>5300K</p>
-                                <p>6500K</p>
+                        </div> <!-- atributo -->
+
+                        <div class="atributo">
+                            <h4>Certificados</h4>
+
+                            <div class="valores">
+                                <img src="src/img/certificados/icono_nom.svg" alt="Certificado NOM">
                             </div>
-                        </div>
-                    </a>
-                    <a class="producto" href="producto.html">
-                        <div class="imagen">
-                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                            
-                            <!-- Línea divisoria -->
-                            <div class="linea"></div>
-                            
-                            <h3>DL-CAM-200W5YUF</h3>
-                        </div>
-    
-                        <!-- Detalles del producto -->
-                        <div class="detalles">
-                            <div class="detalle">
-                                <p class="detalle-titulo">Potencias</p>
-                                <p>120W</p>
-                                <p>150W</p>
-                                <p>200W</p>
-                            </div>
-                            <div class="detalle">
-                                <p class="detalle-titulo">Temperatura</p>
-                                <p>4000K</p>
-                                <p>5300K</p>
-                                <p>6500K</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="producto" href="producto.html">
-                        <div class="imagen">
-                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                            
-                            <!-- Línea divisoria -->
-                            <div class="linea"></div>
-                            
-                            <h3>DL-CAM-200W5YUF</h3>
-                        </div>
-    
-                        <!-- Detalles del producto -->
-                        <div class="detalles">
-                            <div class="detalle">
-                                <p class="detalle-titulo">Potencias</p>
-                                <p>120W</p>
-                                <p>150W</p>
-                                <p>200W</p>
-                            </div>
-                            <div class="detalle">
-                                <p class="detalle-titulo">Temperatura</p>
-                                <p>4000K</p>
-                                <p>5300K</p>
-                                <p>6500K</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="producto" href="producto.html">
-                        <div class="imagen">
-                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                            
-                            <!-- Línea divisoria -->
-                            <div class="linea"></div>
-                            
-                            <h3>DL-CAM-200W5YUF</h3>
-                        </div>
-    
-                        <!-- Detalles del producto -->
-                        <div class="detalles">
-                            <div class="detalle">
-                                <p class="detalle-titulo">Potencias</p>
-                                <p>120W</p>
-                                <p>150W</p>
-                                <p>200W</p>
-                            </div>
-                            <div class="detalle">
-                                <p class="detalle-titulo">Temperatura</p>
-                                <p>4000K</p>
-                                <p>5300K</p>
-                                <p>6500K</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="producto" href="producto.html">
-                        <div class="imagen">
-                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                            
-                            <!-- Línea divisoria -->
-                            <div class="linea"></div>
-                            
-                            <h3>DL-CAM-200W5YUF</h3>
-                        </div>
-    
-                        <!-- Detalles del producto -->
-                        <div class="detalles">
-                            <div class="detalle">
-                                <p class="detalle-titulo">Potencias</p>
-                                <p>120W</p>
-                                <p>150W</p>
-                                <p>200W</p>
-                            </div>
-                            <div class="detalle">
-                                <p class="detalle-titulo">Temperatura</p>
-                                <p>4000K</p>
-                                <p>5300K</p>
-                                <p>6500K</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                        </div> <!-- atributo -->
+                    </div> <!-- producto-info -->
+
+                    <div class="contenedor-fichas">
+                        <h4>Fichas Técnicas</h4>
+
+                        <div class="fichas">
+                            <a class="ficha" href="#">
+                                <img src="src/img/icon_pdf.svg" alt="Icono PDF">
+                                <p>DL-CTN-100W</p>
+                            </a>
+                            <a class="ficha" href="#">
+                                <img src="src/img/icon_pdf.svg" alt="Icono PDF">
+                                <p>DL-CTN-200W</p>
+                            </a>
+                            <a class="ficha" href="#">
+                                <img src="src/img/icon_pdf.svg" alt="Icono PDF">
+                                <p>DL-CTN-300W</p>
+                            </a>
+                            <a class="ficha" href="#">
+                                <img src="src/img/icon_pdf.svg" alt="Icono PDF">
+                                <p>DL-CTN-400W</p>
+                            </a>
+                            <a class="ficha" href="#">
+                                <img src="src/img/icon_pdf.svg" alt="Icono PDF">
+                                <p>DL-CTN-500W</p>
+                            </a>
+                            <a class="ficha" href="#">
+                                <img src="src/img/icon_pdf.svg" alt="Icono PDF">
+                                <p>DL-CTN-600W</p>
+                            </a>
+                        </div> <!-- fichas -->
+                    </div> <!-- contenedor-fichas -->
+                </div> <!-- contenedor-producto -->
             </div>
         </div>
     </main>

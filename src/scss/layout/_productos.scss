@@ -262,6 +262,7 @@
         }
     }
 
+    // CONTENEDOR PRODUCTOS (PAGINA PRODUCTOS)
     .productos {
         display: flex;
         flex-direction: column;
@@ -269,11 +270,11 @@
         gap: 3rem;
 
         @include m.tablet {
-            @include m.grid(2, auto);
+            @include m.grid(2, 5rem);
         }
 
         @include m.desktopS {
-            @include m.grid(3, auto);
+            @include m.grid(3, 5rem);
         }
     
         .producto {
@@ -355,5 +356,166 @@
                 }
             }
         }        
-    }    
+    }
+}
+
+
+
+.contenedor-producto {
+    display: flex;
+    flex-wrap: wrap; // Permite que los elementos bajen si es necesario
+    gap: 3rem;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+
+    .producto-imagenes {
+        flex: 1;
+        max-width: 40rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid v.$gris-claro;
+
+        .contenedor-imagenes {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .imagen-principal {
+            position: relative;
+            width: 40rem; // Mantiene un ancho fijo
+            height: 35rem; // Mantiene la altura constante
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem; /* Espaciado interno */
+
+            img {
+                width: 100%;
+                max-width: 30rem;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .flecha {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(0, 0, 0, 0.5);
+                color: v.$blanco;
+                border: none;
+                font-size: 2rem;
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+                z-index: 1;
+                border-radius: 5px;
+            }
+
+            .prev {
+                left: 1rem;
+            }
+
+            .next {
+                right: 1rem;
+            }
+        }
+
+        .miniaturas {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #fff;
+
+            img {
+                width: 8rem;
+                height: 6rem;
+                object-fit: contain;
+                cursor: pointer;
+                opacity: 0.6;
+                transition: all 0.3 ease;
+            }
+
+            .miniatura.active {
+                opacity: 1;
+                border: 2px solid v.$primario;
+            }
+
+            img:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .producto-info {
+        flex: 1;
+
+        p {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .titulo {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 2.6rem;
+        }
+
+        .atributo {
+            h4 {
+                margin-bottom: 1.5rem;
+                font-size: 2rem;
+            }
+
+            .valores {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            img {
+                width: 5rem;
+                height: 5rem;
+            }
+        }
+    }
+
+    .contenedor-fichas {
+        flex-basis: 100%; // Ocupa todo el ancho disponible
+
+        h4 {
+            margin-top: 0;
+            font-size: 2rem;
+        }
+
+        .fichas {
+            @include m.grid(2, auto);
+            
+            @include m.telefono {
+                @include m.grid(3, auto);
+            }
+
+            @include m.tablet {
+                @include m.grid(6, auto);
+            }
+
+            .ficha {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                img {
+                    width: 3.5rem;
+                    height: 100%;
+                }
+
+                &:hover {
+                    p {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
 }

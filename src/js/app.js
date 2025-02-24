@@ -128,4 +128,42 @@ document.addEventListener("DOMContentLoaded", () => {
             menu.style.height = height + "px";
         });
     });
+
+
+    /* CONTENEDOR DE IMAGENES EN LA PAGINA DE PRODUCTO */
+    const imagenGrande = document.getElementById("imagenGrande");
+    const miniaturas = document.querySelectorAll(".miniatura");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+
+    let indiceActual = 0;
+
+    function cambiarImagen(elemento) {
+        imagenGrande.src = elemento.src;
+        miniaturas.forEach(img => img.classList.remove("active"));
+        elemento.classList.add("active");
+        indiceActual = Array.from(miniaturas).indexOf(elemento);
+    }
+
+    function cambiarConFlecha(direccion) {
+        indiceActual += direccion;
+
+        if (indiceActual < 0) {
+            indiceActual = miniaturas.length - 1; // Ir a la última imagen
+        } else if (indiceActual >= miniaturas.length) {
+            indiceActual = 0; // Volver a la primera imagen
+        }
+
+        cambiarImagen(miniaturas[indiceActual]);
+    }
+
+    prevBtn.addEventListener("click", () => cambiarConFlecha(-1));
+    nextBtn.addEventListener("click", () => cambiarConFlecha(1));
+
+    // Asignar evento de clic a cada miniatura
+    miniaturas.forEach(img => {
+        img.addEventListener("click", function () {
+            cambiarImagen(this);
+        });
+    });
 });
