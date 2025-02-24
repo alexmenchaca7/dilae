@@ -20,6 +20,12 @@
     }
 }
 
+@mixin desktopS {
+    @media (min-width: v.$desktopS) {
+        @content;
+    }
+}
+
 @mixin desktopXL {
     @media (min-width: v.$desktopXL) {
         @content;
@@ -30,9 +36,9 @@
 /** Grid **/
 @mixin grid($columnas, $espaciado_columna, $espaciado_fila : $espaciado_columna ) {
     display: grid;
+    grid-template-columns: repeat($columnas, 1fr);
     column-gap: $espaciado_columna;
     row-gap: $espaciado_fila;
-    grid-template-columns: repeat($columnas, 1fr);
 }
 
 

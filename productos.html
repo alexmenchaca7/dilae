@@ -135,8 +135,10 @@
                     <ul class="lista">
                         <li class="lista-item">
                             <div class="lista-boton activo"> <!-- Activo si es la página actual -->
-                                <a href="#">Iluminación</a> 
-                                <img class="lista-boton-clic" src="src/img/chevron-right.svg" alt="Icono flecha">
+                                <a href="#">Iluminación</a>
+                                <div class="icono">
+                                    <img class="lista-boton-clic" src="src/img/chevron-right.svg" alt="Icono flecha">
+                                </div>
                             </div>
                             <ul class="lista-show">
                                 <li><a href="#">Reflectores</a></li>
@@ -189,30 +191,33 @@
                 <!-- Barra de filtros y búsqueda -->
                 <div class="barra-superior">
                     <div class="filtros">
-                        <div class="filtros-contenedor">
-                            <select id="categoria" name="categoria">
-                                <option value="popularidad">Ordenar por popularidad</option>
-                                <option value="calificacion">Ordenar por calificación media</option>
-                                <option value="ultimas">Ordenar por las últimas</option>
-                                <option value="precio">Ordenar por precio</option>
-                            </select>
-                        </div>
+                        <select id="categoria" name="categoria">
+                            <option value="popularidad">Ordenar por popularidad</option>
+                            <option value="calificacion">Ordenar por calificación media</option>
+                            <option value="ultimas">Ordenar por las últimas</option>
+                            <option value="precio">Ordenar por precio</option>
+                        </select>
                     </div>
             
                     <div class="busqueda">
                         <input type="text" placeholder="Introduce aquí tu búsqueda...">
-                        <button type="submit">Buscar</button>
+                        <button type="submit">
+                            <img src="src/img/icon_search.svg" alt="Icono de busqueda">
+                        </button>
                     </div>
                 </div>
             
                 <!-- Contenedor de productos -->
                 <div class="productos">
-                    <div class="producto">
-                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                        <!-- Línea divisoria -->
-                        <div class="linea"></div>
-    
-                        <h3>DL-CAM-200W5YUF</h3>
+                    <a class="producto" href="producto.html">
+                        <div class="imagen">
+                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                            
+                            <!-- Línea divisoria -->
+                            <div class="linea"></div>
+                            
+                            <h3>DL-CAM-200W5YUF</h3>
+                        </div>
     
                         <!-- Detalles del producto -->
                         <div class="detalles">
@@ -229,13 +234,16 @@
                                 <p>6500K</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="producto">
-                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                        <!-- Línea divisoria -->
-                        <div class="linea"></div>
-    
-                        <h3>DL-CAM-200W5YUF</h3>
+                    </a>
+                    <a class="producto" href="producto.html">
+                        <div class="imagen">
+                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                            
+                            <!-- Línea divisoria -->
+                            <div class="linea"></div>
+                            
+                            <h3>DL-CAM-200W5YUF</h3>
+                        </div>
     
                         <!-- Detalles del producto -->
                         <div class="detalles">
@@ -252,13 +260,16 @@
                                 <p>6500K</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="producto">
-                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                        <!-- Línea divisoria -->
-                        <div class="linea"></div>
-    
-                        <h3>DL-CAM-200W5YUF</h3>
+                    </a>
+                    <a class="producto" href="producto.html">
+                        <div class="imagen">
+                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                            
+                            <!-- Línea divisoria -->
+                            <div class="linea"></div>
+                            
+                            <h3>DL-CAM-200W5YUF</h3>
+                        </div>
     
                         <!-- Detalles del producto -->
                         <div class="detalles">
@@ -275,13 +286,16 @@
                                 <p>6500K</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="producto">
-                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                        <!-- Línea divisoria -->
-                        <div class="linea"></div>
-    
-                        <h3>DL-CAM-200W5YUF</h3>
+                    </a>
+                    <a class="producto" href="producto.html">
+                        <div class="imagen">
+                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                            
+                            <!-- Línea divisoria -->
+                            <div class="linea"></div>
+                            
+                            <h3>DL-CAM-200W5YUF</h3>
+                        </div>
     
                         <!-- Detalles del producto -->
                         <div class="detalles">
@@ -298,13 +312,16 @@
                                 <p>6500K</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="producto">
-                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                        <!-- Línea divisoria -->
-                        <div class="linea"></div>
-    
-                        <h3>DL-CAM-200W5YUF</h3>
+                    </a>
+                    <a class="producto" href="producto.html">
+                        <div class="imagen">
+                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                            
+                            <!-- Línea divisoria -->
+                            <div class="linea"></div>
+                            
+                            <h3>DL-CAM-200W5YUF</h3>
+                        </div>
     
                         <!-- Detalles del producto -->
                         <div class="detalles">
@@ -321,13 +338,16 @@
                                 <p>6500K</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="producto">
-                        <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
-                        <!-- Línea divisoria -->
-                        <div class="linea"></div>
-    
-                        <h3>DL-CAM-200W5YUF</h3>
+                    </a>
+                    <a class="producto" href="producto.html">
+                        <div class="imagen">
+                            <img loading="lazy" src="src/img/productos/producto1.png" alt="Producto 1">
+                            
+                            <!-- Línea divisoria -->
+                            <div class="linea"></div>
+                            
+                            <h3>DL-CAM-200W5YUF</h3>
+                        </div>
     
                         <!-- Detalles del producto -->
                         <div class="detalles">
@@ -344,7 +364,7 @@
                                 <p>6500K</p>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
