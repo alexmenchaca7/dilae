@@ -4,15 +4,39 @@
 
 
 .blog {
-    @include m.tablet {
-        @include m.grid(2, 10rem, 5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+
+    @include m.desktop {
+        @include m.grid(2, 5rem);
     }
 }
 
 .entrada-blog {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    @include m.tablet {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        column-gap: 2rem;
+    }
 
     .texto-entrada {
-        margin-bottom: 5rem;
+
+        h4 {
+            margin-top: 0;
+
+            &::after {
+                content: '';
+                display: block;
+                width: 15rem;
+                height: .5rem;
+                background-color: v.$primario;
+            }
+        }
 
         a {
             text-transform: uppercase;

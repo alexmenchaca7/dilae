@@ -2,21 +2,33 @@
 @use 'base/mixins' as m;
 
 .contenido-contacto {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    @include m.desktop {
-        @include m.grid(2, 2rem);
-        .informacion-contacto {
-            grid-column: 2/3;
-            grid-row: 1/2;
-        }
-    }
+    @include m.grid(1, 2rem);
 
     iframe {
         width: 100%;
         height: 45rem;
+    }
+
+    .imagen-contacto {
+        grid-row: 1/2;
+        display: block;
+        width: fit-content; // Solo ocupará el espacio de la imagen
+        margin: 0 auto; // Para centrarlo en su contenedor
+
+        img {
+            width: 45rem;
+            mix-blend-mode: multiply; // Hace que la imagen interactúe con el color de fondo
+        }
+    }
+
+    @include m.tablet {
+        @include m.grid(2, 5rem);
+        align-items: center;
+
+        .informacion-contacto {
+            grid-column: 2/3;
+            grid-row: 1/2;
+        }
     }
 }
 
@@ -25,7 +37,7 @@
         margin-top: 0;
         text-align: center;
 
-        @include m.desktop {
+        @include m.tablet {
             text-align: left;
         }
     }

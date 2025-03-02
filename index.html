@@ -152,7 +152,7 @@
         </div>
     </main>
 
-    <div class="contenido-logros seccion">
+    <div class="contenido-logros mt-10">
         <div class="logros-nosotros contenedor">
             <section class="logro">
                 <h3><span class="contador" data-target="10">0</span> años</h3>
@@ -175,20 +175,18 @@
     </div>
 
 
-    <div class="seccion contenedor">
+    <div class="mt-5 contenedor">
         <div class="contenido-contacto">
             <section class="informacion-contacto">
-                <h2>Contacto</h2>
+                <h2>¡Ponte en contacto!</h2>
 
-                <p>Si tienes un proyecto en mente o necesitas asesoría en soluciones de iluminación, estamos aquí para
-                    ayudarte. Nuestro equipo de expertos está listo para brindarte la mejor atención y guiarte en cada
-                    paso del proceso.</p>
+                <p>¿Necesitas asesoramiento? Estamos aquí para ayudarte! Nuestro equipo de expertos está listo para brindarte la mejor atención y guiarte en cada paso del proceso.</p>
 
                 <div class="logo-container">
                     <a class="enlace-verde" href="contacto.html">Pide tu cotización aquí</a>
                 </div>
 
-                <p class="p-bold">Visítanos o contáctanos a través de los siguientes medios:</p>
+                <p class="p-bold">Contáctanos a través de los siguientes medios:</p>
 
                 <p class="telefono mb-0">
                     Teléfono 1: 
@@ -209,17 +207,17 @@
                 </a>
             </section>
 
-            <iframe
-                loading="lazy"
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d29842.551213203766!2d-103.41515073461242!3d20.77838255089233!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8428a5f9dea587e9%3A0x945dca655d50b94f!2sDILAE%20SA%20DE%20CV!5e0!3m2!1ses-419!2sus!4v1739927658192!5m2!1ses-419!2sus"
-                width="600" height="450" style="border:0;" 
-                allowfullscreen="" 
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+            <picture class="imagen-contacto">
+                <source srcset="build/img/contacto.avif" type="image/avif">
+                <source srcset="build/img/contacto.webp" type="image/webp">
+                <source srcset="build/img/contacto.png" type="image/png">
+                <img loading="lazy" src="build/img/contacto.png" alt="Imagen Contacto">
+            </picture>
         </div>
     </div>
 
-    <section class="seccion">
+    <section class="mt-10 contenedor-marcas">
+        <h2>Manejamos más de <span>45 marcas</span> reconocidas a nivel mundial</h2>
         <div class="carrusel-logos">
             <div class="logos-slide">
                 <div class="logo-container">
@@ -322,8 +320,26 @@
         </div>
     </section>
 
-    <section class="contenedor seccion">
-        <h2 class="t-align-center mt-0">Articulos destacados</h2>
+
+
+    
+
+    <div class="seccion seccion-solar">
+        <section class="contenido-solar">
+            <h2>Conoce Nuestra Línea de <span>Soluciones Solares</span></h2>
+            <p>Convierte la luz del sol en ahorro y eficiencia energética. Conoce cómo nuestros sistemas solares pueden
+                transformar tu hogar o tu empresa.</p>
+            <p>Sustentabilidad | Ahorro Energético | Tecnología de Vanguardia</p>
+            <div class="logo-container">
+                <a class="boton-verde-block" href="#">Descubre Más</a>
+            </div>
+        </section>
+    </div>
+
+
+
+    <section class="mt-5 mb-5 contenedor seccion">
+        <h2 class="t-align-center mt-0 mb-5">Nuestro Blog</h2>
 
         <div class="blog">
             <article class="entrada-blog">
@@ -337,11 +353,8 @@
                 </div>
 
                 <div class="texto-entrada">
-                    <h3 class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
-                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut. Lorem ipsum dolor sit
-                        amet, consectetur adipiscing elit. Vestibulum vel ipsum a nisl condimentum porta. Proin
-                        condimentum faucibus felis. Nullam eleifend fermentum metus, nec bibendum tellus scelerisque
-                        non. In eu erat mattis, fermentum nibh...</p>
+                    <h4 class="mb-0">Lorem ipsum dolor sit amet</h4>
+                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut.</p>
                     <div class="logo-container">
                         <a href="entrada.html" class="enlace-verde">Leer más</a>
                     </div>
@@ -359,33 +372,26 @@
                 </div>
 
                 <div class="texto-entrada">
-                    <h3 class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
-                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut. Lorem ipsum dolor sit
-                        amet, consectetur adipiscing elit. Vestibulum vel ipsum a nisl condimentum porta. Proin
-                        condimentum faucibus felis. Nullam eleifend fermentum metus, nec bibendum tellus scelerisque
-                        non. In eu erat mattis, fermentum nibh...</p>
+                    <h4 class="mb-0">Lorem ipsum dolor sit amet</h4>
+                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut.</p>
                     <div class="logo-container">
                         <a href="entrada.html" class="enlace-verde">Leer más</a>
                     </div>
                 </div>
             </article>
-
             <article class="entrada-blog">
                 <div class="imagen">
                     <picture>
                         <source srcset="build/img/entrada1.avif" type="image/avif">
                         <source srcset="build/img/entrada1.webp" type="image/webp">
-                        <source srcset="build/img/entrada1.png" type="image/png">
-                        <img loading="lazy" src="build/img/entrada1.png" alt="Imagen entrada">
+                        <source srcset="build/img/entrada1.jpg" type="image/jpeg">
+                        <img loading="lazy" src="build/img/entrada1.jpg" alt="Imagen entrada">
                     </picture>
                 </div>
 
                 <div class="texto-entrada">
-                    <h3 class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
-                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut. Lorem ipsum dolor sit
-                        amet, consectetur adipiscing elit. Vestibulum vel ipsum a nisl condimentum porta. Proin
-                        condimentum faucibus felis. Nullam eleifend fermentum metus, nec bibendum tellus scelerisque
-                        non. In eu erat mattis, fermentum nibh...</p>
+                    <h4 class="mb-0">Lorem ipsum dolor sit amet</h4>
+                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut.</p>
                     <div class="logo-container">
                         <a href="entrada.html" class="enlace-verde">Leer más</a>
                     </div>
@@ -403,11 +409,8 @@
                 </div>
 
                 <div class="texto-entrada">
-                    <h3 class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
-                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut. Lorem ipsum dolor sit
-                        amet, consectetur adipiscing elit. Vestibulum vel ipsum a nisl condimentum porta. Proin
-                        condimentum faucibus felis. Nullam eleifend fermentum metus, nec bibendum tellus scelerisque
-                        non. In eu erat mattis, fermentum nibh...</p>
+                    <h4 class="mb-0">Lorem ipsum dolor sit amet</h4>
+                    <p>Donec sollicitudin efficitur tortor, ornare feugiat elit consequat ut.</p>
                     <div class="logo-container">
                         <a href="entrada.html" class="enlace-verde">Leer más</a>
                     </div>
@@ -415,18 +418,6 @@
             </article>
         </div>
     </section>
-
-    <div class="seccion seccion-solar">
-        <section class="contenido-solar">
-            <h2>Conoce Nuestra Línea de <span>Soluciones Solares</span></h2>
-            <p>Convierte la luz del sol en ahorro y eficiencia energética. Conoce cómo nuestros sistemas solares pueden
-                transformar tu hogar o tu empresa.</p>
-            <p>Sustentabilidad | Ahorro Energético | Tecnología de Vanguardia</p>
-            <div class="logo-container">
-                <a class="boton-verde-block" href="#">Descubre Más</a>
-            </div>
-        </section>
-    </div>
 
 
     <footer class="footer">
