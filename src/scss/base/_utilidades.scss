@@ -48,20 +48,21 @@
     font-size: 1.8rem;
     text-decoration: underline;
     font-weight: v.$bold;
-    position: relative;
-    display: inline-flex;
-    align-items: center; // Asegura que el texto y la flecha estén alineados
-    transition: all 0.3s ease;
+    display: inline-flex;  // Mantiene el texto y la flecha en la misma línea
+    max-width: 100%;
+    flex-wrap: wrap;  // Evita que la flecha pase a la siguiente línea
+    transition: all 0.3s ease-in-out;
+
 
     &:after {
         content: '';
-        display: inline-block;
+        display: flex;
         background: url(/src/img/arrow-right-primary.svg) no-repeat center;
         width: 2rem;
         height: 2rem;
-        margin-left: 0.5rem; // Espaciado entre el texto y la flecha
-        position: relative;
-        transition: all 0.3s ease;
+        margin-left: 0.5rem;
+        align-self: center; // Asegura que la flecha se mantenga alineada con el texto
+        transition: all 0.3s ease-in-out;
     }
 
     &:hover {
@@ -69,7 +70,7 @@
         
         &:after {
             background: url(/src/img/arrow-right-shade-3.svg) no-repeat center;
-            margin-left: 0.7rem;
+            margin-left: 0.8rem;
         }
     }
 }

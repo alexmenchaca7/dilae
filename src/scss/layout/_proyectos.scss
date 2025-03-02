@@ -1,0 +1,62 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.proyectos {
+    @include m.grid(1, 0);
+    margin-bottom: 5rem;
+    width: 100%;
+
+    @include m.tablet {
+        @include m.grid(2, 4rem);
+        justify-content: center;
+    }
+
+    .proyecto {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 4rem 0;
+        border-bottom: 2px solid v.$gris-claro;
+
+        &:first-of-type {
+            padding-top: 0;
+        }
+
+        &:last-of-type {
+            padding-bottom: 0;
+            border: none;
+        }
+
+        @include m.tablet {
+            border: none;
+            padding: 0;
+        }
+
+        h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        a {
+            font-size: 1.6rem;
+        }
+
+        iframe {
+            width: 100%;
+            max-width: 100%; /* Evita que el iframe crezca más allá de su contenedor */
+            height: auto;
+            aspect-ratio: 16 / 9;  /* Mantén la proporción 16:9 */
+            border: none; /* Para evitar bordes por defecto */
+        }
+    }
+}
+
+
+/* Línea de separación entre filas */
+@include m.tablet {
+    .separador {
+        height: 2px;
+        background-color: v.$gris-claro;
+        grid-column: 1 / -1;
+    }
+}

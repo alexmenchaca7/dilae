@@ -45,6 +45,10 @@
 
             a {
                 color: v.$blanco;
+
+                &:hover {
+                    text-decoration: underline;
+                }
             }
 
             img {

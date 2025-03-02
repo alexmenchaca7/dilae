@@ -4,6 +4,7 @@
 .footer {
     background-color: v.$gris-oscuro;
     padding: 4rem 0;
+    text-align: center;
 
     h2, h3 {
         color: v.$blanco;
@@ -58,6 +59,7 @@
         gap: 3rem;
         align-items: center;
         margin-top: 3rem;
+        justify-content: center;
 
         a {
             img {

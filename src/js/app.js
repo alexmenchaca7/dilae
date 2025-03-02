@@ -2,50 +2,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** CONTADORES ANIMADOS DE LA PAGINA DE INICIO **/
     const contadores = document.querySelectorAll(".contador");
-    const duracion = 750; // Duración total en milisegundos (2 segundos)
+    if (contadores.length > 0) {
+        const duracion = 750;
+        const iniciarContador = (contador) => {
+            const objetivo = +contador.dataset.target;
+            let inicio = 0;
+            const incremento = objetivo / (duracion / 16);
 
-    const iniciarContador = (contador) => {
-        const objetivo = +contador.dataset.target;
-        let inicio = 0;
-        const incremento = objetivo / (duracion / 16); // Ajusta el incremento basado en el tiempo total
-
-        const actualizarContador = () => {
-            inicio += incremento;
-            if (inicio >= objetivo) {
-                contador.innerText = `+${objetivo}`; // Muestra el valor final
-            } else {
+            const actualizarContador = () => {
+                inicio += incremento;
                 contador.innerText = `+${Math.floor(inicio)}`;
-                requestAnimationFrame(actualizarContador);
-            }
+                if (inicio < objetivo) requestAnimationFrame(actualizarContador);
+            };
+            actualizarContador();
         };
 
-        actualizarContador();
-    };
+        const observarContadores = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                if (entrada.isIntersecting) iniciarContador(entrada.target);
+            });
+        }, { threshold: 0.6 });
 
-    // Detecta si los contadores están en pantalla y los inicia
-    const observarContadores = new IntersectionObserver((entradas) => {
-        entradas.forEach((entrada) => {
-            if (entrada.isIntersecting) {
-                // Reiniciar el contador a 0 antes de volver a animar
-                entrada.target.innerText = "+0"; 
-                iniciarContador(entrada.target);
-            }
-        });
-    }, { threshold: 0.6 });
-
-    contadores.forEach((contador) => observarContadores.observe(contador));
+        contadores.forEach((contador) => observarContadores.observe(contador));
+    }
 
 
 
 
     /** DUPLICANDO LAS MARCAS PARA EFECTO INFINITO DEL CARRUSEL EN PAGINA DE INICIO**/
     const logosSlide = document.querySelector(".logos-slide");
-
     if (logosSlide) {
-        let copy = logosSlide.cloneNode(true);
-        document.querySelector('.carrusel-logos').appendChild(copy);
-    } else {
-        console.log("El elemento .logos-slide no está presente en esta página.");
+        document.querySelector('.carrusel-logos')?.appendChild(logosSlide.cloneNode(true));
     }
 
 
@@ -53,117 +40,139 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** SUBMENU PRODUCTOS DE NAVEGACION **/
     const submenuContenedor = document.querySelector(".submenu-contenedor");
-    const submenuBtn = submenuContenedor.querySelector(".submenu-btn");
 
-    submenuBtn.addEventListener("click", function (event) {
-        console.log("Submenu button clicked"); // Verificar si se está activando el evento
-        event.preventDefault();
+    // Verificamos que el contenedor y el botón existan antes de agregar eventos
+    if (submenuContenedor) {
+        const submenuBtn = submenuContenedor.querySelector(".submenu-btn");
 
+        if (submenuBtn) {
+            submenuBtn.addEventListener("click", function (event) {
+                event.preventDefault();
 
-        // Cierra cualquier otro submenú activo antes de abrir este
-        document.querySelectorAll(".submenu-contenedor.activo").forEach((item) => {
-            if (item !== submenuContenedor) {
-                item.classList.remove("activo");
-            }
-        });
+                // Cierra cualquier otro submenú activo antes de abrir este
+                document.querySelectorAll(".submenu-contenedor.activo").forEach((item) => {
+                    if (item !== submenuContenedor) {
+                        item.classList.remove("activo");
+                    }
+                });
 
-        submenuContenedor.classList.toggle("activo");
-    });
+                submenuContenedor.classList.toggle("activo");
+            });
+        }
+    }
 
     /** SUB-SUBMENÚS DE NAVEGACION **/
     const subsubmenuBtns = document.querySelectorAll(".subsubmenu-btn");
 
-    subsubmenuBtns.forEach((btn) => {
-        btn.addEventListener("click", function (event) {
-            event.preventDefault();
-            const parentItem = this.closest(".submenu-item");
+    if (subsubmenuBtns.length > 0) {
+        subsubmenuBtns.forEach((btn) => {
+            btn.addEventListener("click", function (event) {
+                event.preventDefault();
+                const parentItem = this.closest(".submenu-item");
 
-            // Cierra otros sub-submenús antes de abrir este
-            document.querySelectorAll(".submenu-item.activo").forEach((item) => {
-                if (item !== parentItem) {
-                    item.classList.remove("activo");
+                if (parentItem) {
+                    // Cierra otros sub-submenús antes de abrir este
+                    document.querySelectorAll(".submenu-item.activo").forEach((item) => {
+                        if (item !== parentItem) {
+                            item.classList.remove("activo");
+                        }
+                    });
+
+                    parentItem.classList.toggle("activo");
                 }
             });
-
-            parentItem.classList.toggle("activo");
         });
-    });
+    }
 
     /** CERRAR SUBMENÚS AL HACER CLIC FUERA **/
     document.addEventListener("click", function (event) {
-        const isClickInsideMenu = submenuContenedor.contains(event.target);
+        if (submenuContenedor) {
+            const isClickInsideMenu = submenuContenedor.contains(event.target);
 
-        if (!isClickInsideMenu) {
-            // Cierra el submenú principal
-            submenuContenedor.classList.remove("activo");
+            if (!isClickInsideMenu) {
+                // Cierra el submenú principal
+                submenuContenedor.classList.remove("activo");
 
-            // Cierra todos los sub-submenús abiertos
-            document.querySelectorAll(".submenu-item").forEach((item) => {
-                item.classList.remove("activo");
-            });
+                // Cierra todos los sub-submenús abiertos
+                document.querySelectorAll(".submenu-item").forEach((item) => {
+                    item.classList.remove("activo");
+                });
+            }
         }
     });
 
 
 
+
     /** LISTA DE ELEMENTOS EN EL SIDEBAR DE LA PAGINA DE PRODUCTOS **/
-    let listElements = document.querySelectorAll('.lista-boton-clic');
+    const listElements = document.querySelectorAll('.lista-boton-clic');
+    if (listElements.length > 0) {
+        listElements.forEach(listElement => {
+            listElement.addEventListener('click', () => {
+                listElement.classList.toggle('arrow');
 
-    listElements.forEach(listElement => {
-        listElement.addEventListener('click', () => {
-            listElement.classList.toggle('arrow');
-
-            let height = 0;
-
-            // Encuentra el elemento padre más cercano con la clase 'lista-item'
-            let parentItem = listElement.closest('.lista-item');
-
-            // Selecciona el 'ul.lista-show' dentro de ese elemento padre
-            let menu = parentItem.querySelector('.lista-show');
-            
-            if(menu.clientHeight == 0){ // Calculando el height dinamicamente por cada submenu con scrollheight
-                height = menu.scrollHeight;
-            }
-
-            menu.style.height = height + "px";
+                let parentItem = listElement.closest('.lista-item');
+                let menu = parentItem.querySelector('.lista-show');
+                
+                menu.style.height = (menu.clientHeight == 0) ? menu.scrollHeight + "px" : "0px";
+            });
         });
-    });
+    }
 
 
-    /* CONTENEDOR DE IMAGENES EN LA PAGINA DE PRODUCTO */
+
+
+    /** CAMBIO DE IMÁGENES EN LA PÁGINA DE PRODUCTO **/
     const imagenGrande = document.getElementById("imagenGrande");
     const miniaturas = document.querySelectorAll(".miniatura");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
 
-    let indiceActual = 0;
+    if (imagenGrande && miniaturas.length > 0) {
+        let indiceActual = 0;
 
-    function cambiarImagen(elemento) {
-        imagenGrande.src = elemento.src;
-        miniaturas.forEach(img => img.classList.remove("active"));
-        elemento.classList.add("active");
-        indiceActual = Array.from(miniaturas).indexOf(elemento);
-    }
-
-    function cambiarConFlecha(direccion) {
-        indiceActual += direccion;
-
-        if (indiceActual < 0) {
-            indiceActual = miniaturas.length - 1; // Ir a la última imagen
-        } else if (indiceActual >= miniaturas.length) {
-            indiceActual = 0; // Volver a la primera imagen
+        function cambiarImagen(elemento) {
+            imagenGrande.src = elemento.src;
+            miniaturas.forEach(img => img.classList.remove("active"));
+            elemento.classList.add("active");
+            indiceActual = Array.from(miniaturas).indexOf(elemento);
         }
 
-        cambiarImagen(miniaturas[indiceActual]);
+        function cambiarConFlecha(direccion) {
+            indiceActual += direccion;
+            if (indiceActual < 0) indiceActual = miniaturas.length - 1;
+            if (indiceActual >= miniaturas.length) indiceActual = 0;
+            cambiarImagen(miniaturas[indiceActual]);
+        }
+
+        prevBtn?.addEventListener("click", () => cambiarConFlecha(-1));
+        nextBtn?.addEventListener("click", () => cambiarConFlecha(1));
+
+        miniaturas.forEach(img => {
+            img.addEventListener("click", function () {
+                cambiarImagen(this);
+            });
+        });
     }
 
-    prevBtn.addEventListener("click", () => cambiarConFlecha(-1));
-    nextBtn.addEventListener("click", () => cambiarConFlecha(1));
+    
 
-    // Asignar evento de clic a cada miniatura
-    miniaturas.forEach(img => {
-        img.addEventListener("click", function () {
-            cambiarImagen(this);
-        });
-    });
+
+
+    /** INSERTAR LÍNEA DIVISORIA EN PROYECTOS **/
+    const proyectosContainer = document.querySelector(".proyectos");
+    if (proyectosContainer && proyectosContainer.children.length > 0) {
+        const proyectos = Array.from(proyectosContainer.querySelectorAll(".proyecto"));
+
+        for (let i = 1; i < proyectos.length; i += 2) {
+            const separador = document.createElement("div");
+            separador.classList.add("separador");
+
+            if (proyectos[i + 1]) {
+                proyectosContainer.insertBefore(separador, proyectos[i + 1]);
+            } else {
+                proyectosContainer.appendChild(separador);
+            }
+        }
+    }
 });

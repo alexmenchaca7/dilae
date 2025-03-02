@@ -33,6 +33,11 @@
 
     h2 {
         margin: 0;
+        text-align: center;
+
+        @include m.desktop {
+            text-align: left;
+        }
     }
 
     nav {
@@ -461,6 +466,11 @@
             margin-top: 0;
             margin-bottom: 1.5rem;
             font-size: 2.6rem;
+            text-align: center;
+
+            @include m.telefono {
+                text-align: left;
+            }
         }
 
         .atributo {
@@ -470,8 +480,16 @@
             }
 
             .valores {
-                display: flex;
-                justify-content: space-between;
+                @include m.grid(2, auto);
+                place-items: center;
+            
+                @include m.telefono {
+                    @include m.grid(3, auto);
+                }
+
+                @include m.tablet {
+                    @include m.grid(6, auto);
+                }
             }
 
             img {
