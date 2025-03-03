@@ -38,6 +38,8 @@ import sharp from 'sharp';
 // Librería avanzada de procesamiento de imágenes en Node.js.
 // Permite redimensionar, convertir formatos (como JPEG a WebP o a AVIF), ajustar calidad y otras operaciones con imágenes.
 
+import svgmin from 'gulp-svgmin'; // Importa el plugin para optimizar SVG
+
 const sass = gulpSass(dartSass); // Combinando gulp-sass con el compilador oficial dartSass para procesar SCSS correctamente
 
 
@@ -48,7 +50,7 @@ export function js(done){
     src('src/js/**/*.js') // Selecciona todos los archivos .js dentro de src/js y sus subcarpetas
         .pipe(concat('app.js')) // Combina todos los archivos en uno solo
         .pipe(terser()) // Minifica el archivo combinado
-        .pipe(dest('build/js')); // Guarda el resultado en build/js/
+        .pipe(dest('./public/build/js')); // Guarda el resultado en build/js/
     done();
 }
 
@@ -58,7 +60,7 @@ export function css(done) {
     src('src/scss/app.scss', {sourcemaps: true})
         .pipe(sass().on('error', sass.logError)) // Compila SASS y si hay un error lo muestra en la terminal
         .pipe(cleanCSS())
-        .pipe(dest('build/css', {sourcemaps: '.'})) // Guarda los archivos en la carpeta de destino
+        .pipe(dest('./public/build/css', {sourcemaps: '.'})) // Guarda los archivos en la carpeta de destino
         
     done();
 }
@@ -99,23 +101,46 @@ export function css(done) {
 // }
 
 
-// Tarea para optimizar las imagenes originales generando su versión JPEG y WebP
+// Tarea para optimizar las imagenes originales
 export async function imagenes(done) {
     const srcDir = './src/img'; // Carpeta donde están las imágenes originales
-    const buildDir = './build/img'; // Carpeta donde se guardarán las nuevas imágenes
+    const buildDir = './public/build/img'; // Carpeta donde se guardarán las nuevas imágenes
 
-    // Usando glob para encontrar todas las imágenes en el directorio de origen con extensiones .jpg o .png
-    const images =  await glob('./src/img/**/*{jpg,png}')
+    // Usando glob para encontrar todas las imágenes en el directorio de origen con extensiones .jpg, .png y .svg
+    const images =  await glob('./src/img/**/*{jpg,png,svg}')
 
     // Procesando cada imagen encontrada
     images.forEach(file => {
         const relativePath = path.relative(srcDir, path.dirname(file)); // Obteniendo la ruta relativa desde srcDir
         const outputSubDir = path.join(buildDir, relativePath); // Creando la ruta de salida correspondiente en buildDir
 
-        // Llamando a la función para procesar las imágenes
-        procesarImagenes(file, outputSubDir);
+        // Si el archivo es un SVG, optimizarlo
+        if (path.extname(file).toLowerCase() === '.svg') {
+            procesarSVG(file, outputSubDir);  // Procesa los archivos SVG
+        } else {
+            // Llamando a la función para procesar imágenes JPEG, WebP, AVIF
+            procesarImagenes(file, outputSubDir);
+        }
     });
     done();
+}
+
+
+// Función auxiliar para optimizar y copiar archivos SVG
+function procesarSVG(file, outputSubDir) {
+    
+    // Creando el directorio de salida si no existe
+    if (!fs.existsSync(outputSubDir)) {
+        fs.mkdirSync(outputSubDir, { recursive: true }); // Creando todos los subdirectorios necesarios
+    }
+
+    const baseName = path.basename(file, path.extname(file)); // Obteniendo el nombre base del archivo sin la extensión
+    const outputFile = path.join(outputSubDir, `${baseName}.svg`); // Ruta del archivo SVG optimizado
+
+    // Procesando y optimizando el archivo SVG
+    src(file)
+        .pipe(svgmin()) // Optimiza el SVG
+        .pipe(dest(outputSubDir)); // Guarda el SVG optimizado en la carpeta de salida
 }
 
 

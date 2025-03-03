@@ -69,7 +69,7 @@
     &:after {
         content: '';
         display: flex;
-        background: url(/src/img/arrow-right-primary.svg) no-repeat center;
+        background: url(/../build/img/arrow-right-primary.svg) no-repeat center;
         width: 2rem;
         height: 2rem;
         margin-left: 0.5rem;
@@ -81,7 +81,7 @@
         color: color.adjust(v.$primario, $lightness: -10%);
         
         &:after {
-            background: url(/src/img/arrow-right-shade-3.svg) no-repeat center;
+            background: url(/../build/img/arrow-right-shade-3.svg) no-repeat center;
             margin-left: 0.8rem;
         }
     }

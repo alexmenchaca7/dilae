@@ -1,3 +1,9 @@
+<?php
+    if(!isset($inicio)) {
+        $inicio = false;
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dilae</title>
-    <link rel="stylesheet" href="build/css/app.css">
+    <link rel="stylesheet" href="../build/css/app.css">
 </head>
 
 <body>
@@ -14,116 +20,118 @@
             <div class="barra">
                 <a href="/">
                     <picture>
-                        <source srcset="build/img/logo.avif" type="image/avif">
-                        <source srcset="build/img/logo.webp" type="image/webp">
-                        <source srcset="build/img/logo.png" type="image/png">
-                        <img loading="lazy" class="logo" src="build/img/logo.png" alt="Logotipo de Dilae">
+                        <source srcset="../build/img/logo.avif" type="image/avif">
+                        <source srcset="../build/img/logo.webp" type="image/webp">
+                        <source srcset="../build/img/logo.png" type="image/png">
+                        <img loading="lazy" class="logo" src="../build/img/logo.png" alt="Logotipo de Dilae">
                     </picture>
-
                 </a>
 
                 <nav class="navegacion">
-                    <a href="nosotros.html">Nosotros</a>
-                
+                    <a href="/nosotros">Nosotros</a>
                     <!-- Contenedor de Productos con Submenú -->
                     <div class="submenu-contenedor">
                         <div class="submenu-toggle">
-                            <a href="productos.html">Productos</a>
+                            <a href="/productos">Productos</a>
                             <button class="submenu-btn">
-                                <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
                             </button>
                         </div>
                         <ul class="submenu">
                             <!-- ILUMINACIÓN -->
                             <li class="submenu-item">
                                 <div class="submenu-toggle">
-                                    <a href="productos/iluminacion.html">Iluminación</a>
+                                    <a href="/productos/iluminacion">Iluminación</a>
                                     <button class="subsubmenu-btn">
-                                        <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                        <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
                                     </button>
                                 </div>
                                 <ul class="subsubmenu">
-                                    <li><a href="productos/iluminacion/reflectores.html">Reflectores</a></li>
-                                    <li><a href="productos/iluminacion/campanas-ufo.html">Campanas UFO</a></li>
-                                    <li><a href="productos/iluminacion/banadores.html">Bañadores</a></li>
-                                    <li><a href="productos/iluminacion/panel-led.html">Panel LED</a></li>
-                                    <li><a href="productos/iluminacion/downlight.html">Downlight</a></li>
-                                    <li><a href="productos/iluminacion/lamparas.html">Lámparas</a></li>
-                                    <li><a href="productos/iluminacion/tubos.html">Tubos</a></li>
-                                    <li><a href="productos/iluminacion/decorativos.html">Decorativos</a></li>
-                                    <li><a href="productos/iluminacion/tiras-mangueras.html">Tiras y Mangueras</a></li>
+                                    <li><a href="/productos/iluminacion/reflectores">Reflectores</a></li>
+                                    <li><a href="/productos/iluminacion/campanas-ufo">Campanas UFO</a></li>
+                                    <li><a href="/productos/iluminacion/banadores">Bañadores</a></li>
+                                    <li><a href="/productos/iluminacion/panel-led">Panel LED</a></li>
+                                    <li><a href="/productos/iluminacion/downlight">Downlight</a></li>
+                                    <li><a href="/productos/iluminacion/lamparas">Lámparas</a></li>
+                                    <li><a href="/productos/iluminacion/tubos">Tubos</a></li>
+                                    <li><a href="/productos/iluminacion/decorativos">Decorativos</a></li>
+                                    <li><a href="/productos/iluminacion/tiras-mangueras">Tiras y Mangueras</a></li>
                                 </ul>
                             </li>
-                
                             <!-- GABINETES -->
                             <li class="submenu-item">
                                 <div class="submenu-toggle">
-                                    <a href="productos/gabinetes.html">Gabinetes</a>
+                                    <a href="/productos/gabinetes">Gabinetes</a>
                                     <button class="subsubmenu-btn">
-                                        <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                        <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
                                     </button>
                                 </div>
                                 <ul class="subsubmenu">
-                                    <li><a href="productos/gabinetes/iluminacion.html">Gabinetes Iluminación</a></li>
-                                    <li><a href="productos/gabinetes/electricos.html">Gabinetes Eléctricos</a></li>
-                                    <li><a href="productos/gabinetes/ccm-armarios.html">CCM Armarios de Distribución</a></li>
-                                    <li><a href="productos/gabinetes/ducto-portacable.html">Ducto Porta Cable</a></li>
+                                    <li><a href="/productos/gabinetes/iluminacion">Gabinetes Iluminación</a></li>
+                                    <li><a href="/productos/gabinetes/electricos">Gabinetes Eléctricos</a></li>
+                                    <li><a href="/productos/gabinetes/ccm-armarios">CCM Armarios de Distribución</a></li>
+                                    <li><a href="/productos/gabinetes/ducto-portacable">Ducto Porta Cable</a></li>
                                 </ul>
                             </li>
-                
                             <!-- VIALIDADES -->
                             <li class="submenu-item">
                                 <div class="submenu-toggle">
-                                    <a href="productos/vialidades.html">Vialidades</a>
+                                    <a href="/productos/vialidades">Vialidades</a>
                                     <button class="subsubmenu-btn">
-                                        <img src="src/img/chevron-right.svg" alt="Abrir Submenú">
+                                        <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
                                     </button>
                                 </div>
                                 <ul class="subsubmenu">
-                                    <li><a href="productos/vialidades/alumbrado-publico.html">Alumbrado Público</a></li>
-                                    <li><a href="productos/vialidades/luminarias-solares.html">Luminarias Solares Calle</a></li>
-                                    <li><a href="productos/vialidades/punta-poste.html">Punta Poste</a></li>
-                                    <li><a href="productos/vialidades/punta-poste-solar.html">Punta Poste Solar</a></li>
-                                    <li><a href="productos/vialidades/urbanos.html">Urbanos</a></li>
-                                    <li><a href="productos/vialidades/postes-accesorios.html">Postes y Accesorios</a></li>
+                                    <li><a href="/productos/vialidades/alumbrado-publico">Alumbrado Público</a></li>
+                                    <li><a href="/productos/vialidades/luminarias-solares">Luminarias Solares Calle</a></li>
+                                    <li><a href="/productos/vialidades/punta-poste">Punta Poste</a></li>
+                                    <li><a href="/productos/vialidades/punta-poste-solar">Punta Poste Solar</a></li>
+                                    <li><a href="/productos/vialidades/urbanos">Urbanos</a></li>
+                                    <li><a href="/productos/vialidades/postes-accesorios">Postes y Accesorios</a></li>
                                 </ul>
                             </li>
-                
                             <!-- VENTILADORES -->
                             <li class="submenu-item">
                                 <div class="submenu-toggle">
-                                    <a href="productos/ventiladores.html">Ventiladores</a>
+                                    <a href="/productos/ventiladores">Ventiladores</a>
                                 </div>
                             </li>
                         </ul>
                     </div>
-                
+
                     <a href="#">Paneles Solares</a>
-                    <a href="proyectos.html">Proyectos</a>
-                    <a href="blog.html">Blog</a>
-                    <a href="contacto.html">Contacto</a>
+                    <a href="/proyectos">Proyectos</a>
+                    <a href="/blog">Blog</a>
+                    <a href="/contacto">Contacto</a>
                 </nav>
-                
 
                 <div class="logo-container">
                     <a href="#">
-                        <img loading="lazy" class="buscar" src="src/img/icon_search.svg" alt="Icono de Busqueda">
+                        <img loading="lazy" class="buscar" src="../build/img/icon_search.svg" alt="Icono de Busqueda">
                     </a>
                 </div>
             </div>
         </div>
 
-        <section class="hero">
+        <section class="hero <?php echo $inicio ? 'inicio' : ''; ?>">
             <div class="contenido-header contenedor">
-                <h1>Contacto</h1>
+                <h1><?php echo $inicio ? 'Iluminación que transforma <span>cada proyecto</span>' : $titulo; ?></h1>
+                <?php if($inicio): ?>
+                    <p>Hablando de iluminación, nosotros apreciamos los diferentes factores que deben tenerse en cuenta para
+                    que la luz sea un protagonista en cada proyecto</p>
+
+                    <!-- Contenedor del botón para controlar su tamaño -->
+                    <div class="boton-contenedor">
+                        <div class="logo-container">
+                            <a class="boton-verde" href="/productos">Conoce nuestros productos</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </section>
     </header>
 
-    <main class="contenedor seccion">
-        <h2>Titulo Pagina</h2>
-    </main>
-
+    <?php echo $contenido; ?>
 
     <footer class="footer">
         <div class="contenedor footer-contenedor">
@@ -140,18 +148,18 @@
                 <div class="footer-social">
                     <div class="logo-container">
                         <a rel="noopener noreferrer" target="_blank" href="https://www.instagram.com">
-                            <img loading="lazy" src="src/img/icon_instagram.svg" alt="Instagram">
+                            <img loading="lazy" src="../build/img/icon_instagram.svg" alt="Instagram">
                         </a>
                     </div>
                     <div class="logo-container">
                         <a rel="noopener noreferrer" target="_blank"
                             href="https://www.facebook.com/p/DILAE-100063075438310/">
-                            <img loading="lazy" src="src/img/icon_facebook.svg" alt="Facebook">
+                            <img loading="lazy" src="../build/img/icon_facebook.svg" alt="Facebook">
                         </a>
                     </div>
                     <div class="logo-container">
                         <a rel="noopener noreferrer" target="_blank" href="https://www.youtube.com/@dilaesadecv3250">
-                            <img loading="lazy" src="src/img/icon_youtube.svg" alt="YouTube">
+                            <img loading="lazy" src="../build/img/icon_youtube.svg" alt="YouTube">
                         </a>
                     </div>
                 </div>
@@ -164,22 +172,22 @@
                     <a href="/">Inicio</a>
                 </div>
                 <div class="logo-container">
-                    <a href="/nosotros.html">Nosotros</a>
+                    <a href="/nosotros">Nosotros</a>
                 </div>
                 <div class="logo-container">
-                    <a href="/productos.html">Productos</a>
+                    <a href="/productos">Productos</a>
                 </div>
                 <div class="logo-container">
                     <a href="#">Paneles Solares</a>
                 </div>
                 <div class="logo-container">
-                    <a href="/proyectos.html">Proyectos</a>
+                    <a href="/proyectos">Proyectos</a>
                 </div>
                 <div class="logo-container">
-                    <a href="/blog.html">Blog</a>
+                    <a href="/blog">Blog</a>
                 </div>
                 <div class="logo-container">
-                    <a href="/contacto.html">Contacto</a>
+                    <a href="/contacto">Contacto</a>
                 </div>
             </div>
 
@@ -195,17 +203,17 @@
                     <a href="#">Legal</a>
                 </div>
                 <div class="logo-container">
-                    <a href="/privacy.html">Política de privacidad</a>
+                    <a href="/privacy">Política de privacidad</a>
                 </div>
             </div>
 
             <!-- Sección de suscripción -->
             <div class="footer-subscribe">
                 <h3>Mantente actualizado</h3>
-                <form action="subscribe.php" method="POST">
+                <form action="/subscribe" method="POST">
                     <input type="email" name="email" placeholder="Tu correo electrónico" required>
                     <button type="submit">
-                        <img loading="lazy" src="src/img/icon_send.svg" alt="Enviar">
+                        <img loading="lazy" src="../build/img/icon_send.svg" alt="Enviar">
                     </button>
                 </form>
             </div>
@@ -213,7 +221,6 @@
     </footer>
 
     <script src="//code.tidio.co/ks94cvclexq9b0equflo49xrjn9oahg3.js" async></script>
-    <script src="build/js/app.js"></script>
+    <script src="../build/js/app.js"></script>
 </body>
-
 </html>

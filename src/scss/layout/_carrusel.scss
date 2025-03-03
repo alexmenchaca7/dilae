@@ -1,100 +1,54 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
 
-
 .contenedor-marcas {
+    padding: 4rem 0;
+    text-align: center;
+
     h2 {
-        text-align: center;
         span {
             color: v.$primario;
         }
     }
+
+    .contenido-centrado {
+        max-width: 120rem;
+        margin: 0 auto;
+    }
 }
 
-
-.carrusel-logos {
-    overflow: hidden;
-    padding: 1rem 0;
-    white-space: nowrap;
-    position: relative;
-    overflow: hidden;
+// Estilos de la cuadrícula de logos
+.grid-marcas {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    background-color: v.$blanco;
-
-    .logos-slide {
-        margin-right: 10rem;
-        display: flex;
-        animation: 200s slide infinite linear;
-        align-items: center;
-        gap: 1rem;
-
-        @include m.tablet {
-            gap: 10rem;
-        }
-
-        .logo-container {
-            width: 20rem; // Tamaño uniforme
-            height: 20rem; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden; // Evita cortes
-            border-radius: 10px; // Bordes redondeados opcionales
-            background: #fff; // Fondo para contraste
-
-            img {
-                width: 15rem;
-                filter: grayscale(100%); // Convierte la imagen a blanco y negro
-                transition: filter 0.3s ease-in-out;
-                object-fit: cover; // Se mantiene el cover sin cortes visibles
-
-                &:hover {
-                    filter: grayscale(0%); // Restaura el color al pasar el mouse
-                }
-
-                @include m.tablet {
-                    width: 100%;
-                }
-            }
-        }
-    }
-
-    &:hover {
-        .logos-slide {
-            animation-play-state: paused;
-        }
-    }
-
-    @include m.tablet {
-        &::before,
-        &::after {
-            content: '';
-            z-index: 2;
-            position: absolute;
-            top: 0;
-            width: 15rem;
-            height: 100%;
-        }
-    
-        &::before {
-            left: 0;
-            background: linear-gradient(to left, rgba(255,255,255,0), v.$blanco);
-        }
-    
-        &::after {
-            right: 0;
-            background: linear-gradient(to right, rgba(255,255,255,0), v.$blanco);
-        }
-    }
+    gap: 1rem;
 }
 
+.marca-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Espaciado pequeño entre las imágenes */
+    width: 100%;
+    flex-wrap: wrap; /* Permite que las imágenes se ajusten en filas si es necesario */
+}
 
-@keyframes slide {
-    from {
-        transform: translateX(0);
+.marca {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
     }
-    to {
-        transform: translateX(-100%);
+
+    img {
+        max-width: 12rem;  
+        object-fit: contain;
+        filter: grayscale(100%);
+        mix-blend-mode: multiply;
     }
 }

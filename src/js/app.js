@@ -175,4 +175,64 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+
+
+
+    /* GRID MARCAS EN PAGINA DE INICIO */
+    const marcas = [
+        { src: 'build/img/500x500/ALP.jpg', alt: 'A.L.P.', link: 'https://alpadvantage.com/' },
+        { src: 'build/img/500x500/ALCODM.jpeg', alt: 'Alcodm', link: 'https://www.alcodm.com.mx/?v=0b98720dcb2c' },
+        { src: 'build/img/500x500/BEGHELLI-LOGO-FONDO.png', alt: 'Beghelli', link: 'https://beghelli.com.mx/' },
+        { src: 'build/img/500x500/Bticino-500x500.jpg', alt: 'Bticino', link: 'https://bticino.com.mx/' },
+        { src: 'build/img/500x500/EATON.jpg', alt: 'Eaton', link: 'https://www.eaton.com/mx/es-mx.php' },
+        { src: 'build/img/500x500/energain.jpeg', alt: 'Energain', link: 'https://energain.com.mx/' },
+        { src: 'build/img/500x500/HOLOPHANE-LOGO-FONDO-BLANCO.jpg', alt: 'Holophane', link: 'https://holophane.acuitybrands.com/' },
+        { src: 'build/img/500x500/Hubbell.png', alt: 'Hubbell', link: 'https://www.hubbell.com/hubbellmexico/es-mx' },
+        { src: 'build/img/500x500/led_mexico.jpg', alt: 'Led Mexico', link: 'https://www1.ledmexico.com.mx/' },
+        { src: 'build/img/500x500/LITHONIA-FONDO-BLANCO.jpg', alt: 'Lithonia Lighting', link: 'https://lithonia.acuitybrands.com/' },
+        { src: 'build/img/500x500/PHILIPS.png', alt: 'Philips', link: 'https://www.lighting.philips.com.mx/' },
+        { src: 'build/img/500x500/rawelt.png', alt: 'Rawelt', link: 'https://www.rawelt.com.mx/' },
+        { src: 'build/img/500x500/SIMON.jpg', alt: 'Simon', link: 'https://www.simonelectric.com/mx' },
+        { src: 'build/img/500x500/construlita.png', alt: 'Construlita', link: 'https://construlita.com/' },
+        { src: 'build/img/500x500/Havells_Logo.png', alt: 'Havells', link: 'https://havells.com/' },
+        { src: 'build/img/500x500/leviton_logo.avif', alt: 'Leviton', link: 'https://es.leviton.com/' },
+        { src: 'build/img/500x500/magg.jpg', alt: 'Magg', link: 'https://www.magg.com.mx/' },
+        { src: 'build/img/500x500/OSRAM-LOGO-FONDO-BLANCO.avif', alt: 'Osram', link: 'https://www.osram.mx/' },
+        { src: 'build/img/500x500/tecno-lite-material-electrico-catatumbo.avif', alt: 'Tecno Lite', link: 'https://tecnolite.mx/' },
+    ];
+    
+    const gridContainer = document.getElementById('grid-marcas');
+    
+    // Función para calcular la distribución de las marcas en 3 filas dinámicas
+    function createBrandRows(brands) {
+        const totalBrands = brands.length;
+        const row1Count = Math.ceil(totalBrands * 0.4);  // Aproximadamente el 40% de marcas en la primera fila
+        const row2Count = Math.ceil(totalBrands * 0.3);  // Aproximadamente el 30% de marcas en la segunda fila
+        const row3Count = totalBrands - row1Count - row2Count; // El resto en la tercera fila
+
+        const rows = [
+            brands.slice(0, row1Count),  // Fila 1
+            brands.slice(row1Count, row1Count + row2Count),  // Fila 2
+            brands.slice(row1Count + row2Count, totalBrands),  // Fila 3
+        ];
+
+        // Crear las filas y agregar al contenedor
+        rows.forEach(rowBrands => {
+            const row = document.createElement('div');
+            row.classList.add('marca-row');
+            rowBrands.forEach(brand => {
+                const brandDiv = document.createElement('div');
+                brandDiv.classList.add('marca');
+                brandDiv.innerHTML = `
+                    <a target="_blank" href="${brand.link}">
+                        <img loading="lazy" src="${brand.src}" alt="${brand.alt}">
+                    </a>
+                `;
+                row.appendChild(brandDiv);
+            });
+            gridContainer.appendChild(row);
+        });
+    }
+
+    createBrandRows(marcas);
 });
