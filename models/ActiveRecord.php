@@ -9,6 +9,7 @@ class ActiveRecord {
     // Static porque no require una nueva instancia, siempre son las mismas credenciales
     protected static $conexion; 
 
+
     // Arreglo de columnas para identificar que forma van a tener los datos
     protected static $columnasDB = [];
     protected static $tabla = '';
@@ -197,6 +198,7 @@ class ActiveRecord {
 
 
     public static function consultarSQL($query) {
+
         // Consultar la BD
         $resultado = self::$conexion->query($query);
 
@@ -215,6 +217,7 @@ class ActiveRecord {
 
 
     protected static function crearObjeto($registro) {
+        
         // Creando objeto de la clase actual
         $objeto = new static;
 

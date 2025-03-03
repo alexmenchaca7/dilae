@@ -3,7 +3,7 @@
         $host = 'localhost';
         $user = 'root';
         $pass = 'root';
-        $db = 'bienesraices_CRUD';
+        $db = 'dilae';
 
         $conexion = new mysqli($host, $user, $pass, $db);
 
