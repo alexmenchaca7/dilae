@@ -25,14 +25,11 @@ class Router {
         if($metodo === 'GET') {
             $fn = $this->rutasGET[$urlActual] ?? null; // Busca la función en el arreglo de rutas GET
         } else {
-            // debuguear($this); // Código comentado para depuración
-            // debuguear($_POST); // Código comentado para depuración
             $fn = $this->rutasPOST[$urlActual] ?? null; // Busca la función en el arreglo de rutas POST
         }
 
         if($fn) {
             // Si existe una función asociada a la ruta, se ejecuta
-            // debuguear($this); // Código comentado para depuración
             call_user_func($fn, $this); // Llama a la función almacenada, pasándole la instancia del Router
         } else {
             // Si la ruta no existe, muestra un mensaje de error
@@ -41,7 +38,7 @@ class Router {
     }
 
     // Método para renderizar vistas
-    public function render($view, $datos = []) {
+    public function render($view, $datos = [], $layout = 'layout') {
 
         // Extrae los datos enviados para usarlos en la vista
         foreach($datos as $key => $value) {
@@ -52,6 +49,8 @@ class Router {
         include __DIR__ . "/views/$view.php"; // Incluye la vista específica
 
         $contenido = ob_get_clean(); // Obtiene el contenido del buffer y limpia el almacenamiento
-        include __DIR__ . "/views/layout.php"; // Incluye la plantilla base y pasa el contenido de la vista
+
+        // Usar el layout pasado como parámetro o el predeterminado
+        include __DIR__ . "/views/$layout.php"; // Incluye la plantilla base y pasa el contenido de la vista
     }
 }

@@ -17,7 +17,7 @@
             </div>
         </section>
 
-        <img loading="lazy" src="build/img/nosotros.jpg" alt="Imagen nosotros">
+        <img loading="lazy" src="../build/img/nosotros.jpg" alt="Imagen nosotros">
     </div>
 </main>
 
@@ -52,7 +52,7 @@
             <p>¿Necesitas asesoramiento? Estamos aquí para ayudarte! Nuestro equipo de expertos está listo para brindarte la mejor atención y guiarte en cada paso del proceso.</p>
 
             <div class="logo-container">
-                <a class="enlace-verde" href="contacto.php">Pide tu cotización aquí</a>
+                <a class="enlace-verde" href="/contacto">Pide tu cotización aquí</a>
             </div>
 
             <p class="p-bold">Contáctanos a través de los siguientes medios:</p>
@@ -77,10 +77,10 @@
         </section>
 
         <picture class="imagen-contacto">
-            <source srcset="build/img/contacto.avif" type="image/avif">
-            <source srcset="build/img/contacto.webp" type="image/webp">
-            <source srcset="build/img/contacto.png" type="image/png">
-            <img loading="lazy" src="build/img/contacto.png" alt="Imagen Contacto">
+            <source srcset="../build/img/contacto.avif" type="image/avif">
+            <source srcset="../build/img/contacto.webp" type="image/webp">
+            <source srcset="./build/img/contacto.png" type="image/png">
+            <img loading="lazy" src="../build/img/contacto.png" alt="Imagen Contacto">
         </picture>
     </div>
 </div>

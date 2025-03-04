@@ -162,15 +162,39 @@ function procesarImagenes(file, outputSubDir) {
 
     // Configurando la calidad de las imágenes procesadas
     const options = { quality: 80 };
+    
+    // Si el archivo es un PNG, asegurarse de que la transparencia se mantenga
+    if (extName.toLowerCase() === '.png') {
+        // Procesando y guardando la imagen en formato PNG optimizado
+        sharp(file)
+            .png({ quality: 80, compressionLevel: 9 }) // Optimización para PNG sin perder transparencia
+            .toFile(outputFile); // Guardar el archivo optimizado en su formato original (PNG)
 
-    // Procesando y guardando la imagen optimizada en su formato original
-    sharp(file).jpeg(options).toFile(outputFile);
+        // Procesando y guardando la imagen en formato WebP
+        sharp(file)
+            .webp(options) // Configuración para WebP
+            .toFile(outputFileWebp); // Guardar como WebP
 
-    // Procesando y guardando la imagen en formato WebP
-    sharp(file).webp(options).toFile(outputFileWebp);
+        // Procesando y guardando la imagen en formato Avif
+        sharp(file)
+            .avif(options) // Configuración para AVIF
+            .toFile(outputFileAvif); // Guardar como AVIF
+    } else {
+        // Si el archivo no es un PNG (es JPG o JPEG), se optimiza en formato JPEG y además en WebP y AVIF
+        sharp(file)
+            .jpeg(options) // Configuración para JPEG
+            .toFile(outputFile); // Guardar como JPEG optimizado
 
-    // Procesando y guardando la imagen en formato Avif
-    sharp(file).avif().toFile(outputFileAvif);
+        // Procesando y guardando la imagen en formato WebP
+        sharp(file)
+            .webp(options) // Configuración para WebP
+            .toFile(outputFileWebp); // Guardar como WebP
+
+        // Procesando y guardando la imagen en formato Avif
+        sharp(file)
+            .avif(options) // Configuración para AVIF
+            .toFile(outputFileAvif); // Guardar como AVIF
+    }
 }
 
 
