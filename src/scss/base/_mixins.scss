@@ -60,3 +60,19 @@
         cursor: pointer;
     }
 }
+
+
+
+/** Enlace **/
+@mixin enlace() {
+    all: unset;
+    color: v.$blanco;
+    font-size: 1.4rem;
+    font-weight: v.$bold;
+    text-transform: uppercase;
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}

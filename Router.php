@@ -50,7 +50,6 @@ class Router {
 
         $contenido = ob_get_clean(); // Obtiene el contenido del buffer y limpia el almacenamiento
 
-        // Usar el layout pasado como parámetro o el predeterminado
         include __DIR__ . "/views/$layout.php"; // Incluye la plantilla base y pasa el contenido de la vista
     }
 }

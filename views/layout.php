@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dilae</title>
+    <title>Dilae | <?php echo $titulo; ?></title>
     <link rel="stylesheet" href="../build/css/app.css">
 </head>
 

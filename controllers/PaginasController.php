@@ -18,7 +18,7 @@ class PaginasController {
         $titulo = 'Nosotros';
 
         $router->render('paginas/nosotros', [
-            'titulo' => $titulo
+            'titulo' => $titulo,
         ]);
     }
 
