@@ -7,6 +7,7 @@ use Controllers\PaginasController;
 use Controllers\DashboardController;
 use Controllers\ProductosController;
 use Controllers\ProyectosController;
+use Controllers\CategoriasController;
 
 $router = new Router();
 
@@ -27,6 +28,13 @@ $router->get('/politicas/privacidad', [PaginasController::class, 'privacidad']);
 
 // AREA DE ADMINISTRACION
 $router->get('/admin/dashboard', [DashboardController::class, 'index']);
+
+$router->get('/admin/categorias', [CategoriasController::class, 'index']);
+$router->get('/admin/categorias/crear', [CategoriasController::class, 'crear']);
+$router->post('/admin/categorias/crear', [CategoriasController::class, 'crear']);
+$router->get('/admin/categorias/subcategorias/crear', [CategoriasController::class, 'crearSubcategoria']);
+$router->post('/admin/categorias/subcategorias/crear', [CategoriasController::class, 'crearSubcategoria']);
+
 
 $router->get('/admin/productos', [ProductosController::class, 'index']);
 $router->get('/admin/productos/crear', [ProductosController::class, 'crear']);

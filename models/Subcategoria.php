@@ -20,4 +20,17 @@ class Subcategoria extends ActiveRecord {
         $this->nombre = $args['nombre'] ?? '';
         $this->categoriaId = $args['categoriaId'] ?? '';
     }
+
+    // Validar formulario   
+    public function validar() {
+        if(!$this->nombre) {
+            self::$alertas['error'][] = 'El nombre es obligatorio';
+        }
+
+        if(!$this->categoriaId) {
+            self::$alertas['error'][] = 'La categoria es obligatoria';
+        }
+
+        return self::$alertas;
+    }
 }

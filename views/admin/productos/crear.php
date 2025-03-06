@@ -11,6 +11,6 @@
     <form method="POST" action="/admin/productos/crear" enctype="multipart/form-data" class="formulario">
         <?php include_once __DIR__ . '/formulario.php'; ?>
 
-        <input class="formulario__submit" type="submit" value="Registrar Producto">
+        <input class="formulario__submit formulario__submit--registrar" type="submit" value="Registrar Producto">
     </form>
 </div>

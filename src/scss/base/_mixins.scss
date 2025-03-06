@@ -33,6 +33,15 @@
 }
 
 
+
+/** Contenedores **/
+@mixin contenedor-md {
+    width: min(95%, 80rem);
+    margin: 0 auto;
+}
+
+
+
 /** Grid **/
 @mixin grid($columnas, $espaciado_columna, $espaciado_fila : $espaciado_columna ) {
     display: grid;
@@ -75,4 +84,10 @@
         cursor: pointer;
         text-decoration: underline;
     }
+}
+
+
+/** Shadow **/
+@mixin shadow() {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }

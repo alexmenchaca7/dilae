@@ -1,0 +1,21 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'sass:color';
+
+.alerta {
+    padding: .5rem;
+    text-align: center;
+    color: v.$blanco;
+    font-weight: v.$bold;
+    text-transform: uppercase;
+    margin: 1rem 0;
+
+    &__error {
+        background-color: v.$rojo;
+    }
+
+    &__exito {
+        background-color: v.$primario;
+        margin-bottom: 5rem;
+    }
+}

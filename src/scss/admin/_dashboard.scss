@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use 'sass:color';
 
 .dashboard {
     height: 100%;
@@ -7,7 +8,7 @@
     flex-direction: column;
 
     &__header {
-        background-color: v.$gris-marino;
+        background-color: v.$dashboard;
         padding: 2rem;
     }
 
@@ -52,7 +53,7 @@
     }
 
     &__sidebar {
-        background-color: lighten(v.$gris-marino, 10);
+        background-color: color.adjust(v.$dashboard, $lightness: 10%);
         width: 12rem;
     }
 
@@ -64,7 +65,7 @@
     }
 
     &__enlace {
-        color: lighten(v.$gris-marino, 40);
+        color: color.adjust(v.$dashboard, $lightness: 40%);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -73,7 +74,7 @@
 
         &:hover,
         &--actual {
-            background-color: lighten(v.$gris-marino, 20);
+            background-color: color.adjust(v.$dashboard, $lightness: 20%);
             color: v.$blanco;
             border-radius: 1rem;
         }
@@ -109,6 +110,8 @@
         @include m.tablet {
             display: flex;
             justify-content: flex-end;
+            gap: 2rem;
+            margin-bottom: 5rem;
         }
     }
 
@@ -119,4 +122,17 @@
             @include m.boton(v.$primario, inline-block);
         }
     }
+
+    &__contenedor {
+        @include m.shadow();
+        padding: 2rem;
+        border-radius: 1rem;
+    }
+
+    &__formulario {
+        @extend .dashboard__contenedor; // Hereda todos los estilos
+
+        @include m.contenedor-md(); 
+    }
 }
+

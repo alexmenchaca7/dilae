@@ -18,4 +18,13 @@ class Categoria extends ActiveRecord {
         $this->id = $args['id'] ?? null;
         $this->nombre = $args['nombre'] ?? '';
     }
+
+    // Validar formulario
+    public function validar() {
+        if(!$this->nombre) {
+            self::$alertas['error'][] = 'El nombre es obligatorio';
+        }
+
+        return self::$alertas;
+    }
 }
