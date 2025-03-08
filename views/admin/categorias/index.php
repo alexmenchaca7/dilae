@@ -6,7 +6,7 @@
         Añadir Categoria
     </a>
 
-    <a class="dashboard__boton" href="/admin/categorias/subcategorias/crear">
+    <a class="dashboard__boton" href="/admin/subcategorias/crear">
         <i class="fa-solid fa-circle-plus"></i>
         Añadir Subcategoria
     </a>
@@ -35,6 +35,20 @@
                                     <?php foreach($subcategoriasPorCategoria[$categoria->id] as $subcategoria): ?>
                                         <li>
                                             <?php echo $subcategoria->nombre; ?>
+
+                                            <!-- Enlaces de acciones: Editar y Eliminar -->
+                                            <div class="table__td--acciones-subcategorias">
+                                                <a class="table__accion table__accion--editar" href="/admin/subcategorias/editar?id=<?php echo $subcategoria->id; ?>">
+                                                    <i class="fa-solid fa-user-pen"></i> Editar
+                                                </a>
+                                                <form class="table__formulario" action="/admin/subcategorias/eliminar" method="POST">
+                                                    <input type="hidden" name="id" value="<?php echo $subcategoria->id; ?>">
+
+                                                    <button class="table__accion table__accion--eliminar" type="submit">
+                                                        <i class="fa-solid fa-circle-xmark"></i> Eliminar
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
@@ -46,7 +60,9 @@
                                 <i class="fa-solid fa-user-pen"></i>
                                 Editar
                             </a>
-                            <form class="table__formulario" action="/admin/categorias/eliminar?id=<?php echo $categoria->id; ?>" method="POST">
+                            <form id="deleteForm" class="table__formulario" action="/admin/categorias/eliminar" method="POST" onsubmit="return openDeleteModal(event, <?php echo $categoria->id; ?>)">
+                                <input type="hidden" name="id" value="<?php echo $categoria->id; ?>">
+                                
                                 <button class="table__accion table__accion--eliminar" type="submit">
                                     <i class="fa-solid fa-circle-xmark"></i>
                                     Eliminar
@@ -61,3 +77,50 @@
         <p class="t-align-center">No Hay Categorías Aún</p>
     <?php endif; ?>
 </div>
+
+<!-- Modal de Confirmación -->
+<div id="deleteModal" class="modal">
+    <div class="modal__content">
+        <h3>Advertencia</h3>
+        <p>¡Al eliminar esta categoría, todas las subcategorías y productos asociados serán eliminados! ¿Estás seguro de que deseas continuar?</p>
+        <button id="cancelDelete" class="modal__cancel">Cancelar</button>
+        <button id="confirmDelete" class="modal__confirm">Eliminar</button>
+    </div>
+</div>
+
+<!-- Aquí va el código de JavaScript -->
+<script>
+    let currentCategoryId = null;
+    let currentForm = null; // Guardamos el formulario actual
+
+    // Función para abrir el modal
+    function openDeleteModal(event, categoryId) {
+        event.preventDefault(); // Previene que el formulario se envíe de inmediato
+        currentCategoryId = categoryId;
+        currentForm = event.target.closest('form'); // Guardamos el formulario actual
+        document.getElementById('deleteModal').style.display = 'block'; // Muestra el modal
+        document.body.style.overflow = 'hidden'; // Deshabilita el desplazamiento
+    }
+
+    // Función para cerrar el modal
+    document.getElementById('cancelDelete').addEventListener('click', () => {
+        document.getElementById('deleteModal').style.display = 'none'; // Cierra el modal
+        document.body.style.overflow = 'auto'; // Habilita el desplazamiento de nuevo
+    });
+
+    // Cerrar modal al hacer clic fuera del modal (en el fondo)
+    document.getElementById('deleteModal').addEventListener('click', (event) => {
+        if (event.target === document.getElementById('deleteModal')) {
+            document.getElementById('deleteModal').style.display = 'none'; // Cierra el modal
+            document.body.style.overflow = 'auto'; // Habilita el desplazamiento de nuevo
+        }
+    });
+
+    // Confirmar eliminación
+    document.getElementById('confirmDelete').addEventListener('click', () => {
+        // Enviar el formulario para eliminar la categoría
+        if (currentForm) {
+            currentForm.submit();
+        }
+    });
+</script>

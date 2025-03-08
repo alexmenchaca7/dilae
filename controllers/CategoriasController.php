@@ -67,56 +67,69 @@ class CategoriasController {
         ], 'admin-layout');
     }
 
-    public static function crearSubcategoria(Router $router) {
-
-        // Creando una nueva instancia de Subcategoria
-        $subcategoria = new Subcategoria;
+    public static function editar(Router $router) {
 
         // Manejo de alertas
         $alertas = [];
+        
+        // Validar ID
+        $id = $_GET['id'];
+        $id = filter_var($id, FILTER_VALIDATE_INT);
 
-        // Consulta para obtener todas las categorias
-        $categorias = Categoria::all(); 
+        if(!$id) {
+            header('Location: /admin/categorias');
+        }
+
+        // Obtener categoria a editar
+        $categoria = Categoria::find($id);
+
+        if(!$categoria) {
+            header('Location: /admin/categorias');
+        }
 
         // Ejecutar el codigo despues de que el usuario envia el formulario
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subcategoria->sincronizar($_POST);
+            $categoria->sincronizar($_POST);
 
             // Validar
-            $alertas = $subcategoria->validar();
+            $alertas = $categoria->validar();
 
             // Guardar el registro
             if(empty($alertas)) {
 
                 // Guardar en la BD
-                $resultado = $subcategoria->guardar();
+                $resultado = $categoria->guardar();
 
                 if($resultado) {
                     header('Location: /admin/categorias');
                 }
             }
         }
-
-        $router->render('admin/categorias/subcategorias/crear', [
-            'titulo' => 'Registrar Subcategoria',
-            'alertas' => $alertas,
-            'subcategoria' => $subcategoria,
-            'categorias' => $categorias
-        ], 'admin-layout');
-    }
-
-    public static function editar(Router $router) {
-
-        // Creando una nueva instancia de Categoria
-        $categoria = '';
-        
-        // Manejo de alertas
-        $alertas = [];
+                
 
         $router->render('admin/categorias/editar', [
-            'titulo' => 'Editar Categoria',
+            'titulo' => 'Actualizar Categoria',
             'alertas' => $alertas,
             'categoria' => $categoria
         ], 'admin-layout');
+    }
+
+    public static function eliminar() {
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'];
+            $categoria = Categoria::find($id);
+
+            // Validar que sea una categoria existente
+            if(!isset($categoria)) {
+                header('Location: /admin/categorias');
+            }
+
+            // Eliminar de la BD
+            $resultado = $categoria->eliminar();
+
+            if($resultado) {
+                header('Location: /admin/categorias');
+            }
+        }
     }
 }

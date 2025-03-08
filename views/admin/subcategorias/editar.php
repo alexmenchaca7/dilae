@@ -13,6 +13,6 @@
     <form method="POST" class="formulario">
         <?php include_once __DIR__ . '/formulario.php'; ?>
 
-        <input class="formulario__submit formulario__submit--registrar" type="submit" value="Actualizar Categoria">
+        <input class="formulario__submit formulario__submit--registrar" type="submit" value="Actualizar Subcategoria">
     </form>
 </div>

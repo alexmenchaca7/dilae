@@ -31,14 +31,24 @@
             justify-content: flex-end;
             align-items: center;
             gap: 2rem;
-            height: 100%;  // Asegura que ocupe todo el alto disponible
 
+            &-subcategorias {
+                @extend .table__td--acciones;
+                padding: 0;
+            }
         }
 
         ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
+
+            li {
+                display: flex;  // Cambiado para alinear los elementos dentro de cada li
+                justify-content: space-between;
+                align-items: center;  // Centra verticalmente el contenido
+                gap: 1rem;  // Añade espacio entre los enlaces de editar y eliminar
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 <fieldset class="formulario__fieldset">
-    <legend class="formulario__legend">Crear categoria</legend>
+    <legend class="formulario__legend">Categoria</legend>
 
     <!-- Nombre de la categoria -->
     <div class="formulario__campo">
