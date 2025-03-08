@@ -34,6 +34,8 @@ $router->get('/admin/categorias/crear', [CategoriasController::class, 'crear']);
 $router->post('/admin/categorias/crear', [CategoriasController::class, 'crear']);
 $router->get('/admin/categorias/subcategorias/crear', [CategoriasController::class, 'crearSubcategoria']);
 $router->post('/admin/categorias/subcategorias/crear', [CategoriasController::class, 'crearSubcategoria']);
+$router->get('/admin/categorias/editar', [CategoriasController::class, 'editar']);
+$router->post('/admin/categorias/editar', [CategoriasController::class, 'editar']);
 
 
 $router->get('/admin/productos', [ProductosController::class, 'index']);

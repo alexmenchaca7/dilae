@@ -34,10 +34,6 @@
         }
     }
 
-    &__nav {
-
-    }
-
     &__form {
         display: flex;
         justify-content: center;
@@ -107,10 +103,13 @@
     }
 
     &__contenedor-boton {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+
         @include m.tablet {
-            display: flex;
+            flex-direction: row;
             justify-content: flex-end;
-            gap: 2rem;
             margin-bottom: 5rem;
         }
     }

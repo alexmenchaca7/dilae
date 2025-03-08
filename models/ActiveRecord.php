@@ -113,7 +113,7 @@ class ActiveRecord {
     }
 
     // Obtener todos los registros
-    public static function all($orden = 'DESC') {
+    public static function all($orden = 'ASC') {
         $query = "SELECT * FROM " . static::$tabla . " ORDER BY id $orden";
         $resultado = self::consultarSQL($query);
         return $resultado; 

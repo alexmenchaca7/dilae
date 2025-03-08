@@ -9,10 +9,29 @@ use MVC\Router;
 class CategoriasController {
 
     public static function index(Router $router) {
+
+        // Obtener todas las categorías
+        $categorias = Categoria::all();
+
+        // Crear un array para almacenar las subcategorías agrupadas por categoriaId
+        $subcategoriasPorCategoria = [];
+
+        // Obtener todas las subcategorías
+        $subcategorias = Subcategoria::all();
+
+        // Agrupar las subcategorías por categoriaId
+        foreach ($subcategorias as $subcategoria) {
+            $subcategoriasPorCategoria[$subcategoria->categoriaId][] = $subcategoria;
+        }
+
+        // Pasar las categorías y las subcategorías agrupadas a la vista
         $router->render('admin/categorias/index', [
-            'titulo' => 'Categorias'
+            'titulo' => 'Categorias',
+            'categorias' => $categorias,
+            'subcategoriasPorCategoria' => $subcategoriasPorCategoria
         ], 'admin-layout');
     }
+
 
     public static function crear(Router $router) {
 
@@ -86,4 +105,18 @@ class CategoriasController {
         ], 'admin-layout');
     }
 
+    public static function editar(Router $router) {
+
+        // Creando una nueva instancia de Categoria
+        $categoria = '';
+        
+        // Manejo de alertas
+        $alertas = [];
+
+        $router->render('admin/categorias/editar', [
+            'titulo' => 'Editar Categoria',
+            'alertas' => $alertas,
+            'categoria' => $categoria
+        ], 'admin-layout');
+    }
 }
