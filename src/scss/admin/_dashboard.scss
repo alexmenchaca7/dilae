@@ -24,10 +24,20 @@
     }
 
     &__logo {
-        color: v.$blanco;
-        text-transform: uppercase;
-        margin: 0;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        img {
+            width: 5rem;
+        }
+        
+        h2 {
+            color: v.$blanco;
+            text-transform: uppercase;
+            margin: 0;
+            text-align: center;
+        }
 
         @include m.tablet {
             text-align: left;

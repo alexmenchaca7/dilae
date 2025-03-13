@@ -1,7 +1,8 @@
 <header class="dashboard__header">
     <div class="dashboard__header-grid">
-        <a href="/">
-            <h2 class="dashboard__logo">Dilae</h2>
+        <a class="dashboard__logo" href="/admin/dashboard">
+            <img src="/build/img/logo.webp" alt="">
+            <h2>Dilae</h2>
         </a>
 
         <nav class="dashboard__nav">
