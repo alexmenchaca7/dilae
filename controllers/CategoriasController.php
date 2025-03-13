@@ -7,8 +7,10 @@ use Model\Subcategoria;
 use MVC\Router;
 
 class CategoriasController {
-
     public static function index(Router $router) {
+        if(!is_auth()) {
+            header('Location: /login');
+        }
 
         // Obtener todas las categorías
         $categorias = Categoria::all();
@@ -34,6 +36,9 @@ class CategoriasController {
 
 
     public static function crear(Router $router) {
+        if(!is_auth()) {
+            header('Location: /login');
+        }
 
         // Creando una nueva instancia de Categoria
         $categoria = new Categoria;
@@ -43,6 +48,10 @@ class CategoriasController {
 
         // Ejecutar el codigo despues de que el usuario envia el formulario
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(!is_auth()) {
+                header('Location: /login');
+            }
+
             $categoria->sincronizar($_POST);
 
             // Validar
@@ -68,6 +77,9 @@ class CategoriasController {
     }
 
     public static function editar(Router $router) {
+        if(!is_auth()) {
+            header('Location: /login');
+        }
 
         // Manejo de alertas
         $alertas = [];
@@ -89,6 +101,10 @@ class CategoriasController {
 
         // Ejecutar el codigo despues de que el usuario envia el formulario
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(!is_auth()) {
+                header('Location: /login');
+            }
+
             $categoria->sincronizar($_POST);
 
             // Validar
@@ -114,7 +130,11 @@ class CategoriasController {
         ], 'admin-layout');
     }
 
-    public static function eliminar() {
+    public static function eliminar() {  
+        if(!is_auth()) {
+            header('Location: /login');
+        }
+
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
             $categoria = Categoria::find($id);

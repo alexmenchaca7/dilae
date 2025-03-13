@@ -31,5 +31,13 @@
                 Proyectos
             </span>  
         </a>
+
+        <a href="/admin/usuarios" class="dashboard__enlace <?php echo pagina_actual('/usuarios') ? 'dashboard__enlace--actual' : ''; ?>">
+            <i class="fa-solid fa-user dashboard__icono"></i>
+
+            <span class="dashboard__menu-texto">
+                Usuarios
+            </span>  
+        </a>
     </nav>
 </aside>

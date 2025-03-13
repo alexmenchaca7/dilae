@@ -3,7 +3,9 @@
 require_once __DIR__ . '/../includes/app.php'; 
 
 use MVC\Router;
+use Controllers\AuthController;
 use Controllers\PaginasController;
+use Controllers\UsuariosController;
 use Controllers\DashboardController;
 use Controllers\ProductosController;
 use Controllers\ProyectosController;
@@ -13,10 +15,22 @@ use Controllers\SubcategoriasController;
 $router = new Router();
 
 
-// ZONA PRIVADA
+// Login
+$router->get('/login', [AuthController::class, 'login']);
+$router->post('/login', [AuthController::class, 'login']);
+$router->post('/logout', [AuthController::class, 'logout']);
+
+// Formulario de olvide mi password
+$router->get('/olvide', [AuthController::class, 'olvide']);
+$router->post('/olvide', [AuthController::class, 'olvide']);
+
+// Colocar el nuevo password
+$router->get('/reestablecer', [AuthController::class, 'reestablecer']);
+$router->post('/reestablecer', [AuthController::class, 'reestablecer']);
 
 
-// ZONA PUBLICA
+
+// Pagina de Inicio
 $router->get('/', [PaginasController::class, 'index']);
 $router->get('/nosotros', [PaginasController::class, 'nosotros']);
 $router->get('/proyectos', [PaginasController::class, 'proyectos']);
@@ -43,11 +57,12 @@ $router->get('/admin/subcategorias/editar', [SubcategoriasController::class, 'ed
 $router->post('/admin/subcategorias/editar', [SubcategoriasController::class, 'editar']);
 $router->post('/admin/subcategorias/eliminar', [SubcategoriasController::class, 'eliminar']);
 
-
 $router->get('/admin/productos', [ProductosController::class, 'index']);
 $router->get('/admin/productos/crear', [ProductosController::class, 'crear']);
 
 $router->get('/admin/proyectos', [ProyectosController::class, 'index']);
+
+$router->get('/admin/usuarios', [UsuariosController::class, 'index']);
 
 
 

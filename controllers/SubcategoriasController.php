@@ -8,6 +8,9 @@ use MVC\Router;
 
 class SubcategoriasController {
     public static function crear(Router $router) {
+        if(!is_auth()) {
+            header('Location: /login');
+        }
 
         // Creando una nueva instancia de Subcategoria
         $subcategoria = new Subcategoria;
@@ -20,6 +23,10 @@ class SubcategoriasController {
 
         // Ejecutar el codigo despues de que el usuario envia el formulario
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(!is_auth()) {
+                header('Location: /login');
+            }
+
             $subcategoria->sincronizar($_POST);
 
             // Validar
@@ -46,6 +53,9 @@ class SubcategoriasController {
     }
 
     public static function editar(Router $router) {
+        if(!is_auth()) {
+            header('Location: /login');
+        }
 
         // Manejo de alertas
         $alertas = [];
@@ -70,6 +80,10 @@ class SubcategoriasController {
 
         // Ejecutar el codigo despues de que el usuario envia el formulario
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(!is_auth()) {
+                header('Location: /login');
+            }
+
             $subcategoria->sincronizar($_POST);
 
             // Validar
@@ -94,5 +108,32 @@ class SubcategoriasController {
             'subcategoria' => $subcategoria,
             'categorias' => $categorias
         ], 'admin-layout');
+    }
+
+    public static function eliminar() {
+        if(!is_auth()) {
+            header('Location: /login');
+        }
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(!is_auth()) {
+                header('Location: /login');
+            }
+            
+            $id = $_POST['id'];
+            $subcategoria = Subcategoria::find($id);
+
+            // Validar que sea una subcategoria existente
+            if(!isset($subcategoria)) {
+                header('Location: /admin/categorias');
+            }
+
+            // Eliminar de la BD
+            $resultado = $subcategoria->eliminar();
+
+            if($resultado) {
+                header('Location: /admin/categorias');
+            }
+        }
     }
 }

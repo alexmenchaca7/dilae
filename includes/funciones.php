@@ -47,3 +47,13 @@ function validar_redireccionar(string $url) {
 function pagina_actual($path) : bool {
     return str_contains($_SERVER['PATH_INFO'], $path) ? true : false;
 }
+
+function is_auth() : bool {
+
+    // Verifica si la sesión no está iniciada para iniciar una nueva
+    if (session_status() == PHP_SESSION_NONE) {  
+        session_start();  
+    }
+
+    return isset($_SESSION['nombre']) && !empty($_SESSION);
+}

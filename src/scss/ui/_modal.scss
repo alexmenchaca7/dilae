@@ -27,20 +27,18 @@
         }
     }
 
-    &__confirm,
-    &__cancel {
-        color: v.$blanco;
-        padding: 1rem 2rem;
-        border: none;
-        cursor: pointer;
-        margin: 1rem;
+    &__acciones {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
     }
 
     &__confirm {
-        background-color: v.$primario; /* Verde */
+        @include m.boton(v.$primario, inline-block);
     }
 
     &__cancel {
-        background-color: v.$rojo; /* Rojo */
+        @include m.boton(v.$rojo, inline-block);
     }
 }
