@@ -49,11 +49,10 @@ function pagina_actual($path) : bool {
 }
 
 function is_auth() : bool {
-
     // Verifica si la sesión no está iniciada para iniciar una nueva
     if (session_status() == PHP_SESSION_NONE) {  
         session_start();  
     }
 
-    return isset($_SESSION['nombre']) && !empty($_SESSION);
+    return isset($_SESSION['login']) && $_SESSION['login'] === true && isset($_SESSION['confirmado']) && $_SESSION['confirmado'] === "1";
 }

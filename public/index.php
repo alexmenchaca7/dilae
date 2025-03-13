@@ -14,7 +14,6 @@ use Controllers\SubcategoriasController;
 
 $router = new Router();
 
-
 // Login
 $router->get('/login', [AuthController::class, 'login']);
 $router->post('/login', [AuthController::class, 'login']);
@@ -28,7 +27,12 @@ $router->post('/olvide', [AuthController::class, 'olvide']);
 $router->get('/reestablecer', [AuthController::class, 'reestablecer']);
 $router->post('/reestablecer', [AuthController::class, 'reestablecer']);
 
+// Confirmar cuenta
+$router->get('/confirmar-cuenta', [AuthController::class, 'confirmar']);
 
+// Establecer nuevo password
+$router->get('/establecer-password', [AuthController::class, 'establecerPassword']);
+$router->post('/establecer-password', [AuthController::class, 'establecerPassword']);
 
 // Pagina de Inicio
 $router->get('/', [PaginasController::class, 'index']);
@@ -38,8 +42,6 @@ $router->get('/blog', [PaginasController::class, 'blog']);
 $router->get('/contacto', [PaginasController::class, 'contacto']);
 
 $router->get('/politicas/privacidad', [PaginasController::class, 'privacidad']);
-
-
 
 // AREA DE ADMINISTRACION
 $router->get('/admin/dashboard', [DashboardController::class, 'index']);
@@ -63,8 +65,11 @@ $router->get('/admin/productos/crear', [ProductosController::class, 'crear']);
 $router->get('/admin/proyectos', [ProyectosController::class, 'index']);
 
 $router->get('/admin/usuarios', [UsuariosController::class, 'index']);
-
-
+$router->get('/admin/usuarios/crear', [UsuariosController::class, 'crear']);
+$router->post('/admin/usuarios/crear', [UsuariosController::class, 'crear']);
+$router->get('/admin/usuarios/editar', [UsuariosController::class, 'editar']);
+$router->post('/admin/usuarios/editar', [UsuariosController::class, 'editar']);
+$router->post('/admin/usuarios/eliminar', [UsuariosController::class, 'eliminar']);
 
 // Comprobar y validar que las rutas existan para asignarles las funciones del Controlador
 $router->comprobarRutas();

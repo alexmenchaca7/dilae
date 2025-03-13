@@ -44,6 +44,11 @@
         }
     }
 
+    &__usuario {
+        color: v.$blanco;
+        font-weight: v.$bold;
+    }
+
     &__form {
         display: flex;
         justify-content: center;

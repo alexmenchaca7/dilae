@@ -5,7 +5,7 @@ namespace Model;
 class Usuario extends ActiveRecord {
     
     // Arreglo de columnas para identificar que forma van a tener los datos
-    protected static $columnasDB = ['id', 'nombre', 'apellido', 'email', 'pass', 'token'];
+    protected static $columnasDB = ['id', 'nombre', 'apellido', 'email', 'pass', 'token', 'confirmado'];
     protected static $tabla = 'usuarios';  
 
 
@@ -16,6 +16,7 @@ class Usuario extends ActiveRecord {
     public $pass;
     public $pass2;
     public $token;
+    public $confirmado;
 
     public $password_actual;
     public $password_nuevo; 
@@ -30,6 +31,27 @@ class Usuario extends ActiveRecord {
         $this->pass = $args['pass'] ?? '';
         $this->pass2 = $args['pass2'] ?? '';
         $this->token = $args['token'] ?? '';
+        $this->confirmado = $args['confirmado'] ?? null;
+    }
+
+
+    // Validar el Registro de Usuarios
+    public function validarRegistro() {
+        if(!$this->nombre) {
+            self::$alertas['error'][] = 'El nombre es obligatorio';
+        }
+    
+        if(!$this->apellido) {
+            self::$alertas['error'][] = 'El apellido es obligatorio';
+        }
+    
+        if(!$this->email) {
+            self::$alertas['error'][] = 'El email es obligatorio';
+        } else if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            self::$alertas['error'][] = 'Email no válido';
+        }
+    
+        return self::$alertas;
     }
 
 
@@ -61,10 +83,15 @@ class Usuario extends ActiveRecord {
     // Valida el password 
     public function validarPassword() {
         if(!$this->pass) {
-            self::$alertas['error'][] = 'El password no puede ir vacio';
+            self::$alertas['error'][] = 'El password no puede ir vacío';
         } else if(strlen($this->pass) < 6) {
             self::$alertas['error'][] = 'El password debe contener al menos 6 caracteres';
         }
+
+        if($this->pass !== $this->pass2) {
+            self::$alertas['error'][] = 'Los passwords no coinciden';
+        }
+
         return self::$alertas;
     }
 

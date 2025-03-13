@@ -8,46 +8,46 @@ use Model\Usuario;
 
 class AuthController {
     public static function login(Router $router) {
-
         $alertas = [];
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
             $usuario = new Usuario($_POST);
-
             $alertas = $usuario->validarLogin();
-            
-            if(empty($alertas)) {
 
-                // Verificar quel el usuario exista
+            if(empty($alertas)) {
+                // Verificar que el usuario exista
                 $usuario = Usuario::where('email', $usuario->email);
                 if(!$usuario) {
                     Usuario::setAlerta('error', 'El usuario no existe');
                 } else {
-
                     // El Usuario existe
-                    if( password_verify($_POST['pass'], $usuario->pass) ) {
-                        
-                        // Iniciar la sesión
-                        session_start();    
-                        $_SESSION['id'] = $usuario->id;
-                        $_SESSION['nombre'] = $usuario->nombre;
-                        $_SESSION['apellido'] = $usuario->apellido;
-                        $_SESSION['email'] = $usuario->email;
+                    if(password_verify($_POST['pass'], $usuario->pass)) {
+                        // Verificar si la cuenta está confirmada
+                        if($usuario->confirmado === "1") {
+                            // Iniciar la sesión
+                            session_start();
+                            $_SESSION['id'] = $usuario->id;
+                            $_SESSION['nombre'] = $usuario->nombre;
+                            $_SESSION['apellido'] = $usuario->apellido;
+                            $_SESSION['email'] = $usuario->email;
+                            $_SESSION['confirmado'] = $usuario->confirmado;
+                            $_SESSION['login'] = true;
 
-                        // Redirección
-                        header('Location: /admin/dashboard');
-                        
+                            // Redirección
+                            header('Location: /admin/dashboard');
+                            exit();
+                        } else {
+                            Usuario::setAlerta('error', 'Tu cuenta no ha sido confirmada. Revisa tu correo');
+                        }
                     } else {
-                        Usuario::setAlerta('error', 'Credenciales incorrectas');
+                        Usuario::setAlerta('error', 'El password es incorrecto');
                     }
                 }
             }
         }
 
         $alertas = Usuario::getAlertas();
-        
-        // Render a la vista 
+
         $router->render('auth/login', [
             'titulo' => 'Iniciar Sesión',
             'alertas' => $alertas
@@ -57,16 +57,16 @@ class AuthController {
     public static function logout() {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_start();
-            $_SESSION = [];
+            session_unset(); // Eliminar todas las variables de sesión
+            session_destroy(); // Destruir la sesión
             header('Location: /');
+            exit();
         }
-       
     }
 
     public static function olvide(Router $router) {
-
         $alertas = [];
-        
+
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = new Usuario($_POST);
             $alertas = $usuario->validarEmail();
@@ -76,30 +76,25 @@ class AuthController {
                 $usuario = Usuario::where('email', $usuario->email);
 
                 if($usuario) {
-
                     // Generar un nuevo token
                     $usuario->crearToken();
-
-                    // Eliminar la propiedad pass2 antes de guardar
-                    unset($usuario->pass2);
-
-                    // Guardar el token en la BD
                     $usuario->guardar();
 
-                    // Enviar el email con el token
-                    $email = new Email( $usuario->email, $usuario->nombre, $usuario->token );
+                    // Enviar el email
+                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
                     $email->enviarInstrucciones();
 
-                    $alertas['exito'][] = 'Hemos enviado las instrucciones a tu email';
+                    Usuario::setAlerta('exito', 'Hemos enviado las instrucciones a tu email');
                 } else {
-                    $alertas['error'][] = 'El usuario no existe o no esta verificado';
+                    Usuario::setAlerta('error', 'El usuario no existe');
                 }
             }
         }
 
-        // Muestra la vista
+        $alertas = Usuario::getAlertas();
+
         $router->render('auth/olvide', [
-            'titulo' => 'Olvide mi Password',
+            'titulo' => 'Olvide Password',
             'alertas' => $alertas
         ]);
     }
@@ -150,6 +145,79 @@ class AuthController {
         // Muestra la vista
         $router->render('auth/reestablecer', [
             'titulo' => 'Reestablecer Password',
+            'alertas' => $alertas,
+            'token_valido' => $token_valido
+        ]);
+    }
+
+    public static function confirmar(Router $router) {
+        $alertas = [];
+        $token = s($_GET['token']);
+
+        if(!$token) {
+            Usuario::setAlerta('error', 'Token no válido');
+        } else {
+            $usuario = Usuario::where('token', $token);
+
+            if(empty($usuario)) {
+                Usuario::setAlerta('error', 'Token no válido');
+            } else {
+                $usuario->confirmado = 1;
+                $usuario->token = null;
+                $usuario->guardar();
+                Usuario::setAlerta('exito', 'Cuenta confirmada correctamente');
+            }
+        }
+
+        $alertas = Usuario::getAlertas();
+
+        $router->render('auth/confirmar', [
+            'titulo' => 'Confirma tu Cuenta',
+            'alertas' => $alertas
+        ]);
+    }
+
+    public static function establecerPassword(Router $router) {
+        $alertas = [];
+        $token = s($_GET['token']);
+        $token_valido = true;
+
+        if(!$token) {
+            Usuario::setAlerta('error', 'Token no válido');
+            $token_valido = false;
+        } else {
+            $usuario = Usuario::where('token', $token);
+
+            if(empty($usuario)) {
+                Usuario::setAlerta('error', 'Token no válido');
+                $token_valido = false;
+            }
+        }
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuario->sincronizar($_POST);
+            $alertas = $usuario->validarPassword();
+
+            if($_POST['pass'] !== $_POST['pass2']) {
+                Usuario::setAlerta('error', 'Los passwords no coinciden');
+            }
+
+            if(empty($alertas)) {
+                $usuario->hashPassword();
+                $usuario->confirmado = 1; // Confirmar la cuenta
+                $usuario->token = null;
+                $resultado = $usuario->guardar();
+
+                if($resultado) {
+                    header('Location: /login');
+                }
+            }
+        }
+
+        $alertas = Usuario::getAlertas();
+
+        $router->render('auth/establecer-password', [
+            'titulo' => 'Establecer Password',
             'alertas' => $alertas,
             'token_valido' => $token_valido
         ]);
