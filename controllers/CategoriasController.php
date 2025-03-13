@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Classes\Paginacion;
 use Model\Categoria;
 use Model\Subcategoria;
 use MVC\Router;
@@ -12,8 +13,24 @@ class CategoriasController {
             header('Location: /login');
         }
 
-        // Obtener todas las categorías
-        $categorias = Categoria::all();
+        // Paginación
+        $pagina_actual = $_GET['page'];
+        $pagina_actual = filter_var($pagina_actual, FILTER_VALIDATE_INT);
+
+        if(!$pagina_actual || $pagina_actual < 1) {
+            header('Location: /admin/categorias?page=1');
+        }
+
+        $registros_por_pagina = 5;
+        $total = Categoria::total();
+        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+
+        if($paginacion->total_paginas() < $pagina_actual) {
+            header('Location: /admin/categorias?page=1');
+        }
+
+        // Obtener las categorias por paginacion
+        $categorias = Categoria::paginar($registros_por_pagina, $paginacion->offset());
 
         // Crear un array para almacenar las subcategorías agrupadas por categoriaId
         $subcategoriasPorCategoria = [];
@@ -30,7 +47,8 @@ class CategoriasController {
         $router->render('admin/categorias/index', [
             'titulo' => 'Categorias',
             'categorias' => $categorias,
-            'subcategoriasPorCategoria' => $subcategoriasPorCategoria
+            'subcategoriasPorCategoria' => $subcategoriasPorCategoria,
+            'paginacion' => $paginacion->paginacion()
         ], 'admin-layout');
     }
 

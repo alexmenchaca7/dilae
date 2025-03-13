@@ -78,6 +78,8 @@
     <?php endif; ?>
 </div>
 
+<?php echo $paginacion; ?>
+
 <!-- Modal de Confirmación -->
 <div id="deleteModal" class="modal">
     <div class="modal__content">
@@ -90,7 +92,6 @@
         </div>
     </div>
 </div>
-
 
 <script>
     let currentId = null;
