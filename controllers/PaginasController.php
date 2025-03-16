@@ -13,6 +13,24 @@ class PaginasController {
         ]);
     }
 
+    public static function productos(Router $router) {
+
+        $inicio = true;
+
+        $router->render('paginas/productos', [
+            'inicio' => $inicio
+        ]);
+    }
+
+    public static function producto(Router $router) {
+
+        $inicio = true;
+
+        $router->render('paginas/producto', [
+            'inicio' => $inicio
+        ]);
+    }
+
     public static function nosotros(Router $router) {
 
         $titulo = 'Nosotros';

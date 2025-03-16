@@ -40,6 +40,8 @@ $router->get('/nosotros', [PaginasController::class, 'nosotros']);
 $router->get('/proyectos', [PaginasController::class, 'proyectos']);
 $router->get('/blog', [PaginasController::class, 'blog']);
 $router->get('/contacto', [PaginasController::class, 'contacto']);
+$router->get('/productos', [PaginasController::class, 'productos']);
+$router->get('/producto', [PaginasController::class, 'producto']);
 
 $router->get('/politicas/privacidad', [PaginasController::class, 'privacidad']);
 
