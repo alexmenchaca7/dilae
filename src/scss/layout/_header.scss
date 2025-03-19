@@ -11,6 +11,9 @@
 
 
 .header {
+    position: relative;
+    width: 100%;
+
     .contenido-header {
         padding: 5rem 0;
         display: flex;
@@ -66,7 +69,9 @@
 
 
 .hero {
+    margin-top: 10rem;
     background-color: v.$negro;
+    
     &.inicio {
         background-position: center center;
         background-size: cover;

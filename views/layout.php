@@ -18,7 +18,7 @@
 <body>
     <header class="header">
         <div class="contenedor">
-            <div class="barra">
+            <div class="barra" id="barra">
                 <a href="/">
                     <picture>
                         <source srcset="../build/img/logo.avif" type="image/avif">
@@ -108,9 +108,9 @@
                     <a href="/proyectos">Proyectos</a>
                     <a href="/blog">Blog</a>
                     <a href="/contacto">Contacto</a>
-
                 </nav>
-                <div class="buscar">
+
+                <div class="buscar" id="buscar">
                     <button><i class="fa-solid fa-search"></i></button>
                 </div>
             </div>

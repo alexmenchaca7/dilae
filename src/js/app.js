@@ -2,10 +2,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** MENU RESPONSIVO **/
     const hamburguesa = document.getElementById('hamburguesa');
+    const buscar = document.getElementById('buscar');
     const navegacion = document.getElementById('navegacion');
 
     hamburguesa.addEventListener('click', function() {
         navegacion.classList.toggle('activo');
+        buscar.classList.toggle('activo');
+    });
+
+
+    /** BARRA DE NAVEGACION FIJA **/
+    const barra = document.getElementById('barra');
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > lastScrollTop && !navegacion.classList.contains('activo')) {
+            // Scroll hacia abajo y la navegación no está activa
+            barra.classList.add('hidden');
+        } else {
+            // Scroll hacia arriba o la navegación está activa
+            barra.classList.remove('hidden');
+        }
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Evita valores negativos
     });
     
 
@@ -48,10 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /** SUBMENU PRODUCTOS DE NAVEGACION **/
-    const submenuContenedor = document.querySelector(".submenu-contenedor");
+    const submenuContenedores = document.querySelectorAll(".submenu-contenedor");
 
-    // Verificamos que el contenedor y el botón existan antes de agregar eventos
-    if (submenuContenedor) {
+    submenuContenedores.forEach(submenuContenedor => {
         const submenuBtn = submenuContenedor.querySelector(".submenu-btn");
 
         if (submenuBtn) {
@@ -68,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 submenuContenedor.classList.toggle("activo");
             });
         }
-    }
+    });
 
     /** SUB-SUBMENÚS DE NAVEGACION **/
     const subsubmenuBtns = document.querySelectorAll(".subsubmenu-btn");
@@ -95,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /** CERRAR SUBMENÚS AL HACER CLIC FUERA **/
     document.addEventListener("click", function (event) {
-        if (submenuContenedor) {
+        submenuContenedores.forEach(submenuContenedor => {
             const isClickInsideMenu = submenuContenedor.contains(event.target);
 
             if (!isClickInsideMenu) {
@@ -107,9 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     item.classList.remove("activo");
                 });
             }
-        }
+        });
     });
-
 
 
 
