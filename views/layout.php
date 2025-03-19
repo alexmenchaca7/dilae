@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dilae | <?php echo $titulo; ?></title>
     <link rel="stylesheet" href="../build/css/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -27,14 +28,18 @@
                     </picture>
                 </a>
 
-                <nav class="navegacion">
+                <button class="hamburguesa" id="hamburguesa">
+                    <i class="fa fa-bars"></i>
+                </button>
+
+                <nav class="navegacion" id="navegacion">
                     <a href="/nosotros">Nosotros</a>
                     <!-- Contenedor de Productos con Submenú -->
                     <div class="submenu-contenedor">
                         <div class="submenu-toggle">
                             <a href="/productos">Productos</a>
                             <button class="submenu-btn">
-                                <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
+                                <i class="fa-solid fa-chevron-right"></i>
                             </button>
                         </div>
                         <ul class="submenu">
@@ -43,7 +48,7 @@
                                 <div class="submenu-toggle">
                                     <a href="/productos/iluminacion">Iluminación</a>
                                     <button class="subsubmenu-btn">
-                                        <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
+                                        <i class="fa-solid fa-chevron-right"></i>
                                     </button>
                                 </div>
                                 <ul class="subsubmenu">
@@ -63,7 +68,7 @@
                                 <div class="submenu-toggle">
                                     <a href="/productos/gabinetes">Gabinetes</a>
                                     <button class="subsubmenu-btn">
-                                        <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
+                                        <i class="fa-solid fa-chevron-right"></i>
                                     </button>
                                 </div>
                                 <ul class="subsubmenu">
@@ -78,7 +83,7 @@
                                 <div class="submenu-toggle">
                                     <a href="/productos/vialidades">Vialidades</a>
                                     <button class="subsubmenu-btn">
-                                        <img src="../build/img/chevron-right.svg" alt="Abrir Submenú">
+                                        <i class="fa-solid fa-chevron-right"></i>
                                     </button>
                                 </div>
                                 <ul class="subsubmenu">
@@ -103,12 +108,10 @@
                     <a href="/proyectos">Proyectos</a>
                     <a href="/blog">Blog</a>
                     <a href="/contacto">Contacto</a>
-                </nav>
 
-                <div class="logo-container">
-                    <a href="#">
-                        <img loading="lazy" class="buscar" src="../build/img/icon_search.svg" alt="Icono de Busqueda">
-                    </a>
+                </nav>
+                <div class="buscar">
+                    <button><i class="fa-solid fa-search"></i></button>
                 </div>
             </div>
         </div>

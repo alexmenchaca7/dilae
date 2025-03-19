@@ -1,5 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    /** MENU RESPONSIVO **/
+    const hamburguesa = document.getElementById('hamburguesa');
+    const navegacion = document.getElementById('navegacion');
+
+    hamburguesa.addEventListener('click', function() {
+        navegacion.classList.toggle('activo');
+    });
+    
+
     /** CONTADORES ANIMADOS DE LA PAGINA DE INICIO **/
     const contadores = document.querySelectorAll(".contador");
     if (contadores.length > 0) {
