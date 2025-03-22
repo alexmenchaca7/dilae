@@ -147,11 +147,18 @@ class ActiveRecord {
         return $resultado;
     }
 
-    // Busqueda Where con Columna 
+    // Método where que retorna un único objeto (el primero)
     public static function where($columna, $valor) {
         $query = "SELECT * FROM " . static::$tabla . " WHERE $columna = '$valor'";
         $resultado = self::consultarSQL($query);
-        return array_shift( $resultado ) ;
+        return array_shift($resultado);
+    }
+
+    // Método whereField que devuelve TODOS los objetos que cumplen la condición
+    public static function whereField($campo, $valor) {
+        $valor = self::$conexion->escape_string($valor);
+        $query = "SELECT * FROM " . static::$tabla . " WHERE $campo = '$valor'";
+        return self::consultarSQL($query);
     }
 
     // Busqueda Where con Múltiples opciones
@@ -233,10 +240,13 @@ class ActiveRecord {
 
         // Ejecutar la consulta
         $resultado = self::$conexion->query($query); 
-        return [
-            'resultado' =>  $resultado,
-            'id' => self::$conexion->insert_id
-        ];
+
+        if($resultado) {
+            // Asignar el id generado al objeto
+            $this->id = self::$conexion->insert_id;
+        }
+
+        return $resultado;
     }
 
     // Actualizar un registro

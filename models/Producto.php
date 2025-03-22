@@ -22,4 +22,21 @@ class Producto extends ActiveRecord {
         $this->descripcion = $args['descripcion'] ?? '';
         $this->subcategoriaId = $args['subcategoriaId'] ?? '';
     }
+
+    // Validar formulario   
+    public function validar() {
+        if(!$this->nombre) {
+            self::$alertas['error'][] = 'El nombre es obligatorio';
+        }
+
+        if(!$this->descripcion) {
+            self::$alertas['error'][] = 'La descripcion es obligatoria';
+        }
+
+        if(!$this->subcategoriaId) {
+            self::$alertas['error'][] = 'La subcategoria es obligatoria';
+        }
+
+        return self::$alertas;
+    }
 }

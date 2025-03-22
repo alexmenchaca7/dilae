@@ -17,30 +17,23 @@
     <!-- Descripción del producto -->
     <div class="formulario__campo">
         <label for="descripcion" class="formulario__label">Descripcion</label>
-        <textarea class="formulario__input" name="descripcion" id="descripcion" rows="4"></textarea>
-    </div>
-
-    <!-- Selección de la categoría -->
-    <div class="formulario__campo">
-        <label for="categoria" class="formulario__label">Categoría</label>
-        <select class="formulario__input" id="categoria" name="categoria" required>
-            <option value="" disabled selected>Selecciona una Categoría</option>
-
-            <!-- Aquí irían las categorías dinámicamente cargadas desde la base de datos -->
-            <option value="1">Iluminación</option>
-            <option value="2">Gabinetes</option>
-        </select>
+        <textarea class="formulario__input" name="descripcion" id="descripcion" rows="4"><?php echo $producto->descripcion ?? ''; ?></textarea>
     </div>
 
     <!-- Selección de la subcategoría -->
     <div class="formulario__campo">
-        <label for="subcategoria" class="formulario__label">Subcategoría</label>
-        <select class="formulario__input" id="subcategoria" name="subcategoria" required>
-            <option value="" disabled selected>Selecciona una Subategoría</option>
+        <label for="subcategoriaId" class="formulario__label">Subcategoría</label>
+        <select class="formulario__input" id="subcategoriaId" name="subcategoriaId">
+            <option value="" disabled selected>Selecciona una Subcategoría</option>
 
-            <!-- Aquí irían las categorías dinámicamente cargadas desde la base de datos -->
-            <option value="1">Reflectores</option>
-            <option value="2">Campanas UFO</option>
+            <!-- Aquí irían las subcategorías dinámicamente cargadas desde la base de datos -->
+            <?php foreach($subcategorias as $subcategoria): ?>
+                <option value="<?php echo $subcategoria->id; ?>" 
+                    <?php echo $producto->subcategoriaId === $subcategoria->id ? 'selected' : ''; ?>
+                >
+                    <?php echo $subcategoria->nombre; ?>
+                </option>
+            <?php endforeach; ?>
         </select>
     </div>
 </fieldset>

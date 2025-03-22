@@ -16,6 +16,14 @@
             </span>  
         </a>
 
+        <a href="/admin/atributos" class="dashboard__enlace <?php echo pagina_actual('/atributos') ? 'dashboard__enlace--actual' : ''; ?>">
+            <i class="fa-solid fa-list dashboard__icono"></i>
+
+            <span class="dashboard__menu-texto">
+                Atributos
+            </span>  
+        </a>
+
         <a href="/admin/productos" class="dashboard__enlace <?php echo pagina_actual('/productos') ? 'dashboard__enlace--actual' : ''; ?>">
             <i class="fa-solid fa-lightbulb dashboard__icono"></i>
 

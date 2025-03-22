@@ -1,6 +1,7 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
 
+/* ----------- ESTILOS MOBILE / TABLET ----------- */
 .barra {
     position: fixed;
     top: 0;
@@ -9,11 +10,6 @@
     z-index: 1000;
     background-color: v.$blanco;
     transition: transform 0.3s ease-in-out;
-
-    &.hidden {
-        transform: translateY(-100%);
-    }
-
     display: grid;
     grid-template-areas: 'logo hamburguesa' 
                          'navegacion navegacion'
@@ -21,23 +17,14 @@
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
     align-items: center;
-    padding: 1.5rem;
+    padding: 0 1.5rem;
 
-    @include m.desktop {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-        .logo,
-        .buscar {
-            margin: 0;
-        }
+    &.hidden {
+        transform: translateY(-100%);
     }
 
     .logo {
         grid-area: logo;
-        height: 10rem;
         width: auto;
     }
 
@@ -46,17 +33,11 @@
         grid-area: hamburguesa;
         font-size: 3.5rem;
         cursor: pointer;
-
-        @include m.desktop {
-            display: none;
-        }
     }
 
     .buscar {
         grid-area: buscar;
         width: 100%;
-        display: flex;
-        align-items: center;
         margin-top: 1rem;
         display: none;
         opacity: 0;
@@ -68,15 +49,6 @@
             opacity: 1;
             visibility: visible;
             max-height: 35rem;
-        }
-
-        @include m.desktop {
-            display: flex;
-            opacity: 1;
-            visibility: visible;
-            max-height: none;
-            width: auto;
-            margin-top: 0;
         }
 
         input {
@@ -102,10 +74,9 @@
     grid-area: navegacion;
     margin-top: 2rem;
     width: 100%;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: flex-start;
-    display: none;
     opacity: 0;
     visibility: hidden;
     max-height: 0;
@@ -118,18 +89,6 @@
         max-height: 100rem;
     }
 
-    @include m.desktop {
-        width: auto;
-        margin-top: 0;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 5rem;
-        opacity: 1;
-        visibility: visible;
-        max-height: none;
-    }
-
     a {
         width: 100%;
         border-bottom: 1px solid v.$gris-claro;
@@ -137,44 +96,29 @@
         color: v.$negro;
         transition: 0.3s ease all;
 
-        @include m.desktop {
-            width: auto;
-            border: none;
-            margin-bottom: 0;
-        }
-
         &:hover {
             color: v.$primario;
-        } 
+        }
     }
 
-    /* Contenedor del Submenú */
     .submenu-contenedor {
         position: relative;
         width: 100%;
 
-        .submenu-item {
-            padding: 0;
-
-            .submenu-toggle {
-
-                a {
-                    padding: 1.5rem 0;
-                }
-            }
+        .submenu-item .submenu-toggle a {
+            padding: 1.5rem 0;
         }
 
         .submenu-toggle {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
             cursor: pointer;
+            gap: 0.5rem;
 
             .submenu-btn, .subsubmenu-btn {
                 background: none;
                 border: none;
-                cursor: pointer;
                 display: flex;
                 align-items: center;
                 padding: 0;
@@ -182,10 +126,7 @@
                 i {
                     font-size: 1.2rem;
                     transition: transform 0.3s ease;
-
-                    @include m.desktop {
-                        margin-bottom: 0;
-                    }
+                    cursor: pointer;
                 }
             }
         }
@@ -193,14 +134,14 @@
         .submenu {
             width: 100%;
             background-color: v.$blanco;
-            padding: 0;
-            margin: 0;
-            list-style: none;
             display: none;
             opacity: 0;
             visibility: hidden;
             max-height: 0;
             transition: all 0.3s ease;
+            list-style: none;
+            padding: 0;
+            margin: 0;
 
             li {
                 position: relative;
@@ -210,7 +151,6 @@
                     padding: 1rem;
                     color: v.$negro;
                     text-align: left;
-                    transition: 0.3s ease all;
 
                     &:hover {
                         color: v.$primario;
@@ -220,18 +160,11 @@
                 .subsubmenu {
                     width: 100%;
                     background-color: v.$blanco;
-                    padding: 0;
-                    margin: 0;
-                    list-style: none;
                     display: none;
                     opacity: 0;
                     visibility: hidden;
                     max-height: 0;
                     transition: all 0.3s ease;
-
-                    &-btn {
-                        padding-right: 1rem;
-                    }
                 }
 
                 &.activo .subsubmenu {
@@ -250,8 +183,160 @@
             max-height: 35rem;
         }
 
-        &.activo .submenu-btn i, .submenu-item.activo .subsubmenu-btn i {
+        &.activo .submenu-btn i, 
+        .submenu-item.activo .subsubmenu-btn i {
             transform: rotate(90deg);
+        }
+    }
+}
+
+/* ----------- ESTILOS ESCRITORIO (SEPARADOS) ----------- */
+@include m.desktop {
+    .barra {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+
+        .logo {
+            height: 10rem;
+            width: auto;
+            margin-bottom: 0;
+        }
+
+        .buscar {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            height: 2.4rem;
+            width: auto;
+
+            input {
+                width: 100%;
+                background-color: v.$fondo;
+                padding: 0.5rem;
+                border: 1px solid v.$gris-claro;
+                border-radius: 0.5rem;
+                margin-right: 0.5rem;
+            }
+
+            button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 1.5rem;
+                color: v.$gris-oscuro;
+            }
+        }
+
+        .hamburguesa {
+            display: none;
+        }
+    }
+
+    .navegacion {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5rem;
+        margin: 0;
+        opacity: 1;
+        visibility: visible;
+        max-height: none;
+
+        a {
+            color: v.$negro;
+            display: block;
+            text-align: center;
+            margin: 0;
+            border: none;
+            transition: 0.3s ease all;
+
+            &:hover {
+                color: v.$primario;
+            }
+        }
+
+        .submenu-contenedor {
+            position: relative;
+
+            .submenu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+
+                .submenu-btn, .subsubmenu-btn {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    padding: 0;
+
+                    img {
+                        width: 1.8rem;
+                        transition: transform 0.3s ease;
+                        margin-bottom: 0;
+                    }
+                }
+            }
+
+            .submenu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                background-color: v.$blanco;
+                box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.15);
+                padding: 0;
+                margin: 0;
+                list-style: none;
+                min-width: 20rem;
+                display: none;
+
+                li {
+                    position: relative;
+
+                    a {
+                        display: block;
+                        padding: 1rem;
+                        color: v.$negro;
+                        text-align: left;
+
+                        &:hover {
+                            color: v.$primario;
+                        }
+                    }
+
+                    .subsubmenu {
+                        position: absolute;
+                        top: 0;
+                        left: 100%;
+                        background-color: v.$blanco;
+                        box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.15);
+                        padding: 0;
+                        margin: 0;
+                        list-style: none;
+                        min-width: 18rem;
+                        display: none;
+                    }
+
+                    &.activo .subsubmenu {
+                        display: block;
+                    }
+                }
+            }
+
+            &.activo .submenu {
+                display: block;
+            }
+
+            &.activo .submenu-btn img, 
+            .submenu-item.activo .subsubmenu-btn img {
+                transform: rotate(90deg);
+            }
         }
     }
 }

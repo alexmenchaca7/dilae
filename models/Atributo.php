@@ -20,4 +20,16 @@ class Atributo extends ActiveRecord {
         $this->nombre = $args['nombre'] ?? '';
         $this->tipo = $args['tipo'] ?? '';
     }
+
+
+    // Validar formulario
+    public function validar() {
+        if(!$this->nombre) {
+            self::$alertas['error'][] = 'El nombre del atributo es obligatorio';
+        }
+        if(!$this->tipo) {
+            self::$alertas['error'][] = 'El tipo del atributo es obligatorio';
+        }
+        return self::$alertas;
+    }
 }
