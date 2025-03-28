@@ -1,9 +1,15 @@
 @use 'variables' as v;
 
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 html {
     font-size: 62.5%;
     box-sizing: border-box;
-    height: 100%;
 }
 *, *:before, *:after {
     box-sizing: inherit;

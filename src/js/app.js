@@ -17,11 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('scroll', function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (scrollTop > lastScrollTop && !navegacion.classList.contains('activo')) {
-            // Scroll hacia abajo y la navegación no está activa
+        // Verificamos si hay submenus abiertos
+        const submenusAbiertos = document.querySelectorAll('.submenu-contenedor.activo, .submenu-item.activo').length > 0;
+
+        if (scrollTop > lastScrollTop && 
+            !navegacion.classList.contains('activo') && 
+            !submenusAbiertos) { // Solo ocultar si no hay submenús abiertos
             barra.classList.add('hidden');
         } else {
-            // Scroll hacia arriba o la navegación está activa
             barra.classList.remove('hidden');
         }
 
@@ -76,15 +79,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (submenuBtn) {
             submenuBtn.addEventListener("click", function (event) {
                 event.preventDefault();
+                event.stopPropagation();
 
+                // Guardar referencia al ícono antes de cualquier cambio
+                const icon = this.querySelector('i');
+                
                 // Cierra cualquier otro submenú activo antes de abrir este
                 document.querySelectorAll(".submenu-contenedor.activo").forEach((item) => {
                     if (item !== submenuContenedor) {
                         item.classList.remove("activo");
+                        // Restablece la flecha del submenú cerrado
+                        const otherIcon = item.querySelector('.submenu-btn i');
+                        if (otherIcon) {
+                            otherIcon.style.transform = 'rotate(0deg)';
+                        }
                     }
                 });
 
-                submenuContenedor.classList.toggle("activo");
+                // Alternar el estado activo del submenú contenedor
+                const isActive = submenuContenedor.classList.toggle("activo");
+                
+                // Rotar el ícono basado en el nuevo estado
+                icon.style.transform = isActive ? 'rotate(90deg)' : 'rotate(0deg)';
             });
         }
     });
@@ -96,17 +112,26 @@ document.addEventListener("DOMContentLoaded", () => {
         subsubmenuBtns.forEach((btn) => {
             btn.addEventListener("click", function (event) {
                 event.preventDefault();
+                event.stopPropagation();
                 const parentItem = this.closest(".submenu-item");
+                const icon = this.querySelector('i');
 
                 if (parentItem) {
                     // Cierra otros sub-submenús antes de abrir este
                     document.querySelectorAll(".submenu-item.activo").forEach((item) => {
                         if (item !== parentItem) {
                             item.classList.remove("activo");
+                            // Restablece la flecha del sub-submenú cerrado
+                            const otherIcon = item.querySelector('.subsubmenu-btn i');
+                            if (otherIcon) {
+                                otherIcon.style.transform = 'rotate(0deg)';
+                            }
                         }
                     });
 
-                    parentItem.classList.toggle("activo");
+                    // Alternar estado y rotar ícono
+                    const isActive = parentItem.classList.toggle("activo");
+                    icon.style.transform = isActive ? 'rotate(90deg)' : 'rotate(0deg)';
                 }
             });
         });
@@ -120,14 +145,27 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isClickInsideMenu) {
                 // Cierra el submenú principal
                 submenuContenedor.classList.remove("activo");
+                
+                // Restablece la flecha del submenú principal
+                const mainIcon = submenuContenedor.querySelector('.submenu-btn i');
+                if (mainIcon) {
+                    mainIcon.style.transform = 'rotate(0deg)';
+                }
 
                 // Cierra todos los sub-submenús abiertos
                 document.querySelectorAll(".submenu-item").forEach((item) => {
                     item.classList.remove("activo");
+                    // Restablece las flechas de los sub-submenús
+                    const subIcon = item.querySelector('.subsubmenu-btn i');
+                    if (subIcon) {
+                        subIcon.style.transform = 'rotate(0deg)';
+                    }
                 });
             }
         });
     });
+    
+
 
 
 

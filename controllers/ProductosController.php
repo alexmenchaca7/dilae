@@ -2,9 +2,14 @@
 
 namespace Controllers;
 
-use Model\Producto;
+use Exception;
 use MVC\Router;
+use Model\Producto;
+use Model\Categoria;
 use Model\Subcategoria;
+use Model\ImagenProducto;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ProductosController {
     public static function index(Router $router) {
@@ -22,34 +27,104 @@ class ProductosController {
             header('Location: /login');
         }
 
-        // Creando una nueva instancia de producto
         $producto = new Producto;
-
-        // Manejo de errores
         $alertas = [];
-
-        // Obteniendo todas las subcategorias
+        $categorias = Categoria::all();
         $subcategorias = Subcategoria::all();
+        $subcategoriasPorCategoria = [];
+        
+        // Agrupar subcategorías por categoría
+        foreach ($subcategorias as $subcategoria) {
+            $subcategoriasPorCategoria[$subcategoria->categoriaId][] = $subcategoria;
+        }
 
-        // Ejecutar el codigo despues de que el usuario haya enviado el formulario
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             if(!is_auth()) {
                 header('Location: /login');
             }
 
             $producto->sincronizar($_POST);
-
-            // Validar
             $alertas = $producto->validar();
 
-            // Guardar el registro
-            if(empty($alertas)) {
+            // Validación de subcategoría
+            if($producto->categoriaId) {
+                $tieneSubcategorias = !empty($subcategoriasPorCategoria[$producto->categoriaId]);
+                
+                if($tieneSubcategorias && empty($producto->subcategoriaId)) {
+                    $alertas['error'][] = 'Debes seleccionar una subcategoría para esta categoría';
+                }
+                
+                if($producto->subcategoriaId) {
+                    $subcategoriaValida = false;
+                    foreach($subcategoriasPorCategoria[$producto->categoriaId] ?? [] as $subcat) {
+                        if($subcat->id == $producto->subcategoriaId) {
+                            $subcategoriaValida = true;
+                            break;
+                        }
+                    }
+                    
+                    if(!$subcategoriaValida) {
+                        $alertas['error'][] = 'La subcategoría seleccionada no pertenece a esta categoría';
+                    }
+                }
+            }
 
-                // Guardar en la BD
+            // Validar imágenes
+            $imagenes = [];
+            foreach($_FILES as $key => $file) {
+                if(strpos($key, 'imagenes_') === 0 && !empty($file['name'][0])) {
+                    if ($file['error'][0] === UPLOAD_ERR_OK && is_uploaded_file($file['tmp_name'][0])) {
+                        $imagenes[] = [
+                            'tmp' => $file['tmp_name'][0],
+                            'name' => $file['name'][0]
+                        ];
+                    }
+                }
+            }
+
+            if(count($imagenes) === 0) {
+                $alertas['error'][] = 'Debes subir al menos una imagen del producto';
+            } elseif(count($imagenes) > 5) {
+                $alertas['error'][] = 'Máximo 5 imágenes permitidas por producto';
+            }
+
+            // Procesar imágenes solo si no hay errores
+            if(empty($alertas['error'])) {
                 $resultado = $producto->guardar();
 
                 if($resultado) {
-                    header('Location: /admin/categorias');
+                    $manager = new ImageManager(new Driver());
+                    $carpetaFinal = '../public/img/productos';
+                    
+                    if(!is_dir($carpetaFinal)) mkdir($carpetaFinal, 0755, true);
+
+                    // Procesar todas las imágenes
+                    foreach($imagenes as $imagenData) {
+                        $nombreUnico = md5(uniqid(rand(), true));
+                        
+                        try {
+                            // Asegúrate de pasar solo la ruta del archivo temporal
+                            $imagen = $manager->read($imagenData['tmp']); // Cambio clave aquí
+                            
+                            $imagen->cover(800, 800);
+                            $imagen->toPng()->save("$carpetaFinal/$nombreUnico.png");
+                            $imagen->toWebp()->save("$carpetaFinal/$nombreUnico.webp");
+                            
+                            $imagenProducto = new ImagenProducto([
+                                'url' => $nombreUnico,
+                                'productoId' => $producto->id
+                            ]);
+                            $imagenProducto->guardar();
+                            
+                        } catch (Exception $e) {
+                            // Registra el error pero permite continuar
+                            error_log("Error procesando imagen: " . $e->getMessage());
+                            $alertas['error'][] = 'Error al procesar una de las imágenes';
+                            continue;
+                        }
+                    }
+
+                    header('Location: /admin/productos');
                 }
             }
         }
@@ -57,7 +132,8 @@ class ProductosController {
         $router->render('admin/productos/crear', [
             'titulo' => 'Registrar Producto',
             'alertas' => $alertas,
-            'subcategorias' => $subcategorias,
+            'categorias' => $categorias,
+            'subcategoriasPorCategoria' => $subcategoriasPorCategoria,
             'producto' => $producto
         ], 'admin-layout');
     }

@@ -69,7 +69,8 @@
 
 
 .hero {
-    margin-top: 10rem;
+    margin-top: 0;
+    padding-top: 10rem; /* Aseguramos espacio para la barra */
     background-color: v.$negro;
     
     &.inicio {
@@ -95,5 +96,9 @@
                 margin-bottom: 3.2rem;
             }
         }
+    }
+
+    @include m.desktop {
+        margin-top: 0;
     }
 }

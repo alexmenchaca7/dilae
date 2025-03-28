@@ -1,5 +1,5 @@
     <main class="contenedor seccion mb-10 ">
-        <div class="layout">
+        <div class="layout-seccion">
             <!-- Barra lateral de categorías -->
             <aside class="barra-lateral">
                 <h2>Categorías</h2>
