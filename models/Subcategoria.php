@@ -8,6 +8,9 @@ class Subcategoria extends ActiveRecord {
     protected static $columnasDB = ['id', 'nombre', 'categoriaId'];
     protected static $tabla = 'subcategorias';  
 
+    // Propiedad con las columnas a buscar
+    protected static $buscarColumns = ['nombre'];
+
 
     public $id;
     public $nombre;

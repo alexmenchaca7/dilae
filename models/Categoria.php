@@ -8,6 +8,9 @@ class Categoria extends ActiveRecord {
     protected static $columnasDB = ['id', 'nombre'];
     protected static $tabla = 'categorias';  
 
+    // Propiedad con las columnas a buscar
+    protected static $buscarColumns = ['nombre'];
+
 
     public $id;
     public $nombre;
@@ -26,5 +29,19 @@ class Categoria extends ActiveRecord {
         }
 
         return self::$alertas;
+    }
+
+    public static function buscar($termino) {
+        $condiciones = [];
+        $termino = self::$conexion->escape_string($termino);
+        
+        // Búsqueda en categorías y subcategorías relacionadas
+        $condiciones[] = "nombre LIKE '%$termino%' OR id IN (
+            SELECT categoriaId 
+            FROM subcategorias 
+            WHERE nombre LIKE '%$termino%'
+        )";
+        
+        return $condiciones;
     }
 }

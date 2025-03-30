@@ -17,26 +17,47 @@ class CategoriasController {
             header('Location: /login');
         }
 
-        // Paginación
-        $pagina_actual = isset($_GET['page']) ? filter_var($_GET['page'], FILTER_VALIDATE_INT) : 1;
-        if (!$pagina_actual || $pagina_actual < 1) {
+        // Manejo de búsqueda y paginación
+        $busqueda = $_GET['busqueda'] ?? '';
+        $pagina_actual = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
+        
+        if($pagina_actual < 1) {
             header('Location: /admin/categorias?page=1');
+            exit();
         }
 
         $registros_por_pagina = 5;
-        $total = Categoria::total();
-        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+        $condiciones = [];
 
-        if ($paginacion->total_paginas() < $pagina_actual) {
-            header('Location: /admin/categorias?page=1');
+        if(!empty($busqueda)) {
+            // Usar método del modelo para buscar
+            $condiciones = Categoria::buscar($busqueda);
         }
 
-        // Obtener las categorías por paginación
-        $categorias = Categoria::paginar($registros_por_pagina, $paginacion->offset());
+        // Obtener total de registros
+        $total = Categoria::totalCondiciones($condiciones);
 
-        // Agrupar subcategorías por categoría
-        $subcategoriasPorCategoria = [];
+        // Crear instancia de paginación
+        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+        
+        if ($paginacion->total_paginas() < $pagina_actual && $pagina_actual > 1) {
+            header('Location: /admin/categorias?page=1');
+            exit();
+        }
+
+        // Obtener categorías paginadas
+        $params = [
+            'condiciones' => $condiciones,
+            'orden' => 'nombre ASC',
+            'limite' => $registros_por_pagina,
+            'offset' => $paginacion->offset(),
+        ];
+        
+        $categorias = Categoria::metodoSQL($params);
+
+        // Obtener subcategorías agrupadas
         $subcategorias = Subcategoria::all();
+        $subcategoriasPorCategoria = [];
         foreach ($subcategorias as $subcategoria) {
             $subcategoriasPorCategoria[$subcategoria->categoriaId][] = $subcategoria;
         }
@@ -45,7 +66,8 @@ class CategoriasController {
             'titulo' => 'Categorias',
             'categorias' => $categorias,
             'subcategoriasPorCategoria' => $subcategoriasPorCategoria,
-            'paginacion' => $paginacion->paginacion()
+            'paginacion' => $paginacion->paginacion(),
+            'busqueda' => $busqueda
         ], 'admin-layout');
     }
 

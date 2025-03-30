@@ -303,4 +303,48 @@ class ActiveRecord {
             unlink(CARPETA_IMAGENES . $this->imagen);
         }
     }
+    
+    public static function totalCondiciones($condiciones = []) {
+        $query = "SELECT COUNT(*) as total FROM " . static::$tabla;
+        
+        if (!empty($condiciones)) {
+            $query .= " WHERE " . implode(' AND ', $condiciones);
+        }
+        
+        $resultado = self::$conexion->query($query);
+        $total = $resultado->fetch_assoc();
+        return (int)$total['total'];
+    }
+    
+
+    public static function metodoSQL($params = []) {
+        $default = [
+            'condiciones' => [],
+            'orden' => 'id ASC',
+            'limite' => null,
+            'offset' => null
+        ];
+        
+        $params = array_merge($default, $params);
+    
+        $query = "SELECT * FROM " . static::$tabla;
+        
+        // Construir condiciones
+        if (!empty($params['condiciones'])) {
+            $query .= " WHERE " . implode(' AND ', $params['condiciones']);
+        }
+        
+        // Orden
+        $query .= " ORDER BY " . $params['orden'];
+        
+        // Límite y offset
+        if ($params['limite']) {
+            $query .= " LIMIT " . $params['limite'];
+            if ($params['offset']) {
+                $query .= " OFFSET " . $params['offset'];
+            }
+        }
+    
+        return self::consultarSQL($query);
+    }
 }

@@ -6,7 +6,10 @@ class Usuario extends ActiveRecord {
     
     // Arreglo de columnas para identificar que forma van a tener los datos
     protected static $columnasDB = ['id', 'nombre', 'apellido', 'email', 'pass', 'token', 'confirmado'];
-    protected static $tabla = 'usuarios';  
+    protected static $tabla = 'usuarios'; 
+    
+    // Propiedad con las columnas a buscar
+    protected static $buscarColumns = ['nombre', 'apellido', 'email'];
 
 
     public $id;
@@ -49,6 +52,13 @@ class Usuario extends ActiveRecord {
             self::$alertas['error'][] = 'El email es obligatorio';
         } else if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             self::$alertas['error'][] = 'Email no válido';
+        } else {
+            // Validar que el email no esté registrado
+            $existeUsuario = $this::where('email', $this->email);
+            
+            if ($existeUsuario && $existeUsuario->id !== $this->id) {
+                self::$alertas['error'][] = 'El correo ya está registrado';
+            }
         }
     
         return self::$alertas;

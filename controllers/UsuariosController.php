@@ -13,30 +13,49 @@ class UsuariosController {
             header('Location: /login');
         }
 
-        // Paginación
-        $pagina_actual = $_GET['page'];
-        $pagina_actual = filter_var($pagina_actual, FILTER_VALIDATE_INT);
+        // Obtener término de búsqueda si existe
+        $busqueda = $_GET['busqueda'] ?? '';
+        $pagina_actual = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
 
-        if(!$pagina_actual || $pagina_actual < 1) {
+        if($pagina_actual < 1) {
             header('Location: /admin/usuarios?page=1');
+            exit();
         }
 
         $registros_por_pagina = 10;
-        $total = Usuario::total();
-        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+        $condiciones = [];
 
-        if($paginacion->total_paginas() < $pagina_actual) {
-            header('Location: /admin/usuarios?page=1');
+        if(!empty($busqueda)) {
+            $condiciones = Usuario::buscar($busqueda);
         }
 
-        // Obtener los usuarios por paginacion
-        $usuarios = Usuario::paginar($registros_por_pagina, $paginacion->offset());
+        // Obtener total de registros
+        $total = Usuario::totalCondiciones($condiciones);
+
+        // Crear instancia de paginación
+        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+        
+        if ($paginacion->total_paginas() < $pagina_actual && $pagina_actual > 1) {
+            header('Location: /admin/usuarios?page=1');
+            exit();
+        }
+
+        // Obtener usuarios
+        $params = [
+            'condiciones' => $condiciones,
+            'orden' => 'nombre ASC',
+            'limite' => $registros_por_pagina,
+            'offset' => $paginacion->offset()
+        ];
+        
+        $usuarios = Usuario::metodoSQL($params);
 
         // Pasar los usuarios a la vista
         $router->render('admin/usuarios/index', [
             'titulo' => 'Usuarios',
             'usuarios' => $usuarios,
-            'paginacion' => $paginacion->paginacion()
+            'paginacion' => $paginacion->paginacion(),
+            'busqueda' => $busqueda
         ], 'admin-layout');
     }
 
@@ -119,18 +138,44 @@ class UsuariosController {
             header('Location: /login');
         }
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'];
             $usuario = Usuario::find($id);
-
-            if(!isset($usuario)) {
+    
+            if (!$usuario) {
                 header('Location: /admin/usuarios');
             }
-
+    
+            // Eliminar sesiones del usuario
+            $user_id = $usuario->id;
+            $sessionSavePath = session_save_path();
+            $sessionFiles = glob($sessionSavePath . '/sess_*');
+    
+            foreach ($sessionFiles as $sessionFile) {
+                $data = file_get_contents($sessionFile);
+                $_SESSION = [];
+                session_decode($data);
+                if (isset($_SESSION['id']) && $_SESSION['id'] == $user_id) {
+                    unlink($sessionFile);
+                }
+            }
+    
+            // Si el usuario eliminado es el mismo que está logueado, cerrar sesión
+            if ($user_id == $_SESSION['id']) {
+                session_unset();
+                session_destroy();
+            }
+    
             $resultado = $usuario->eliminar();
-
-            if($resultado) {
-                header('Location: /admin/usuarios');
+    
+            if ($resultado) {
+                // Redirigir adecuadamente
+                if ($user_id == $_SESSION['id'] ?? null) {
+                    header('Location: /login');
+                } else {
+                    header('Location: /admin/usuarios');
+                }
+                exit();
             }
         }
     }
