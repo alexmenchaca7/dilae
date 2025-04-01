@@ -8,6 +8,9 @@ class Atributo extends ActiveRecord {
     protected static $columnasDB = ['id', 'nombre', 'tipo'];
     protected static $tabla = 'atributos';  
 
+    // Propiedad con las columnas a buscar
+    protected static $buscarColumns = ['nombre', 'tipo'];
+
 
     public $id;
     public $nombre;

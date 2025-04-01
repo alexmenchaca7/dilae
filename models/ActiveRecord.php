@@ -11,8 +11,11 @@ class ActiveRecord {
     protected static $columnasDB = [];
     protected static $tabla = '';
 
-    // ALERTAS Y MENSAJES
+    // ALERTAS
     protected static $alertas = []; 
+
+    // PROPIEDAD CON LAS COLUMNAS A BUSCAR
+    protected static $buscarColumns = []; 
 
     // Definir la conexion a la base de datos
     public static function setDB($database) {
@@ -346,5 +349,26 @@ class ActiveRecord {
         }
     
         return self::consultarSQL($query);
+    }
+
+    // Buscar un termino en la base de datos
+    public static function buscar($termino) {
+        $condiciones = [];
+        $termino = self::$conexion->escape_string($termino);
+        
+        // Verificar si el modelo tiene columnas de búsqueda definidas
+        if (!isset(static::$buscarColumns) || empty(static::$buscarColumns)) {
+            return $condiciones;
+        }
+        
+        // Generar condiciones de búsqueda
+        $buscarConditions = [];
+        foreach (static::$buscarColumns as $columna) {
+            $buscarConditions[] = "$columna LIKE '%$termino%'";
+        }
+        
+        $condiciones[] = "(" . implode(' OR ', $buscarConditions) . ")";
+        
+        return $condiciones;
     }
 }

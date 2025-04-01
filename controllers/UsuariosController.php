@@ -13,18 +13,21 @@ class UsuariosController {
             header('Location: /login');
         }
 
-        // Obtener término de búsqueda si existe
+        // Busqueda
         $busqueda = $_GET['busqueda'] ?? '';
         $pagina_actual = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
 
+        // Validar página
         if($pagina_actual < 1) {
             header('Location: /admin/usuarios?page=1');
             exit();
         }
 
+        // Configuración paginación
         $registros_por_pagina = 10;
         $condiciones = [];
 
+        // Usar método del modelo para buscar
         if(!empty($busqueda)) {
             $condiciones = Usuario::buscar($busqueda);
         }
@@ -35,12 +38,13 @@ class UsuariosController {
         // Crear instancia de paginación
         $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
         
+        // Validar paginas totales
         if ($paginacion->total_paginas() < $pagina_actual && $pagina_actual > 1) {
             header('Location: /admin/usuarios?page=1');
             exit();
         }
 
-        // Obtener usuarios
+        // Obtener registros
         $params = [
             'condiciones' => $condiciones,
             'orden' => 'nombre ASC',
@@ -50,7 +54,7 @@ class UsuariosController {
         
         $usuarios = Usuario::metodoSQL($params);
 
-        // Pasar los usuarios a la vista
+        // Renderizar vista
         $router->render('admin/usuarios/index', [
             'titulo' => 'Usuarios',
             'usuarios' => $usuarios,

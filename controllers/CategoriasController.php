@@ -11,27 +11,28 @@ use Model\CategoriaAtributo;
 use Model\SubcategoriaAtributo;
 
 class CategoriasController {
-
     public static function index(Router $router) {
         if (!is_auth()) {
             header('Location: /login');
         }
 
-        // Manejo de búsqueda y paginación
+        // Busqueda
         $busqueda = $_GET['busqueda'] ?? '';
         $pagina_actual = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
         
+        // Validar página
         if($pagina_actual < 1) {
             header('Location: /admin/categorias?page=1');
             exit();
         }
 
+        // Configuración paginación
         $registros_por_pagina = 5;
         $condiciones = [];
 
+        // Usar método del modelo para buscar
         if(!empty($busqueda)) {
-            // Usar método del modelo para buscar
-            $condiciones = Categoria::buscar($busqueda);
+            $condiciones = Atributo::buscar($busqueda);
         }
 
         // Obtener total de registros
@@ -40,12 +41,13 @@ class CategoriasController {
         // Crear instancia de paginación
         $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
         
+        // Validar paginas totales
         if ($paginacion->total_paginas() < $pagina_actual && $pagina_actual > 1) {
             header('Location: /admin/categorias?page=1');
             exit();
         }
 
-        // Obtener categorías paginadas
+        // Obtener registros
         $params = [
             'condiciones' => $condiciones,
             'orden' => 'nombre ASC',
@@ -62,6 +64,7 @@ class CategoriasController {
             $subcategoriasPorCategoria[$subcategoria->categoriaId][] = $subcategoria;
         }
 
+        // Renderizar vista
         $router->render('admin/categorias/index', [
             'titulo' => 'Categorias',
             'categorias' => $categorias,

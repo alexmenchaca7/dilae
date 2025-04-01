@@ -1,6 +1,21 @@
 <h2 class="dashboard__heading"><?php echo $titulo; ?></h2>
 
 <div class="dashboard__contenedor-boton">
+    <form class="dashboard__busqueda" method="GET" action="/admin/atributos">
+        <div class="campo-busqueda">
+            <input 
+                type="text" 
+                name="busqueda" 
+                class="input-busqueda" 
+                placeholder="Buscar por nombre o tipo..."
+                value="<?php echo htmlspecialchars($_GET['busqueda'] ?? ''); ?>"
+            >
+            <button type="submit" class="boton-busqueda">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </form>
+
     <a class="dashboard__boton" href="/admin/atributos/crear">
         <i class="fa-solid fa-circle-plus"></i>
         Añadir Atributo
@@ -44,6 +59,8 @@
         <p class="t-align-center">No Hay Atributos Aún</p>
     <?php endif; ?>
 </div>
+
+<?php echo $paginacion; ?>
 
 <!-- Modal de Confirmación -->
 <div id="deleteModal" class="modal">

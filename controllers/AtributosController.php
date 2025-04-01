@@ -4,23 +4,66 @@ namespace Controllers;
 
 use MVC\Router;
 use Model\Atributo;
+use Classes\Paginacion;
 
 class AtributosController {
-    // Listar todos los atributos
+
     public static function index(Router $router) {
         if (!is_auth()) {
             header('Location: /login');
         }
 
-        $atributos = Atributo::all();
+        // Busqueda
+        $busqueda = $_GET['busqueda'] ?? '';
+        $pagina_actual = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
+        
+        // Validar página
+        if($pagina_actual < 1) {
+            header('Location: /admin/atributos?page=1');
+            exit();
+        }
 
+        // Configuración paginación
+        $registros_por_pagina = 10;
+        $condiciones = [];
+
+        // Usar método del modelo para buscar
+        if(!empty($busqueda)) {
+            $condiciones = Atributo::buscar($busqueda);
+        }
+
+        // Obtener total de registros
+        $total = Atributo::totalCondiciones($condiciones);
+
+        // Crear instancia de paginación
+        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+
+        // Validar paginas totales
+        if ($paginacion->total_paginas() < $pagina_actual && $pagina_actual > 1) {
+            header('Location: /admin/atributos?page=1');
+            exit();
+        }
+
+        // Obtener registros
+        $params = [
+            'condiciones' => $condiciones,
+            'orden' => 'nombre ASC',
+            'limite' => $registros_por_pagina,
+            'offset' => $paginacion->offset(),
+        ];
+
+        $atributos = Atributo::metodoSQL($params);
+
+        // Renderizar vista
         $router->render('admin/atributos/index', [
             'titulo' => 'Atributos',
-            'atributos' => $atributos
+            'atributos' => $atributos,
+            'paginacion' => $paginacion->paginacion(),
+            'busqueda' => $busqueda
         ], 'admin-layout');
     }
 
-    // Crear un nuevo atributo
+
     public static function crear(Router $router) {
         if (!is_auth()) {
             header('Location: /login');
