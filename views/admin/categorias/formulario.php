@@ -14,41 +14,45 @@
     </div>
 </fieldset>
 
-<!-- Fieldset para Atributos (dinámicos) -->
+<!-- Fieldset para Atributos (tags) -->
 <fieldset class="formulario__fieldset">
     <legend class="formulario__legend">Atributos</legend>
-    <div id="atributos-container">
+    
+    <!-- Selected Tags -->
+    <div id="selected-tags" class="tags-container">
         <?php if(isset($atributosAsociados) && !empty($atributosAsociados)): ?>
-            <?php foreach($atributosAsociados as $index => $atributo): ?>
-                <div class="atributo-block">
-                    <div class="formulario__campo">
-                        <label for="atributo_select_<?php echo $index; ?>" class="formulario__label">Atributo</label>
-                        <select 
-                            class="formulario__input"
-                            id="atributo_select_<?php echo $index; ?>"
-                            name="atributos[]"
-                        >
-                            <option value="">Selecciona un atributo</option>
-                            <?php foreach($atributos as $opcion): ?>
-                                <option value="<?php echo $opcion->id; ?>"
-                                    <?php echo ($opcion->id == $atributo->id) ? 'selected' : ''; ?>>
-                                    <?php echo $opcion->nombre . ' (' . ucfirst($opcion->tipo) . ')'; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <button type="button" class="remove-atributo formulario__accion--secundario">
-                        <i class="fa-solid fa-circle-xmark"></i>
-                        Eliminar
-                    </button>
+            <?php foreach($atributosAsociados as $atributo): ?>
+                <div class="tag selected" data-id="<?php echo $atributo->id; ?>">
+                    <?php echo $atributo->nombre . ' (' . ucfirst($atributo->tipo) . ')'; ?>
+                    <span class="remove-tag">&times;</span>
+                    <input type="hidden" name="atributos[]" value="<?php echo $atributo->id; ?>">
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-    <button type="button" id="agregar-atributo" class="formulario__accion">
-        <i class="fa-solid fa-circle-plus"></i>
-        Agregar Atributo
-    </button>
+
+    <!-- Search Bar -->
+    <div class="formulario__campo">
+        <input 
+            type="text" 
+            id="search-attributes" 
+            class="formulario__input" 
+            placeholder="Buscar atributos..."
+        >
+    </div>
+
+    <!-- Available Tags -->
+    <div id="available-tags" class="tags-container">
+        <?php if(isset($atributosDisponibles) && !empty($atributosDisponibles)): ?>
+            <?php foreach($atributosDisponibles as $atributo): ?>
+                <div class="tag" data-id="<?php echo $atributo->id; ?>">
+                    <?php echo $atributo->nombre . ' (' . ucfirst($atributo->tipo) . ')'; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="texto-info">No hay más atributos disponibles</p>
+        <?php endif; ?>
+    </div>
 </fieldset>
 
 <!-- Template para nuevos bloques de atributos (oculto) -->
@@ -74,20 +78,59 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const agregarBtn = document.getElementById('agregar-atributo');
-        const container = document.getElementById('atributos-container');
-        const template = document.getElementById('atributo-template').content;
+        const searchInput = document.getElementById('search-attributes');
+        const availableTags = document.getElementById('available-tags');
+        const selectedTags = document.getElementById('selected-tags');
 
-        // Al hacer clic, clona el bloque de atributos y lo agrega al contenedor.
-        agregarBtn.addEventListener('click', function() {
-            const clone = document.importNode(template, true);
-            container.appendChild(clone);
+        // Función para filtrar atributos
+        function filterAttributes(searchText) {
+            const tags = availableTags.querySelectorAll('.tag');
+            tags.forEach(tag => {
+                const text = tag.textContent.toLowerCase();
+                const isVisible = text.includes(searchText.toLowerCase());
+                tag.style.display = isVisible ? 'flex' : 'none';
+            });
+        }
+
+        // Búsqueda en tiempo real
+        searchInput.addEventListener('input', function(e) {
+            filterAttributes(e.target.value);
         });
 
-        // Delegación de eventos para eliminar un bloque de atributos.
-        container.addEventListener('click', function(e) {
-            if(e.target && e.target.closest("button.remove-atributo")) {
-                e.target.closest('.atributo-block').remove();
+        // Manejar clic en tags disponibles
+        availableTags.addEventListener('click', function(e) {
+            const tag = e.target.closest('.tag:not(.selected)');
+            if (tag) {
+                // Mover el elemento en lugar de clonar
+                tag.classList.add('selected');
+                
+                const removeSpan = document.createElement('span');
+                removeSpan.className = 'remove-tag';
+                removeSpan.innerHTML = '&times;';
+                
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'atributos[]';
+                hiddenInput.value = tag.dataset.id;
+                
+                tag.appendChild(removeSpan);
+                tag.appendChild(hiddenInput);
+                selectedTags.appendChild(tag);
+            }
+        });
+
+        // Eliminar tags seleccionados
+        selectedTags.addEventListener('click', function(e) {
+            const tag = e.target.closest('.tag.selected');
+            
+            if (tag) {
+                // Eliminar elementos internos
+                tag.querySelector('input')?.remove();
+                tag.querySelector('.remove-tag')?.remove();
+                
+                // Quitar clase selected y mover a disponibles
+                tag.classList.remove('selected');
+                availableTags.appendChild(tag);
             }
         });
     });

@@ -165,6 +165,18 @@ class ActiveRecord {
         return self::consultarSQL($query);
     }
 
+    public static function whereIn($columna, $valores) {
+        if(empty($valores)) return [];
+        
+        $valoresEscapados = array_map(function($valor) {
+            return self::$conexion->escape_string($valor);
+        }, $valores);
+        
+        $query = "SELECT * FROM " . static::$tabla . " WHERE $columna IN ('" . implode("','", $valoresEscapados) . "')";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
     // Busqueda Where con Múltiples opciones
     public static function whereArray($array = []) {
         $query = "SELECT * FROM " . static::$tabla . " WHERE ";

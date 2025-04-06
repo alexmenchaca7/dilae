@@ -21,7 +21,7 @@ class Atributo extends ActiveRecord {
     {
         $this->id = $args['id'] ?? null;
         $this->nombre = $args['nombre'] ?? '';
-        $this->tipo = $args['tipo'] ?? '';
+        $this->tipo = $args['tipo'] ?? 'texto';
     }
 
 
@@ -32,6 +32,13 @@ class Atributo extends ActiveRecord {
         }
         if(!$this->tipo) {
             self::$alertas['error'][] = 'El tipo del atributo es obligatorio';
+        }
+        return self::$alertas;
+    }
+
+    public function validarValor($valor) {
+        if($this->tipo === 'numero' && !is_numeric($valor)) {
+            self::$alertas['error'][] = "El atributo {$this->nombre} debe ser numérico";
         }
         return self::$alertas;
     }

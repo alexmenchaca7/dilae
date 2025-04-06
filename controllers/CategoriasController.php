@@ -32,7 +32,12 @@ class CategoriasController {
 
         // Usar método del modelo para buscar
         if(!empty($busqueda)) {
-            $condiciones = Atributo::buscar($busqueda);
+            $busqueda = trim($busqueda);
+            $condiciones = Categoria::buscar($busqueda);
+            
+            if(empty($condiciones)) {
+                $condiciones[] = "1 = 0"; // Forzar resultado vacío si no hay término válido
+            }
         }
 
         // Obtener total de registros
@@ -113,12 +118,14 @@ class CategoriasController {
     
         // Se asume que el listado completo de atributos se obtiene así:
         $atributos = Atributo::all();
+        $atributosDisponibles = $atributos; // Todos están disponibles al crear
     
         $router->render('admin/categorias/crear', [
             'titulo' => 'Registrar Categoria',
             'alertas' => $alertas,
             'categoria' => $categoria,
-            'atributos' => $atributos  // Lista de atributos para el select
+            'atributos' => $atributos,
+            'atributosDisponibles' => $atributosDisponibles
         ], 'admin-layout');
     }
 
@@ -180,13 +187,17 @@ class CategoriasController {
 
         // Obtener lista completa de atributos para el select
         $atributos = Atributo::all();
+        $atributosDisponibles = array_filter($atributos, function($atributo) use ($atributosAsociados) {
+            return !in_array($atributo->id, array_column($atributosAsociados, 'id'));
+        });
 
         $router->render('admin/categorias/editar', [
             'titulo'             => 'Actualizar Categoria',
             'alertas'            => $alertas,
             'categoria'          => $categoria,
             'atributosAsociados' => $atributosAsociados,  // Atributos actualmente asignados
-            'atributos'          => $atributos           // Lista completa para el select
+            'atributos'          => $atributos,           // Lista completa para el select
+            'atributosDisponibles' => $atributosDisponibles
         ], 'admin-layout');
     }
     

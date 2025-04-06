@@ -32,15 +32,22 @@ class Categoria extends ActiveRecord {
     }
 
     public static function buscar($termino) {
-        $condiciones = parent::buscar($termino); // Condiciones básicas
-        
-        // Búsqueda adicional en subcategorías
-        $termino = self::$conexion->escape_string($termino);
-        $condiciones[] = "id IN (
-            SELECT categoriaId 
-            FROM subcategorias 
-            WHERE nombre LIKE '%$termino%'
-        )";
+        $condiciones = [];
+    
+        if (!empty($termino)) {
+            $termino = self::$conexion->escape_string($termino);
+            $terminoLower = mb_strtolower($termino, 'UTF-8');
+            
+            // Búsqueda case-insensitive en categorías y subcategorías
+            $condiciones[] = "(
+                LOWER(nombre) LIKE '%$terminoLower%' 
+                OR id IN (
+                    SELECT categoriaId 
+                    FROM subcategorias 
+                    WHERE LOWER(nombre) LIKE '%$terminoLower%'
+                )
+            )";
+        }
         
         return $condiciones;
     }    

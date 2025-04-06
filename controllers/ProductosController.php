@@ -4,10 +4,14 @@ namespace Controllers;
 
 use Exception;
 use MVC\Router;
+use Model\Atributo;
 use Model\Producto;
 use Model\Categoria;
 use Model\Subcategoria;
 use Model\ImagenProducto;
+use Model\ProductoAtributo;
+use Model\CategoriaAtributo;
+use Model\SubcategoriaAtributo;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
@@ -38,6 +42,36 @@ class ProductosController {
             $subcategoriasPorCategoria[$subcategoria->categoriaId][] = $subcategoria;
         }
 
+        // Obtener todos los atributos disponibles
+        $todosAtributos = Atributo::all();
+
+        // Precargar relaciones de atributos
+        $relacionesAtributos = [
+            'categorias' => [],
+            'subcategorias' => []
+        ];
+
+        // Cargar relaciones categoría-atributo
+        $subcategoriasAtributos = SubcategoriaAtributo::all();
+        foreach ($subcategoriasAtributos as $sa) {
+            $relacionesAtributos['subcategorias'][$sa->subcategoriaId][] = $sa->atributoId; 
+        }
+
+        // Cargar relaciones subcategoría-atributo
+        $subcategoriasAtributos = SubcategoriaAtributo::all();
+        foreach ($subcategoriasAtributos as $sa) {
+            $relacionesAtributos['subcategorias'][$sa->subcategoriaId][] = $sa->atributoId;
+        }
+
+        // Atributos disponibles inicialmente
+        $atributosDisponibles = [];
+        if($producto->categoriaId) {
+            $atributosDisponibles = self::obtenerAtributosDisponibles(
+                $producto->categoriaId, 
+                $producto->subcategoriaId ?? null
+            );
+        }
+
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             if(!is_auth()) {
                 header('Location: /login');
@@ -65,6 +99,44 @@ class ProductosController {
                     
                     if(!$subcategoriaValida) {
                         $alertas['error'][] = 'La subcategoría seleccionada no pertenece a esta categoría';
+                    }
+                }
+            }
+
+            // Validar que los atributos agregados pertenezcan a la categoría/subcategoría
+            if(isset($_POST['atributos']) && is_array($_POST['atributos'])) {
+                $atributosPermitidos = self::obtenerAtributosDisponibles(
+                    $producto->categoriaId, 
+                    $producto->subcategoriaId ?? null
+                );
+
+                // Convertir a array de IDs para validación
+                $atributosPermitidosIds = array_map(function($atributo) {
+                    return (string)$atributo->id; // Forzar conversión a string
+                }, $atributosPermitidos);
+
+                foreach($_POST['atributos'] as $atributoId => $valores) {
+                    // Convertir el ID a string para comparación
+                    $atributoIdStr = (string)$atributoId;
+
+                    // Verificar que el atributo esté permitido
+                    if(!in_array($atributoIdStr, $atributosPermitidosIds)) {
+                        $alertas['error'][] = 'Uno o más atributos no pertenecen a la categoría/subcategoría seleccionada';
+                        break;
+                    }
+
+                    // Validar cada valor del atributo
+                    foreach((array)$valores as $valor) {
+                        if(!empty($valor)) {
+                            $atributo = Atributo::find($atributoId);
+                            if(!$atributo) continue;
+                            
+                            $alertasAtributo = $atributo->validarValor($valor);
+                            
+                            if(!empty($alertasAtributo['error'])) {
+                                $alertas['error'] = array_merge($alertas['error'] ?? [], $alertasAtributo['error']);
+                            }
+                        }
                     }
                 }
             }
@@ -124,6 +196,42 @@ class ProductosController {
                         }
                     }
 
+                    // Guardar atributos
+                    if(isset($_POST['atributos']) && is_array($_POST['atributos'])) {
+                        // Eliminar atributos anteriores
+                        if($producto->id) {
+                            $atributosAnteriores = ProductoAtributo::whereField('productoId', $producto->id);
+                            if(is_array($atributosAnteriores)) {
+                                foreach($atributosAnteriores as $atributoAnterior) {
+                                    $atributoAnterior->eliminar();
+                                }
+                            }
+                        }
+
+                        foreach($_POST['atributos'] as $atributoId => $valor) {
+                            if(!empty($valor)) {
+                                $atributo = Atributo::find($atributoId);
+                                if(!$atributo) continue;
+                                
+                                $alertasAtributo = $atributo->validarValor($valor);
+                                
+                                if(!empty($alertasAtributo['error'])) {
+                                    $alertas['error'] = array_merge($alertas['error'] ?? [], $alertasAtributo['error']);
+                                    continue;
+                                }
+                                
+                                $productoAtributo = new ProductoAtributo([
+                                    'productoId' => $producto->id,
+                                    'atributoId' => $atributoId,
+                                    'valor_texto' => $atributo->tipo === 'texto' ? $valor : '',
+                                    'valor_numero' => $atributo->tipo === 'numero' ? $valor : ''
+                                ]);
+                                
+                                $productoAtributo->guardar();
+                            }
+                        }
+                    }
+
                     header('Location: /admin/productos');
                 }
             }
@@ -132,9 +240,40 @@ class ProductosController {
         $router->render('admin/productos/crear', [
             'titulo' => 'Registrar Producto',
             'alertas' => $alertas,
+            'producto' => $producto,
             'categorias' => $categorias,
             'subcategoriasPorCategoria' => $subcategoriasPorCategoria,
-            'producto' => $producto
+            'todosAtributos' => $todosAtributos,
+            'relacionesAtributos' => $relacionesAtributos,
+            'atributosDisponibles' => $atributosDisponibles,
         ], 'admin-layout');
+    }
+
+    private static function obtenerAtributosDisponibles($categoriaId, $subcategoriaId = null) {
+        $atributosIds = [];
+
+        // Determinar si la categoría tiene subcategorías
+        $tieneSubcategorias = !empty(Subcategoria::where('categoriaId', $categoriaId));
+
+        // Lógica principal
+        if ($tieneSubcategorias) {
+            // Si tiene subcategorías, solo usar atributos de la subcategoría (si existe)
+            if ($subcategoriaId) {
+                $atributosSubcategoria = SubcategoriaAtributo::where('subcategoriaId', $subcategoriaId);
+                foreach ($atributosSubcategoria as $sa) {
+                    $atributosIds[] = $sa->atributoId;
+                }
+            }
+        } else {
+            // Si no tiene subcategorías, usar atributos de la categoría
+            $atributosCategoria = CategoriaAtributo::where('categoriaId', $categoriaId);
+            foreach ($atributosCategoria as $ca) {
+                $atributosIds[] = $ca->atributoId;
+            }
+        }
+
+        // Eliminar duplicados y obtener objetos Atributo
+        $atributosIdsUnicos = array_unique($atributosIds);
+        return empty($atributosIdsUnicos) ? [] : Atributo::whereIn('id', $atributosIdsUnicos);
     }
 }
