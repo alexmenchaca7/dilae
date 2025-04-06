@@ -50,13 +50,17 @@ class SubcategoriasController {
                 }
             }
         }
+
+        // Obtener atributos disponibles
+        $atributosDisponibles = $atributos; // Todos disponibles al crear
     
         $router->render('admin/subcategorias/crear', [
             'titulo'      => 'Registrar Subcategoría',
             'alertas'     => $alertas,
             'subcategoria'=> $subcategoria,
             'categorias'  => $categorias,
-            'atributos'   => $atributos  // Lista de atributos para el select
+            'atributos'   => $atributos,
+            'atributosDisponibles' => $atributosDisponibles
         ], 'admin-layout');
     }    
 
@@ -123,14 +127,20 @@ class SubcategoriasController {
                 }
             }
         }
+
+        // Obtener atributos disponibles
+        $atributosDisponibles = array_filter($atributos, function($atributo) use ($atributosAsociados) {
+            return !in_array($atributo->id, array_column($atributosAsociados, 'id'));
+        });
         
         $router->render('admin/subcategorias/editar', [
             'titulo'             => 'Actualizar Subcategoría',
             'alertas'            => $alertas,
             'subcategoria'       => $subcategoria,
             'categorias'         => $categorias,
-            'atributosAsociados' => $atributosAsociados, // Atributos ya asignados
-            'atributos'          => $atributos           // Lista completa para el select
+            'atributosAsociados' => $atributosAsociados,  // Atributos ya asignados
+            'atributos'          => $atributos,           // Lista completa para el select
+            'atributosDisponibles' => $atributosDisponibles
         ], 'admin-layout');
     }    
 
