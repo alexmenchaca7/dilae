@@ -175,15 +175,25 @@ document.addEventListener("DOMContentLoaded", () => {
         listElements.forEach(listElement => {
             listElement.addEventListener('click', () => {
                 listElement.classList.toggle('arrow');
-
                 let parentItem = listElement.closest('.lista-item');
                 let menu = parentItem.querySelector('.lista-show');
-                
                 menu.style.height = (menu.clientHeight == 0) ? menu.scrollHeight + "px" : "0px";
             });
         });
-    }
 
+        // Expandir submenús activos al cargar
+        document.querySelectorAll('.lista-item').forEach(item => {
+            const boton = item.querySelector('.lista-boton');
+            if (boton && boton.classList.contains('activo')) {
+                const menu = item.querySelector('.lista-show');
+                const chevron = item.querySelector('.lista-boton-clic');
+                if (menu && chevron) {
+                    menu.style.height = menu.scrollHeight + 'px';
+                    chevron.classList.add('arrow');
+                }
+            }
+        });
+    }
 
 
 

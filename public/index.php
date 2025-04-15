@@ -39,10 +39,15 @@ $router->get('/nosotros', [PaginasController::class, 'nosotros']);
 $router->get('/proyectos', [PaginasController::class, 'proyectos']);
 $router->get('/blog', [PaginasController::class, 'blog']);
 $router->get('/contacto', [PaginasController::class, 'contacto']);
-$router->get('/productos', [PaginasController::class, 'productos']);
-$router->get('/producto', [PaginasController::class, 'producto']);
-
 $router->get('/politicas/privacidad', [PaginasController::class, 'privacidad']);
+
+// PRODUCTOS
+$router->get('/productos/{categoria_slug}/{subcategoria_slug}/{producto_slug}', [PaginasController::class, 'producto']);
+$router->get('/productos/{categoria_slug}/{subcategoria_slug}', [PaginasController::class, 'productos']);
+$router->get('/productos/{categoria_slug}', [PaginasController::class, 'productos']);
+$router->get('/productos', [PaginasController::class, 'productos']);
+
+
 
 
 
@@ -72,6 +77,9 @@ $router->post('/admin/atributos/eliminar', [AtributosController::class, 'elimina
 $router->get('/admin/productos', [ProductosController::class, 'index']);
 $router->get('/admin/productos/crear', [ProductosController::class, 'crear']);
 $router->post('/admin/productos/crear', [ProductosController::class, 'crear']);
+$router->get('/admin/productos/editar', [ProductosController::class, 'editar']);
+$router->post('/admin/productos/editar', [ProductosController::class, 'editar']);
+$router->post('/admin/productos/eliminar', [ProductosController::class, 'eliminar']);
 
 $router->get('/admin/proyectos', [ProyectosController::class, 'index']);
 

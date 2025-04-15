@@ -20,6 +20,8 @@
 }
 
 .barra-lateral {
+    width: auto;
+    max-width: 30rem;
     display: flex;
     flex-direction: column;
     gap: 5rem;
@@ -166,6 +168,17 @@
             }
         }
     }
+
+    .rango-inputs {
+        max-width: 100%;
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+
+        input {
+            width: 100%;
+        }
+    }
 }
 
 
@@ -243,6 +256,14 @@
             gap: 2rem;
             border: 1px solid v.$gris-claro;
             padding: 0.5rem;
+            width: 100%;
+
+            form {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
 
             input {
                 flex: 1;
@@ -273,7 +294,7 @@
     .productos {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         gap: 3rem;
 
         @include m.tablet {
@@ -285,7 +306,7 @@
         }
     
         .producto {
-            max-width: 30rem;
+            width: 100%;
             justify-self: center; /* Centra cada producto en su celda */
             display: flex;
             flex-direction: column;
@@ -304,8 +325,8 @@
 
         
                 img {
-                    max-width: 20rem;
-                    height: 15rem;
+                    width: 100%;
+                    padding: 3rem;
                     mix-blend-mode: multiply; // Hace que la imagen interactúe con el color de fondo
                 }
 
@@ -347,7 +368,7 @@
             // Detalles del producto
             .detalles {
                 background-color: color.adjust(v.$gris-claro, $lightness: 13%);
-                @include m.grid(2, 5rem);
+                @include m.grid(2, 5rem, 2rem);
                 padding: 1.5rem;
                 
             }

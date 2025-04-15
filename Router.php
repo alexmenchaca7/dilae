@@ -19,22 +19,33 @@ class Router {
 
     // Método para comprobar qué ruta se ha solicitado y ejecutar la función asociada
     public function comprobarRutas() {
-        $urlActual = $_SERVER['PATH_INFO'] ?? '/'; // Obtiene la URL actual o usa '/' si no está definida
-        $metodo = $_SERVER['REQUEST_METHOD']; // Obtiene el método HTTP de la solicitud (GET o POST)
+        $urlActual = strtok($_SERVER['REQUEST_URI'], '?') ?? '/';
+        $urlActual = $urlActual === '' ? '/' : $urlActual;
+        $metodo = $_SERVER['REQUEST_METHOD'];
+        
+        $rutas = $metodo === 'GET' ? $this->rutasGET : $this->rutasPOST;
+        $fn = null;
+        $params = [];
 
-        if($metodo === 'GET') {
-            $fn = $this->rutasGET[$urlActual] ?? null; // Busca la función en el arreglo de rutas GET
-        } else {
-            $fn = $this->rutasPOST[$urlActual] ?? null; // Busca la función en el arreglo de rutas POST
+        foreach ($rutas as $ruta => $handler) {
+            $pattern = $this->convertirPatron($ruta);
+            if (preg_match($pattern, $urlActual, $matches)) {
+                $fn = $handler;
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                break;
+            }
         }
 
-        if($fn) {
-            // Si existe una función asociada a la ruta, se ejecuta
-            call_user_func($fn, $this); // Llama a la función almacenada, pasándole la instancia del Router
+        if ($fn) {
+            call_user_func_array($fn, array_merge([$this], $params));
         } else {
-            // Si la ruta no existe, muestra un mensaje de error
             echo "Pagina No Encontrada";
         }
+    }
+
+    private function convertirPatron($ruta) {
+        $pattern = preg_replace('/\{([a-z_]+)\}/', '(?P<$1>[^\/]+)', $ruta);
+        return '#^' . $pattern . '$#';
     }
 
     // Método para renderizar vistas

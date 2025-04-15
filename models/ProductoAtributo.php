@@ -28,4 +28,10 @@ class ProductoAtributo extends ActiveRecord {
     public function getValor() {
         return $this->valor_numero !== '' ? $this->valor_numero : $this->valor_texto;
     }
+
+    public static function eliminarTodos($productoId) {
+        $productoId = self::$conexion->escape_string($productoId);
+        $query = "DELETE FROM " . static::$tabla . " WHERE productoId = '$productoId'";
+        return self::$conexion->query($query);
+    }
 }

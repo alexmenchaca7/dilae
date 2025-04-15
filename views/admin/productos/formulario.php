@@ -75,7 +75,17 @@
     <legend class="formulario__legend">Imágenes del Producto (Máximo 5)</legend>
     
     <div class="contenedor-imagenes" id="contenedor-imagenes">
-        <!-- Las imágenes se agregarán dinámicamente aquí -->
+        <?php foreach($imagenes as $imagen): ?>
+            <div class="formulario__campo contenedor-imagen" data-existente="true">
+                <div class="contenedor-imagen-preview">
+                    <div class="imagen-preview">
+                        <img src="/img/productos/<?= $imagen->url ?>.webp" alt="Imagen existente">
+                        <input type="hidden" name="imagenes_existentes[]" value="<?= $imagen->id ?>">
+                    </div>
+                    <button type="button" class="formulario__accion--secundario eliminar-imagen">Eliminar</button>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
 
     <button type="button" class="formulario__accion" id="agregar-imagen">
@@ -88,42 +98,59 @@
     <div id="atributos-container">
         <?php if (!empty($atributosDisponibles)): ?>
             <?php foreach($atributosDisponibles as $atributo): ?>
-                <div class="formulario__campo" data-atributo-id="<?php echo $atributo->id; ?>">
-                    <label><?php echo htmlspecialchars($atributo->nombre); ?></label>
-                    <?php if($atributo->tipo === 'numero'): ?>
-                        <input type="number" 
-                               name="atributos[<?php echo $atributo->id; ?>][]" 
-                               placeholder="<?php echo htmlspecialchars($atributo->nombre); ?>"
-                               step="any"
-                               value="<?= $_POST['atributos'][$atributo->id][0] ?? '' ?>">
-                    <?php else: ?>
-                        <input type="text" 
-                               name="atributos[<?php echo $atributo->id; ?>][]" 
-                               placeholder="<?php echo htmlspecialchars($atributo->nombre); ?>"
-                               value="<?= $_POST['atributos'][$atributo->id][0] ?? '' ?>">
-                    <?php endif; ?>
-                    <button type="button" class="formulario__accion--secundario eliminar-atributo">Eliminar</button>
+                <?php 
+                    // Añadir verificación para evitar atributos duplicados
+                    if (!isset($atributosProcesados[$atributo->id])): 
+                        $atributosProcesados[$atributo->id] = true;
+                ?>
+                <div class="atributo-group" data-atributo-id="<?= $atributo->id ?>" data-renderizado-php="true">
+                    <label class="formulario__label"><?= htmlspecialchars($atributo->nombre) ?></label>
+                    <div class="atributo-inputs">
+                        <?php 
+                            $valores = $atributosValores[$atributo->id] ?? [''];
+                            foreach($valores as $valor): 
+                        ?>
+                        <div class="input-wrapper">
+                            <input 
+                                type="<?= $atributo->tipo === 'numero' ? 'number' : 'text' ?>" 
+                                name="atributos[<?= $atributo->id ?>][]"
+                                placeholder="<?= htmlspecialchars($atributo->nombre) ?>"
+                                value="<?= htmlspecialchars($valor) ?>"
+                                <?= $atributo->tipo === 'numero' ? 'step="any"' : '' ?>
+                            >
+                            <button type="button" class="eliminar-valor">×</button>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="button" class="agregar-valor">+ Agregar Valor</button>
                 </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php else: ?>
-            <p>Selecciona una categoría para ver los atributos disponibles</p>
+            <p class="texto-info">Selecciona una categoría para ver los atributos disponibles</p>
         <?php endif; ?>
     </div>
-    
-    <div class="formulario__campo">
-        <label>Agregar nuevo atributo</label>
-        <select id="nuevo-atributo-select" class="formulario__input" disabled>
-            <option value="">-- Selecciona un atributo --</option>
-            <?php foreach($todosAtributos as $atributo): ?>
-                <option value="<?php echo htmlspecialchars($atributo->id); ?>">
-                    <?php echo htmlspecialchars($atributo->nombre); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <button type="button" class="formulario__accion" id="agregar-atributo" disabled>
-            <i class="fas fa-plus"></i> Añadir atributo
-        </button>
+</fieldset>
+
+<fieldset class="formulario__fieldset">
+    <legend class="formulario__legend">Fichas Técnicas (PDF)</legend>
+    <div class="contenedor-fichas" id="contenedor-fichas">
+        <?php foreach($fichas as $ficha): ?>
+            <div class="formulario__campo contenedor-ficha" data-existente="true">
+                <div class="ficha-preview">
+                    <a href="/fichas/<?= $ficha->url ?>" target="_blank" class="ficha-existente">
+                        <?= $ficha->url ?>
+                    </a>
+                    <input type="hidden" name="fichas_existentes[]" value="<?= $ficha->id ?>">
+                    <button type="button" class="formulario__accion--secundario eliminar-ficha">Eliminar</button>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
+
+    <button type="button" class="formulario__accion" id="agregar-ficha">
+        <i class="fas fa-plus"></i> Añadir ficha técnica
+    </button>
 </fieldset>
 
 <script>
@@ -132,27 +159,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const subcategoriasPorCategoria = <?php echo json_encode($subcategoriasPorCategoria); ?>;
     const relacionesAtributos = <?php echo json_encode($relacionesAtributos); ?>;
     const todosAtributos = <?php echo json_encode($todosAtributos); ?>;
+    const productoSubcategoriaId = <?= json_encode($producto->subcategoriaId ?? null) ?>;
     
     const categoriaSelect = document.getElementById('categoriaId');
     const subcategoriaSelect = document.getElementById('subcategoriaId');
     const atributosContainer = document.getElementById('atributos-container');
-    const nuevoAtributoSelect = document.getElementById('nuevo-atributo-select');
-    const btnAgregarAtributo = document.getElementById('agregar-atributo');
+
     const contenedorImagenes = document.getElementById('contenedor-imagenes');
     const btnAgregarImagen = document.getElementById('agregar-imagen');
     
     let imageCount = 0;
     const maxImages = 5;
-    let atributosPermitidos = [];
+
+    const contenedorFichas = document.getElementById('contenedor-fichas');
+    const btnAgregarFicha = document.getElementById('agregar-ficha');
+    
+    let fichaCount = 0;
+    const maxFichas = 5;
 
     // ------------- Funciones para subcategorías -------------
-    function cargarSubcategorias() {
-        const categoriaId = categoriaSelect.value;
+    function cargarSubcategorias(cargarAtributos = true) {
+        const categoriaId = parseInt(categoriaSelect.value);
         subcategoriaSelect.innerHTML = '<option value="">-- Seleccione --</option>';
         
         if (categoriaId && subcategoriasPorCategoria[categoriaId]) {
             subcategoriasPorCategoria[categoriaId].forEach(subcategoria => {
                 const option = new Option(subcategoria.nombre, subcategoria.id);
+                if (subcategoria.id == productoSubcategoriaId) {
+                    option.selected = true;
+                }
                 subcategoriaSelect.add(option);
             });
             subcategoriaSelect.disabled = false;
@@ -161,136 +196,128 @@ document.addEventListener('DOMContentLoaded', function() {
             subcategoriaSelect.disabled = true;
         }
         
-        cargarAtributosDisponibles();
-        actualizarSelectAtributos();
+        // Solo cargar atributos si el parámetro es true
+        if (cargarAtributos) {
+            cargarAtributosDisponibles();
+        }
     }
 
     // ------------- Funciones para atributos -------------
     function cargarAtributosDisponibles() {
-        const categoriaId = categoriaSelect.value;
-        const subcategoriaId = subcategoriaSelect.value;
+        // Limpiar solo los atributos dinámicos (no los renderizados por PHP)
+        const atributosDinamicos = atributosContainer.querySelectorAll('.atributo-group[data-dinamico="true"]');
+        atributosDinamicos.forEach(atributo => atributo.remove());
+
+        const categoriaId = parseInt(categoriaSelect.value);
+        const subcategoriaId = parseInt(subcategoriaSelect.value);
+        
+        let atributosIds = [];
         
         // Determinar si la categoría tiene subcategorías
-        const tieneSubcategorias = categoriaId && subcategoriasPorCategoria[categoriaId]?.length > 0;
-        
-        // Lógica para atributos permitidos
-        atributosPermitidos = [];
-        
-        if (tieneSubcategorias) {
-            // Cargar atributos de la subcategoría (si está seleccionada)
-            if (subcategoriaId) {
-                const subcatAtributos = relacionesAtributos.subcategorias[subcategoriaId] || [];
-                atributosPermitidos = subcatAtributos.map(id => 
-                    todosAtributos.find(a => a.id == id)
-                );
-            }
-        } else {
-            // Cargar atributos de la categoría
-            const catAtributos = relacionesAtributos.categorias[categoriaId] || [];
-            atributosPermitidos = catAtributos.map(id => 
-                todosAtributos.find(a => a.id == id)
-            );
+        const tieneSubcategorias = subcategoriasPorCategoria[categoriaId]?.length > 0;
+
+        if (tieneSubcategorias && subcategoriaId) {
+            // Obtener de subcategoría
+            atributosIds = relacionesAtributos.subcategorias[subcategoriaId] || [];
+        } else if (!tieneSubcategorias) {
+            // Obtener de categoría
+            atributosIds = relacionesAtributos.categorias[categoriaId] || [];
         }
-        
-        actualizarSelectAtributos();
-        actualizarAtributosEnFormulario();
+
+        // Filtrar atributos permitidos
+        const atributosPermitidos = todosAtributos.filter(atributo => {
+            return atributosIds.some(id => id === atributo.id);
+        });
+
+        actualizarAtributosEnFormulario(atributosPermitidos);
     }
 
+    function actualizarAtributosEnFormulario(atributos) {
+        // Limpiar todos los atributos dinámicos
+        const atributosDinamicos = atributosContainer.querySelectorAll('.atributo-group[data-dinamico="true"]');
+        atributosDinamicos.forEach(atributo => atributo.remove());
 
-    function actualizarSelectAtributos() {
-        nuevoAtributoSelect.innerHTML = '<option value="">-- Selecciona un atributo --</option>';
-        
-        atributosPermitidos.forEach(atributo => {
-            const option = document.createElement('option');
-            option.value = atributo.id;
-            option.textContent = atributo.nombre;
-            nuevoAtributoSelect.appendChild(option);
+        if (atributos.length === 0) {
+            atributosContainer.innerHTML = '<p class="texto-info">No hay atributos disponibles para esta selección</p>';
+            return;
+        }
+
+        atributos.forEach(atributo => {
+            const group = document.createElement('div');
+            group.className = 'atributo-group';
+            group.dataset.atributoId = atributo.id;
+            group.dataset.dinamico = "true"; // Marcar como dinámico
+
+            const label = document.createElement('label');
+            label.className = 'formulario__label';
+            label.textContent = atributo.nombre;
+            group.appendChild(label);
+
+            const inputsContainer = document.createElement('div');
+            inputsContainer.className = 'atributo-inputs';
+
+            // Input inicial
+            const initialInput = createInput(atributo);
+            inputsContainer.appendChild(initialInput);
+
+            // Botón agregar
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.className = 'agregar-valor';
+            addButton.textContent = '+ Agregar Valor';
+            addButton.addEventListener('click', () => {
+                const newInput = createInput(atributo);
+                inputsContainer.appendChild(newInput);
+            });
+
+            group.appendChild(inputsContainer);
+            group.appendChild(addButton);
+            atributosContainer.appendChild(group);
         });
     }
 
-    function actualizarAtributosEnFormulario() {
-        // Limpiar atributos actuales
-        atributosContainer.innerHTML = '';
-        
-        // Agregar los nuevos atributos permitidos
-        atributosPermitidos.forEach(atributo => {
-            const div = document.createElement('div');
-            div.className = 'formulario__campo';
-            div.dataset.atributoId = atributo.id;
-            div.innerHTML = `
-                <label>${atributo.nombre}</label>
-                ${atributo.tipo === 'numero' ? 
-                    `<input type="number" 
-                            name="atributos[${atributo.id}][]" 
-                            placeholder="${atributo.nombre}"
-                            step="any">` : 
-                    `<input type="text" 
-                            name="atributos[${atributo.id}][]" 
-                            placeholder="${atributo.nombre}">`
-                }
-                <button type="button" class="formulario__accion--secundario eliminar-atributo">Eliminar</button>
-            `;
-            atributosContainer.appendChild(div);
-        });
-    }
+    function createInput(atributo) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'input-wrapper';
 
-    function agregarAtributo() {
-        const atributoId = nuevoAtributoSelect.value;
-        if (!atributoId) return;
+        const input = document.createElement('input');
+        input.type = atributo.tipo === 'numero' ? 'number' : 'text';
+        input.name = `atributos[${atributo.id}][]`;
+        input.placeholder = atributo.nombre;
+        input.step = atributo.tipo === 'numero' ? 'any' : '';
 
-        // Buscar el atributo en los permitidos
-        const atributo = atributosPermitidos.find(a => a.id == atributoId);
-        if (!atributo) return;
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'eliminar-valor';
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', () => wrapper.remove());
 
-        // Obtener valores previos del atributo
-        const valoresPrevios = <?= json_encode($_POST['atributos'] ?? []) ?>;
-        const valores = valoresPrevios[atributoId] || [''];
-
-        // Crear campos para cada valor
-        valores.forEach(valor => {
-            const nuevoCampo = document.createElement('div');
-            nuevoCampo.className = 'formulario__campo';
-            nuevoCampo.dataset.atributoId = atributo.id;
-            
-            nuevoCampo.innerHTML = `
-                <label>${atributo.nombre}</label>
-                ${atributo.tipo === 'numero' ? 
-                    `<input type="number" name="atributos[${atributo.id}][]" 
-                            placeholder="${atributo.nombre}" step="any"
-                            value="${valor}">` : 
-                    `<input type="text" name="atributos[${atributo.id}][]" 
-                            placeholder="${atributo.nombre}"
-                            value="${valor}">`
-                }
-                <button type="button" class="formulario__accion--secundario eliminar-atributo">Eliminar</button>
-            `;
-
-            atributosContainer.appendChild(nuevoCampo);
-        });
-        
-        nuevoAtributoSelect.value = '';
+        wrapper.appendChild(input);
+        wrapper.appendChild(removeBtn);
+        return wrapper;
     }
 
     // ------------- Funciones para imágenes -------------
     function crearNuevaImagen() {
-        if (imageCount >= maxImages) {
+        const totalImagenes = document.querySelectorAll('.contenedor-imagen').length;
+        if (totalImagenes >= maxImages) {
             alert('Máximo de imágenes alcanzado');
             return;
         }
         
-        imageCount++;
         const nuevoContenedor = document.createElement('div');
         nuevoContenedor.className = 'formulario__campo contenedor-imagen';
-        nuevoContenedor.dataset.index = imageCount;
         
+        // Usar timestamp para nombres únicos
+        const timestamp = Date.now();
         nuevoContenedor.innerHTML = `
             <div class="contenedor-imagen-preview">
-                <div class="imagen-preview" id="imagenPreview${imageCount}">
+                <div class="imagen-preview">
                     <span class="imagen-placeholder">+</span>
                     <input 
                         type="file"
                         class="imagen-input"
-                        name="imagenes_${imageCount}[]" 
+                        name="nuevas_imagenes[]"
                         accept="image/*"
                         style="display: none;"
                     >
@@ -302,12 +329,10 @@ document.addEventListener('DOMContentLoaded', function() {
         contenedorImagenes.appendChild(nuevoContenedor);
         
         // Configurar eventos
-        const previewElement = document.getElementById(`imagenPreview${imageCount}`);
+        const previewElement = nuevoContenedor.querySelector('.imagen-preview');
         const inputFile = nuevoContenedor.querySelector('input[type="file"]');
-        const btnEliminar = nuevoContenedor.querySelector('.eliminar-imagen');
         
         inputFile.addEventListener('change', previewImage);
-        btnEliminar.addEventListener('click', removeImage);
         previewElement.addEventListener('click', () => inputFile.click());
     }
 
@@ -335,37 +360,104 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function removeImage(e) {
-        const button = e.target;
-        const contenedor = button.closest('.formulario__campo');
+        const contenedor = e.target.closest('.formulario__campo');
+    
+        // Si es una imagen existente, marcar para eliminación
+        if (contenedor.dataset.existente) {
+            const inputId = contenedor.querySelector('input[type="hidden"]');
+            const nuevoInput = document.createElement('input');
+            nuevoInput.type = 'hidden';
+            nuevoInput.name = 'imagenes_eliminadas[]';
+            nuevoInput.value = inputId.value;
+            contenedorImagenes.appendChild(nuevoInput);
+        }
+        
         contenedor.remove();
-        
-        // Reindexar las imágenes restantes
-        const imagenes = document.querySelectorAll('.contenedor-imagen');
-        imagenes.forEach((img, index) => {
-            img.dataset.index = index + 1;
-            const input = img.querySelector('input[type="file"]');
-            input.name = `imagenes_${index + 1}[]`;
+    }
+
+    // ------------- Funciones para fichas tecnicas -------------
+    function agregarEventListenerAFicha(contenedor) {
+        const inputFile = contenedor.querySelector('.ficha-input');
+        const nombreSpan = contenedor.querySelector('.ficha-nombre');
+
+        inputFile.addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : "Ningún archivo seleccionado";
+            nombreSpan.textContent = fileName;
         });
+
+        // Event listener para el botón "Eliminar" dentro de cada ficha
+        const btnEliminar = contenedor.querySelector('.eliminar-ficha');
+        btnEliminar.addEventListener('click', function(e) {
+            const contenedorFicha = e.target.closest('.contenedor-ficha');
+            contenedorFicha.remove();
+
+            // Reindexar las fichas restantes
+            const fichas = document.querySelectorAll('.contenedor-ficha');
+            fichas.forEach((ficha, index) => {
+                ficha.dataset.index = index + 1;
+                const input = ficha.querySelector('input[type="file"]');
+                input.name = `fichas_${index + 1}[]`;
+            });
+
+            fichaCount = fichas.length;
+        });
+    }
+
+    function crearNuevaFicha() {
+        const totalFichas = document.querySelectorAll('.contenedor-ficha').length;
+        if (totalFichas >= maxFichas) {
+            alert('Máximo de fichas técnicas alcanzado');
+            return;
+        }
+
+        const nuevoContenedor = document.createElement('div');
+        nuevoContenedor.className = 'formulario__campo contenedor-ficha';
         
-        imageCount = imagenes.length;
+        nuevoContenedor.innerHTML = `
+            <div class="ficha-preview">
+                <input type="file" 
+                    class="ficha-input" 
+                    name="nuevas_fichas[]"
+                    accept="application/pdf"
+                >
+                <button type="button" class="formulario__accion--secundario eliminar-ficha">Eliminar</button>
+            </div>
+        `;
+
+
+        contenedorFichas.appendChild(nuevoContenedor);
+        
+        // Agregar evento de eliminación
+        nuevoContenedor.querySelector('.eliminar-ficha').addEventListener('click', removeFicha);
+    }
+
+
+
+    function removeFicha(e) {
+        const contenedor = e.target.closest('.formulario__campo');
+    
+        // Si es una ficha existente, crear input para eliminación
+        if (contenedor.dataset.existente) {
+            const inputId = contenedor.querySelector('input[type="hidden"]');
+            const nuevoInput = document.createElement('input');
+            nuevoInput.type = 'hidden';
+            nuevoInput.name = 'fichas_eliminadas[]';
+            nuevoInput.value = inputId.value;
+            contenedorFichas.appendChild(nuevoInput);
+        }
+        
+        contenedor.remove();
     }
 
     // ------------- Event Listeners -------------
     categoriaSelect.addEventListener('change', cargarSubcategorias);
-    subcategoriaSelect.addEventListener('change', function() {
-        cargarAtributosDisponibles();
-        actualizarSelectAtributos();
-    });
-    btnAgregarAtributo.addEventListener('click', agregarAtributo);
+    subcategoriaSelect.addEventListener('change', cargarAtributosDisponibles);
+
     btnAgregarImagen.addEventListener('click', crearNuevaImagen);
+
+    btnAgregarFicha.addEventListener('click', crearNuevaFicha);
     
     // Delegación de eventos
-    atributosContainer.addEventListener('click', function(e) {
-        if (e.target.classList.contains('eliminar-atributo')) {
-            e.target.closest('.formulario__campo').remove();
-        }
-    });
-    
     contenedorImagenes.addEventListener('click', function(e) {
         if (e.target.classList.contains('eliminar-imagen')) {
             removeImage(e);
@@ -373,17 +465,55 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ------------- Inicialización -------------
-    if (categoriaSelect.value) {
-        cargarSubcategorias();
+    if (window.location.pathname.includes('/crear')) {
+        // Comportamiento para creación
+        if (categoriaSelect.value) {
+            cargarSubcategorias();
+        }
+        
+        if (imageCount === 0) crearNuevaImagen();
+        if (fichaCount === 0) crearNuevaFicha();
+    } else {
+        // Comportamiento para edición
+        if (categoriaSelect.value) {
+            cargarSubcategorias(false); // Evita la carga inicial de atributos
+        }
+        
+        // Establecer la subcategoría seleccionada después de cargar las opciones
+        if (productoSubcategoriaId) {
+            subcategoriaSelect.value = productoSubcategoriaId;
+        }
     }
-    
-    // Cargar atributos iniciales desde PHP
-    const atributosIniciales = <?php echo json_encode($atributosDisponibles); ?>;
-    if (atributosIniciales.length > 0) {
-        atributosPermitidos = atributosIniciales;
-        actualizarSelectAtributos();
-    }
-    
-    crearNuevaImagen(); // Imagen inicial
+
+
+
+    // Configurar imágenes existentes
+    document.querySelectorAll('.contenedor-imagen[data-existente]').forEach(contenedor => {
+        const btnEliminar = contenedor.querySelector('.eliminar-imagen');
+        btnEliminar.addEventListener('click', function(e) {
+            contenedor.remove();
+        });
+    });
+
+    // Configurar fichas existentes
+    document.querySelectorAll('.contenedor-ficha[data-existente]').forEach(contenedor => {
+        const btnEliminar = contenedor.querySelector('.eliminar-ficha');
+        btnEliminar.addEventListener('click', function(e) {
+            contenedor.remove();
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('agregar-valor')) {
+            const grupoAtributo = e.target.closest('.atributo-group');
+            const atributoId = grupoAtributo.dataset.atributoId;
+            const atributo = todosAtributos.find(a => a.id == atributoId);
+            
+            if (atributo) {
+                const nuevoInput = createInput(atributo);
+                grupoAtributo.querySelector('.atributo-inputs').appendChild(nuevoInput);
+            }
+        }
+    });
 });
 </script>

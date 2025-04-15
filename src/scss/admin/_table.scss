@@ -14,6 +14,12 @@
     &__th {
         padding: 1rem;
         text-align: left;
+        vertical-align: bottom; // Alinear texto de encabezados abajo
+
+        &--imagen {
+            text-align: center;
+            width: 10rem;
+        }
     }
 
     &__tr {
@@ -24,6 +30,14 @@
 
     &__td {
         padding: 1.5rem 1rem;
+        vertical-align: middle; // IMPORTANTE: Centra verticalmente todo en la celda
+
+        &--imagen {
+            width: 10rem;
+            text-align: center;
+            padding: 0.5rem; // Un padding pequeño dentro de la celda de imagen
+
+        }
 
         &--acciones {
             @extend .table__td;
@@ -50,6 +64,23 @@
                 gap: 1rem;  // Añade espacio entre los enlaces de editar y eliminar
             }
         }
+    }
+
+    &__imagen {
+        display: block;       // Trata la imagen como bloque
+        width: 100%;          // Intenta llenar el ancho de la celda (que es 10rem)
+        height: 8rem;         // Define una ALTURA FIJA (ajusta este valor)
+        max-width: 100%;      // Asegura que no exceda el ancho de la celda
+        object-fit: contain;  // Mantiene el aspect ratio dentro del alto/ancho definido
+        margin: 0 auto;       // Centra horizontalmente si object-fit deja espacio
+    }
+
+    // Estilo opcional para el texto "S/I" ---
+    &__no-imagen {
+        display: inline-block;
+        font-size: 1.2rem;
+        color: v.$gris; // O el color que prefieras
+        font-style: italic;
     }
 
     &__accion {

@@ -37,9 +37,10 @@ class Atributo extends ActiveRecord {
     }
 
     public function validarValor($valor) {
-        if($this->tipo === 'numero' && !is_numeric($valor)) {
-            self::$alertas['error'][] = "El atributo {$this->nombre} debe ser numérico";
+        if ($this->tipo === 'numero' && !is_numeric($valor)) {
+            $this->alertas['error'][] = "El valor debe ser numérico";
         }
+        
         return self::$alertas;
     }
 }

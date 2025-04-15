@@ -89,10 +89,8 @@ class ActiveRecord {
 
         // Recorriendo el arreglo como un arreglo asociativo (tanto llave como valor)
         foreach($atributos as $key => $value) {
-
-            // Verificamos si el valor es null o vacío y lo reemplazamos por null
-            if ($value === NULL || $value === '') {
-                $sanitizado[$key] = NULL;  // Reemplazamos con NULL
+            if ($value === null || $value === '') {
+                $sanitizado[$key] = null; // Convertir a NULL
             } else {
                 $sanitizado[$key] = self::$conexion->escape_string($value);
             }
@@ -153,7 +151,8 @@ class ActiveRecord {
 
     // Método where que retorna un único objeto (el primero)
     public static function where($columna, $valor) {
-        $query = "SELECT * FROM " . static::$tabla . " WHERE $columna = '$valor'";
+        $valor = self::$conexion->escape_string($valor);
+        $query = "SELECT * FROM " . static::$tabla . " WHERE $columna = '$valor' LIMIT 1";
         $resultado = self::consultarSQL($query);
         return array_shift($resultado);
     }
