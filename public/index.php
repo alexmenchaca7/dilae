@@ -46,6 +46,7 @@ $router->get('/productos/{categoria_slug}/{subcategoria_slug}/{producto_slug}', 
 $router->get('/productos/{categoria_slug}/{subcategoria_slug}', [PaginasController::class, 'productos']);
 $router->get('/productos/{categoria_slug}', [PaginasController::class, 'productos']);
 $router->get('/productos', [PaginasController::class, 'productos']);
+$router->get('/admin/productos/verificar-ficha', [ProductosController::class, 'verificarFicha']);
 
 
 

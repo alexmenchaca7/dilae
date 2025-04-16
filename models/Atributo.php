@@ -35,9 +35,6 @@ class Atributo extends ActiveRecord {
         if(!$this->tipo) {
             self::$alertas['error'][] = 'El tipo del atributo es obligatorio';
         }
-        if(!$this->unidad) {
-            self::$alertas['error'][] = 'La unidad del atributo es obligatoria';
-        }
         return self::$alertas;
     }
 

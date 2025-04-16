@@ -36,25 +36,6 @@
             </aside>
 
             <div class="layout-productos">
-                <!-- Barra de filtros y búsqueda -->
-                <div class="barra-superior">
-                    <div class="filtros">
-                        <select id="categoria" name="categoria">
-                            <option value="popularidad">Ordenar por popularidad</option>
-                            <option value="calificacion">Ordenar por calificación media</option>
-                            <option value="ultimas">Ordenar por las últimas</option>
-                            <option value="precio">Ordenar por precio</option>
-                        </select>
-                    </div>
-            
-                    <div class="busqueda">
-                        <input type="text" placeholder="Introduce aquí tu búsqueda...">
-                        <button type="submit">
-                            <img src="/build/img/icon_search-grey.svg" alt="Icono de busqueda">
-                        </button>
-                    </div>
-                </div>
-            
                 <div class="contenedor-producto">
                     <div class="producto-imagenes">
                         <div class="contenedor-imagenes">

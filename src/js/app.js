@@ -181,18 +181,24 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Expandir submenús activos al cargar
-        document.querySelectorAll('.lista-item').forEach(item => {
-            const boton = item.querySelector('.lista-boton');
-            if (boton && boton.classList.contains('activo')) {
-                const menu = item.querySelector('.lista-show');
-                const chevron = item.querySelector('.lista-boton-clic');
-                if (menu && chevron) {
-                    menu.style.height = menu.scrollHeight + 'px';
-                    chevron.classList.add('arrow');
+        // Verificar si estamos en la página de producto
+        const isProductPage = document.querySelector('.contenedor-producto') !== null;
+
+        // Solo expandir si NO estamos en la página de producto
+        if (!isProductPage) {
+            // Expandir submenús activos al cargar
+            document.querySelectorAll('.lista-item').forEach(item => {
+                const boton = item.querySelector('.lista-boton');
+                if (boton && boton.classList.contains('activo')) {
+                    const menu = item.querySelector('.lista-show');
+                    const chevron = item.querySelector('.lista-boton-clic');
+                    if (menu && chevron) {
+                        menu.style.height = menu.scrollHeight + 'px';
+                        chevron.classList.add('arrow');
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
 

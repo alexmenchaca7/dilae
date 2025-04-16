@@ -20,13 +20,12 @@
 }
 
 .barra-lateral {
-    width: auto;
-    max-width: 30rem;
     display: flex;
     flex-direction: column;
     gap: 5rem;
     flex-shrink: 0; /* Evita que la barra lateral se reduzca */
     order: 1;
+    margin-bottom: 5rem;
 
     @include m.desktop {
         order: 0;
@@ -35,7 +34,7 @@
 
     h2 {
         margin: 0;
-        text-align: center;
+        text-align: left;
 
         @include m.desktop {
             text-align: left;

@@ -169,13 +169,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAgregarImagen = document.getElementById('agregar-imagen');
     
     let imageCount = 0;
-    const maxImages = 5;
+    const maxImages = 15;
 
     const contenedorFichas = document.getElementById('contenedor-fichas');
     const btnAgregarFicha = document.getElementById('agregar-ficha');
     
     let fichaCount = 0;
-    const maxFichas = 5;
+    const maxFichas = 15;
 
     // ------------- Funciones para subcategorías -------------
     function cargarSubcategorias(cargarAtributos = true) {
@@ -405,12 +405,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function crearNuevaFicha() {
-        const totalFichas = document.querySelectorAll('.contenedor-ficha').length;
-        if (totalFichas >= maxFichas) {
-            alert('Máximo de fichas técnicas alcanzado');
-            return;
-        }
-
         const nuevoContenedor = document.createElement('div');
         nuevoContenedor.className = 'formulario__campo contenedor-ficha';
         
@@ -421,34 +415,67 @@ document.addEventListener('DOMContentLoaded', function() {
                     name="nuevas_fichas[]"
                     accept="application/pdf"
                 >
+                <div class="mensaje-error text-red-600 text-sm"></div>
                 <button type="button" class="formulario__accion--secundario eliminar-ficha">Eliminar</button>
             </div>
         `;
 
+        const inputFile = nuevoContenedor.querySelector('.ficha-input');
+        const mensajeError = nuevoContenedor.querySelector('.mensaje-error');
+
+        inputFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const nombreOriginal = file.name;
+            const nombreSanitizado = nombreOriginal.replace(/[^a-zA-Z0-9_.-]/g, '_');
+
+            // Validación en tiempo real
+            fetch(`/admin/productos/verificar-ficha?nombre=${encodeURIComponent(nombreSanitizado)}`)
+                .then(response => {
+                    if(!response.ok) throw new Error('Error en la verificación');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.existe) {
+                        mensajeError.textContent = `⚠️ El archivo ${nombreOriginal} ya existe`;
+                        inputFile.value = '';
+                    } else {
+                        mensajeError.textContent = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    mensajeError.textContent = 'Error verificando la ficha';
+                });
+        });
 
         contenedorFichas.appendChild(nuevoContenedor);
-        
-        // Agregar evento de eliminación
         nuevoContenedor.querySelector('.eliminar-ficha').addEventListener('click', removeFicha);
     }
 
 
 
+
+
     function removeFicha(e) {
         const contenedor = e.target.closest('.formulario__campo');
-    
+        
         // Si es una ficha existente, crear input para eliminación
         if (contenedor.dataset.existente) {
-            const inputId = contenedor.querySelector('input[type="hidden"]');
-            const nuevoInput = document.createElement('input');
-            nuevoInput.type = 'hidden';
-            nuevoInput.name = 'fichas_eliminadas[]';
-            nuevoInput.value = inputId.value;
-            contenedorFichas.appendChild(nuevoInput);
+            const inputId = contenedor.querySelector('input[name="fichas_existentes[]"]');
+            if (inputId) {
+                const nuevoInput = document.createElement('input');
+                nuevoInput.type = 'hidden';
+                nuevoInput.name = 'fichas_eliminadas[]';
+                nuevoInput.value = inputId.value;
+                // Añadir al formulario, no al contenedor de fichas
+                document.querySelector('form').appendChild(nuevoInput);
+            }
         }
-        
         contenedor.remove();
     }
+
 
     // ------------- Event Listeners -------------
     categoriaSelect.addEventListener('change', cargarSubcategorias);
@@ -487,8 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
-
     // Configurar imágenes existentes
     document.querySelectorAll('.contenedor-imagen:not([data-existente="true"])').forEach(contenedor => {
         const preview = contenedor.querySelector('.imagen-preview');
@@ -510,7 +535,23 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.contenedor-ficha[data-existente]').forEach(contenedor => {
         const btnEliminar = contenedor.querySelector('.eliminar-ficha');
         btnEliminar.addEventListener('click', function(e) {
-            contenedor.remove();
+            const contenedorFicha = e.target.closest('.contenedor-ficha');
+
+            if (contenedorFicha && contenedorFicha.dataset.existente === 'true') {
+                const idFicha = contenedorFicha.querySelector('input[name="fichas_existentes[]"]').value;
+
+                // Crear un input oculto para marcar la ficha como eliminada
+                const inputEliminado = document.createElement('input');
+                inputEliminado.type = 'hidden';
+                inputEliminado.name = 'fichas_eliminadas[]';
+                inputEliminado.value = idFicha;
+
+                // Añadir el input al formulario (asumiendo que el formulario es el padre del contenedor)
+                contenedorFicha.closest('form').appendChild(inputEliminado);
+
+                // Remover visualmente la ficha
+                contenedorFicha.remove();
+            }
         });
     });
 

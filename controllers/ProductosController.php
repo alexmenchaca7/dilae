@@ -97,6 +97,21 @@ class ProductosController {
         ], 'admin-layout');
     }
 
+    public static function verificarFicha() {
+        if(!is_auth()) {
+            header('HTTP/1.1 401 Unauthorized');
+            exit;
+        }
+    
+        $nombre = $_GET['nombre'] ?? '';
+        $nombreSanitizado = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $nombre);
+        $existe = FichaProducto::where('url', $nombreSanitizado);
+        
+        header('Content-Type: application/json');
+        echo json_encode(['existe' => !empty($existe)]);
+        exit;
+    }    
+
     public static function crear(Router $router) {
         if(!is_auth()) {
             header('Location: /login');
@@ -248,22 +263,37 @@ class ProductosController {
             } 
             // Calcular total de imágenes (existentes no eliminadas + nuevas)
             $existentes_no_eliminadas = count(array_diff($_POST['imagenes_existentes'] ?? [], $_POST['imagenes_eliminadas'] ?? []));
-            if (($existentes_no_eliminadas + count($imagenes)) > 5) {
-                $alertas['error'][] = 'Máximo 5 imágenes permitidas por producto';
+            if (($existentes_no_eliminadas + count($imagenes)) > 15) {
+                $alertas['error'][] = 'Máximo 15 imágenes permitidas por producto';
             }
 
             // Validar fichas técnicas
             $fichas = [];
+            $nombresFichas = [];
             foreach ($_FILES as $key => $file) {
-                 // Asegurarse que el nombre no esté vacío y sea un input de 'nuevas_fichas'
-                 if (strpos($key, 'nuevas_fichas') === 0 && !empty($file['name'][0])) { 
-                    // Iterar sobre los posibles archivos subidos en el array
+                if (strpos($key, 'nuevas_fichas') === 0 && !empty($file['name'][0])) { 
                     foreach($file['tmp_name'] as $index => $tmp_name) {
                         if ($file['error'][$index] === UPLOAD_ERR_OK && is_uploaded_file($tmp_name)) {
+                            $nombreOriginal = basename($file['name'][$index]);
+                            $nombreSanitizado = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $nombreOriginal);
+                            
+                            // Verificar duplicados en esta misma subida
+                            if(in_array($nombreSanitizado, $nombresFichas)) {
+                                $alertas['error'][] = "La ficha '$nombreSanitizado' está duplicada en los archivos seleccionados";
+                                continue;
+                            }
+                            
+                            // Verificar en base de datos
+                            $existeFicha = FichaProducto::where('url', $nombreSanitizado);
+                            if (!empty($existeFicha)) {
+                                $alertas['error'][] = "La ficha '$nombreSanitizado' ya existe en el sistema";
+                            }
+
                             $fichas[] = [
                                 'tmp' => $tmp_name,
-                                'name' => $file['name'][$index] // Usar el nombre correcto del índice
+                                'name' => $nombreSanitizado
                             ];
+                            $nombresFichas[] = $nombreSanitizado;
                         }
                     }
                 }
@@ -271,8 +301,8 @@ class ProductosController {
 
             // Calcular total de fichas (existentes no eliminadas + nuevas)
             $fichas_existentes_no_eliminadas = count(array_diff($_POST['fichas_existentes'] ?? [], $_POST['fichas_eliminadas'] ?? []));
-             if (($fichas_existentes_no_eliminadas + count($fichas)) > 5) {
-                $alertas['error'][] = 'Máximo 5 fichas técnicas permitidas por producto';
+             if (($fichas_existentes_no_eliminadas + count($fichas)) > 15) {
+                $alertas['error'][] = 'Máximo 15 fichas técnicas permitidas por producto';
             }
     
             if(empty($alertas['error'])) {
@@ -317,13 +347,20 @@ class ProductosController {
                     if (!is_dir($carpetaFichas)) mkdir($carpetaFichas, 0755, true);
 
                     foreach ($fichas as $fichaData) {
-                        $nombreUnico = md5(uniqid(rand(), true)) . '.pdf';
+                        $nombreSanitizado = $fichaData['name'];
+                        $rutaCompleta = "$carpetaFichas/$nombreSanitizado";
+                        
+                        // Verificar nuevamente por si hay duplicados
+                        if(file_exists($rutaCompleta)) {
+                            $alertas['error'][] = "La ficha '$nombreSanitizado' ya existe en el servidor";
+                            continue;
+                        }
                         
                         try {
-                            move_uploaded_file($fichaData['tmp'], "$carpetaFichas/$nombreUnico");
+                            move_uploaded_file($fichaData['tmp'], $rutaCompleta);
                             
                             $fichaProducto = new FichaProducto([
-                                'url' => $nombreUnico,
+                                'url' => $nombreSanitizado,
                                 'productoId' => $producto->id
                             ]);
                             $fichaProducto->guardar();
@@ -464,10 +501,66 @@ class ProductosController {
                 }
             }
 
-            if(empty($alertas)) {
+            // Validar fichas técnicas
+            $fichasNuevas = []; // Cambiamos el nombre para diferenciar
+            $nombresFichas = [];
+            foreach ($_FILES as $key => $file) {
+                if (strpos($key, 'nuevas_fichas') === 0 && !empty($file['name'][0])) {
+                    foreach($file['tmp_name'] as $index => $tmp_name) {
+                        if ($file['error'][$index] === UPLOAD_ERR_OK && is_uploaded_file($tmp_name)) {
+                            $nombreOriginal = basename($file['name'][$index]);
+                            $nombreSanitizado = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $nombreOriginal);
+
+                            // Verificar duplicados en la misma subida
+                            if(in_array($nombreSanitizado, $nombresFichas)) {
+                                $alertas['error'][] = "La ficha '$nombreSanitizado' está duplicada en los archivos seleccionados";
+                                continue;
+                            }
+
+                            // Verificar en base de datos
+                            $existeFicha = FichaProducto::where('url', $nombreSanitizado);
+                            if (!empty($existeFicha)) {
+                                $alertas['error'][] = "La ficha '$nombreSanitizado' ya existe en el sistema";
+                            }
+
+                            $fichasNuevas[] = [
+                                'tmp' => $tmp_name,
+                                'name' => $nombreSanitizado
+                            ];
+                            $nombresFichas[] = $nombreSanitizado;
+                        }
+                    }
+                }
+            }
+
+            // Calcular total de fichas (existentes no eliminadas + nuevas)
+            $fichas_existentes_no_eliminadas = count(array_diff($_POST['fichas_existentes'] ?? [], $_POST['fichas_eliminadas'] ?? []));
+            if (($fichas_existentes_no_eliminadas + count($fichasNuevas)) > 15) {
+                $alertas['error'][] = 'Máximo 15 fichas técnicas permitidas por producto';
+            }
+
+            if(!empty($alertas)) {
+                $fichas = FichaProducto::whereField('productoId', $producto->id);
+            } else {
                 $resultado = $producto->guardar();
 
                 if($resultado) {
+                    // Eliminar fichas marcadas para eliminar
+                    $fichasEliminadas = $_POST['fichas_eliminadas'] ?? [];
+                    if (!empty($fichasEliminadas)) {
+                        foreach ($fichasEliminadas as $id) {
+                            $id = (int)$id;
+                            $ficha = FichaProducto::find($id);
+                            if ($ficha) {
+                                $rutaFicha = "../public/fichas/{$ficha->url}";
+                                if (file_exists($rutaFicha)) {
+                                    unlink($rutaFicha);
+                                }
+                                $ficha->eliminar();
+                            }
+                        }
+                    }
+    
                     // Procesar NUEVAS imágenes
                     if(isset($_FILES['nuevas_imagenes'])) {
                         $manager = new ImageManager(new Driver());
@@ -478,7 +571,7 @@ class ProductosController {
                                 $nombreUnico = md5(uniqid(rand(), true));
                                 try {
                                     $imagen = $manager->read($tmp_name);
-
+    
                                     // Redimensionar manteniendo relación de aspecto
                                     $imagen->contain(800, 800);
                                     
@@ -499,38 +592,44 @@ class ProductosController {
                         }
                     }
     
-                    // Procesar NUEVAS fichas
-                    if(isset($_FILES['nuevas_fichas'])) {
-                        $carpetaFichas = '../public/fichas';
-                        foreach($_FILES['nuevas_fichas']['tmp_name'] as $key => $tmp_name) {
-                            if($_FILES['nuevas_fichas']['error'][$key] === UPLOAD_ERR_OK) {
-                                $nombreUnico = md5(uniqid(rand(), true)) . '.pdf';
-                                move_uploaded_file($tmp_name, "$carpetaFichas/$nombreUnico");
-                                
-                                $fichaProducto = new FichaProducto([
-                                    'url' => $nombreUnico,
-                                    'productoId' => $producto->id
-                                ]);
-                                $fichaProducto->guardar();
-                            }
+                    // Procesar nuevas fichas técnicas
+                    $carpetaFichas = '../public/fichas';
+
+                    if (!is_dir($carpetaFichas)) mkdir($carpetaFichas, 0755, true);
+
+                    foreach ($fichasNuevas as $fichaData) {
+                        $nombreSanitizado = $fichaData['name'];
+                        $rutaCompleta = "$carpetaFichas/$nombreSanitizado";
+
+                        // Verificar nuevamente por duplicados (esto podría ser redundante pero es una capa extra)
+                        if(file_exists($rutaCompleta)) {
+                            $alertas['error'][] = "La ficha '$nombreSanitizado' ya existe en el servidor";
+                            continue;
+                        }
+
+                        try {
+                            move_uploaded_file($fichaData['tmp'], $rutaCompleta);
+
+                            $fichaProducto = new FichaProducto([
+                                'url' => $nombreSanitizado,
+                                'productoId' => $producto->id
+                            ]);
+                            $fichaProducto->guardar();
+                        } catch (Exception $e) {
+                            error_log("Error procesando ficha técnica: " . $e->getMessage());
+                            $alertas['error'][] = 'Error al procesar una de las fichas técnicas';
+                            continue;
                         }
                     }
-
-                    // Eliminar elementos marcados
+    
+                    // Eliminar imagenes marcadas para eliminar
                     if(!empty($_POST['imagenes_eliminadas'])) {
                         foreach($_POST['imagenes_eliminadas'] as $id) {
                             $imagen = ImagenProducto::find($id);
                             if($imagen) $imagen->eliminar();
                         }
                     }
-
-                    if(!empty($_POST['fichas_eliminadas'])) {
-                        foreach($_POST['fichas_eliminadas'] as $id) {
-                            $ficha = FichaProducto::find($id);
-                            if($ficha) $ficha->eliminar();
-                        }
-                    }
-
+    
                     // Actualizar atributos
                     ProductoAtributo::eliminarTodos($producto->id);
                     if(isset($_POST['atributos'])) {
@@ -547,8 +646,9 @@ class ProductosController {
                             }
                         }
                     }
-
+    
                     header('Location: /admin/productos');
+                    exit;
                 }
             }
         }
