@@ -100,7 +100,7 @@
                             <?php endif; ?>
                         </div>
     
-                        <a href="#">Paneles Solaresss</a>
+                        <a href="#">Paneles Solares</a>
                         <a href="/proyectos">Proyectos</a>
                         <a href="/blog">Blog</a>
                         <a href="/contacto">Contacto</a>
