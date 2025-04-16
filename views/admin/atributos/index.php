@@ -7,7 +7,7 @@
                 type="text" 
                 name="busqueda" 
                 class="input-busqueda" 
-                placeholder="Buscar por nombre o tipo..."
+                placeholder="Buscar por nombre, tipo o unidad"
                 value="<?php echo htmlspecialchars($_GET['busqueda'] ?? ''); ?>"
             >
             <button type="submit" class="boton-busqueda">
@@ -28,7 +28,8 @@
             <thead class="table__thead">
                 <tr>
                     <th scope="col" class="table__th">Nombre</th>
-                    <th scope="col" class="table__th">Tipo</th>
+                    <th scope="col" class="table__th">Unidad</th>
+                    <th scope="col" class="table__th">Tipo de dato</th>
                     <th scope="col" class="table__th"></th>
                 </tr>
             </thead>
@@ -37,6 +38,7 @@
                 <?php foreach($atributos as $atributo): ?>
                     <tr class="table__tr">
                         <td class="table__td"><?php echo $atributo->nombre; ?></td>
+                        <td class="table__td"><?php echo $atributo->unidad; ?></td>
                         <td class="table__td"><?php echo ucfirst($atributo->tipo); ?></td>
                         <td class="table__td--acciones">
                             <a class="table__accion table__accion--editar" href="/admin/atributos/editar?id=<?php echo $atributo->id; ?>">

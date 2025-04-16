@@ -14,6 +14,19 @@
         >
     </div>
 
+    <!-- Unidad del Atributo -->
+    <div class="formulario__campo">
+        <label for="unidad" class="formulario__label">Unidad</label>
+        <input 
+            type="text"
+            class="formulario__input"
+            id="unidad"
+            name="unidad"
+            placeholder="Ej: W, V, Lm"
+            value="<?php echo $atributo->unidad ?? ''; ?>"
+        >
+    </div>
+
     <!-- Selección del Tipo de Atributo -->
     <div class="formulario__campo">
         <label for="tipo" class="formulario__label">Tipo</label>

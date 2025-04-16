@@ -208,3 +208,4 @@ export function dev() { // No se pasa la función de done porque es un watch
 
 // Flujo de trabajo por defecto
 export default series(js, css, imagenes, dev);
+export const build = series(js, css, imagenes);

@@ -73,6 +73,7 @@
         max-width: 100%;      // Asegura que no exceda el ancho de la celda
         object-fit: contain;  // Mantiene el aspect ratio dentro del alto/ancho definido
         margin: 0 auto;       // Centra horizontalmente si object-fit deja espacio
+        mix-blend-mode: multiply;
     }
 
     // Estilo opcional para el texto "S/I" ---

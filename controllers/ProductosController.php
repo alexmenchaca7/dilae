@@ -290,9 +290,13 @@ class ProductosController {
                         
                         try {
                             $imagen = $manager->read($imagenData['tmp']);
-                            $imagen->cover(800, 800);
+
+                            // Redimensionar manteniendo relación de aspecto
+                            $imagen->contain(800, 800);
+                            
+                            // Guardar con calidad
+                            $imagen->toWebp(85)->save("$carpetaFinal/$nombreUnico.webp");
                             $imagen->toPng()->save("$carpetaFinal/$nombreUnico.png");
-                            $imagen->toWebp()->save("$carpetaFinal/$nombreUnico.webp");
                             
                             $imagenProducto = new ImagenProducto([
                                 'url' => $nombreUnico,
@@ -470,13 +474,17 @@ class ProductosController {
                         $carpetaFinal = '../public/img/productos';
                         
                         foreach($_FILES['nuevas_imagenes']['tmp_name'] as $key => $tmp_name) {
-                            if($_FILES['nuevas_imagenes']['error'][$key] === UPLOAD_ERR_OK) {
+                            if($_FILES['nuevas_imagenes']['error'][$key] === UPLOAD_ERR_OK && is_uploaded_file($tmp_name)) {
                                 $nombreUnico = md5(uniqid(rand(), true));
                                 try {
                                     $imagen = $manager->read($tmp_name);
-                                    $imagen->cover(800, 800);
+
+                                    // Redimensionar manteniendo relación de aspecto
+                                    $imagen->contain(800, 800);
+                                    
+                                    // Guardar con calidad
+                                    $imagen->toWebp(85)->save("$carpetaFinal/$nombreUnico.webp");
                                     $imagen->toPng()->save("$carpetaFinal/$nombreUnico.png");
-                                    $imagen->toWebp()->save("$carpetaFinal/$nombreUnico.webp");
                                     
                                     $imagenProducto = new ImagenProducto([
                                         'url' => $nombreUnico,
@@ -485,6 +493,7 @@ class ProductosController {
                                     $imagenProducto->guardar();
                                 } catch (Exception $e) {
                                     error_log("Error procesando imagen: " . $e->getMessage());
+                                    $alertas['error'][] = 'Error al procesar una de las imágenes'; // Mostrar error al usuario
                                 }
                             }
                         }

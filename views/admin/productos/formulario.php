@@ -79,7 +79,7 @@
             <div class="formulario__campo contenedor-imagen" data-existente="true">
                 <div class="contenedor-imagen-preview">
                     <div class="imagen-preview">
-                        <img src="/img/productos/<?= $imagen->url ?>.webp" alt="Imagen existente">
+                        <img src="/img/productos/<?= $imagen->url ?>.webp" alt="<?php echo $producto->nombre; ?>">
                         <input type="hidden" name="imagenes_existentes[]" value="<?= $imagen->id ?>">
                     </div>
                     <button type="button" class="formulario__accion--secundario eliminar-imagen">Eliminar</button>
@@ -104,7 +104,7 @@
                         $atributosProcesados[$atributo->id] = true;
                 ?>
                 <div class="atributo-group" data-atributo-id="<?= $atributo->id ?>" data-renderizado-php="true">
-                    <label class="formulario__label"><?= htmlspecialchars($atributo->nombre) ?></label>
+                    <label class="formulario__label"><?= htmlspecialchars($atributo->nombre)?> (<?php echo $atributo->unidad; ?>)</label>
                     <div class="atributo-inputs">
                         <?php 
                             $valores = $atributosValores[$atributo->id] ?? [''];
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ------------- Funciones para imágenes -------------
     function crearNuevaImagen() {
-        const totalImagenes = document.querySelectorAll('.contenedor-imagen').length;
+        const totalImagenes = document.querySelectorAll('.contenedor-imagen:not([data-existente="true"])').length;
         if (totalImagenes >= maxImages) {
             alert('Máximo de imágenes alcanzado');
             return;
@@ -308,8 +308,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const nuevoContenedor = document.createElement('div');
         nuevoContenedor.className = 'formulario__campo contenedor-imagen';
         
-        // Usar timestamp para nombres únicos
-        const timestamp = Date.now();
         nuevoContenedor.innerHTML = `
             <div class="contenedor-imagen-preview">
                 <div class="imagen-preview">
@@ -334,6 +332,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         inputFile.addEventListener('change', previewImage);
         previewElement.addEventListener('click', () => inputFile.click());
+
+        // Añadir evento de eliminación
+        nuevoContenedor.querySelector('.eliminar-imagen').addEventListener('click', removeImage);
     }
 
     function previewImage(e) {
@@ -458,11 +459,12 @@ document.addEventListener('DOMContentLoaded', function() {
     btnAgregarFicha.addEventListener('click', crearNuevaFicha);
     
     // Delegación de eventos
-    contenedorImagenes.addEventListener('click', function(e) {
+    document.addEventListener('click', function(e) {
         if (e.target.classList.contains('eliminar-imagen')) {
             removeImage(e);
         }
     });
+
 
     // ------------- Inicialización -------------
     if (window.location.pathname.includes('/crear')) {
@@ -488,6 +490,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // Configurar imágenes existentes
+    document.querySelectorAll('.contenedor-imagen:not([data-existente="true"])').forEach(contenedor => {
+        const preview = contenedor.querySelector('.imagen-preview');
+        const input = contenedor.querySelector('input[type="file"]');
+        if (preview && input) {
+            preview.addEventListener('click', () => input.click());
+            input.addEventListener('change', previewImage);
+        }
+    });
+
     document.querySelectorAll('.contenedor-imagen[data-existente]').forEach(contenedor => {
         const btnEliminar = contenedor.querySelector('.eliminar-imagen');
         btnEliminar.addEventListener('click', function(e) {

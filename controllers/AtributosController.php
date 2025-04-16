@@ -5,6 +5,9 @@ namespace Controllers;
 use MVC\Router;
 use Model\Atributo;
 use Classes\Paginacion;
+use Model\ProductoAtributo;
+use Model\CategoriaAtributo;
+use Model\SubcategoriaAtributo;
 
 class AtributosController {
 
@@ -134,12 +137,37 @@ class AtributosController {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!is_auth()) {
+                header('Location: /login');
+            }
+
             $id = $_POST['id'];
             $atributo = Atributo::find($id);
+
             if (!$atributo) {
                 header('Location: /admin/atributos');
             }
+
+            // Eliminar relaciones en todas las tablas usando whereField
+            $relaciones = CategoriaAtributo::whereField('atributoId', $id);
+            foreach($relaciones as $relacion) {
+                $relacion->eliminar();
+            }
+
+            $relacionesSub = SubcategoriaAtributo::whereField('atributoId', $id);
+            foreach($relacionesSub as $relacion) {
+                $relacion->eliminar();
+            }
+
+            $relacionesProd = ProductoAtributo::whereField('atributoId', $id);
+            foreach($relacionesProd as $relacion) {
+                $relacion->eliminar();
+            }
+
+            // Eliminar el atributo
             $resultado = $atributo->eliminar();
+
+
             if ($resultado) {
                 header('Location: /admin/atributos');
             }

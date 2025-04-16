@@ -5,16 +5,17 @@ namespace Model;
 class Atributo extends ActiveRecord {
     
     // Arreglo de columnas para identificar que forma van a tener los datos
-    protected static $columnasDB = ['id', 'nombre', 'tipo'];
+    protected static $columnasDB = ['id', 'nombre', 'tipo', 'unidad'];
     protected static $tabla = 'atributos';  
 
     // Propiedad con las columnas a buscar
-    protected static $buscarColumns = ['nombre', 'tipo'];
+    protected static $buscarColumns = ['nombre', 'tipo', 'unidad'];
 
 
     public $id;
     public $nombre;
     public $tipo;
+    public $unidad;
 
 
     public function __construct($args = [])
@@ -22,6 +23,7 @@ class Atributo extends ActiveRecord {
         $this->id = $args['id'] ?? null;
         $this->nombre = $args['nombre'] ?? '';
         $this->tipo = $args['tipo'] ?? 'texto';
+        $this->unidad = $args['unidad'] ?? '';
     }
 
 
@@ -32,6 +34,9 @@ class Atributo extends ActiveRecord {
         }
         if(!$this->tipo) {
             self::$alertas['error'][] = 'El tipo del atributo es obligatorio';
+        }
+        if(!$this->unidad) {
+            self::$alertas['error'][] = 'La unidad del atributo es obligatoria';
         }
         return self::$alertas;
     }
