@@ -17,7 +17,7 @@
             </div>
         </section>
 
-        <img loading="lazy" src="../build/img/nosotros.jpg" alt="Imagen nosotros">
+        <img loading="lazy" src="/build/img/nosotros.jpg" alt="Imagen nosotros">
     </div>
 </main>
 
@@ -71,16 +71,16 @@
             </p>
 
             <a target="_blank" class="boton-whatsapp" href="https://wa.me/3311162324">
-                <img src="build/img/icon_whatsapp.svg" alt="Icono WhatsApp">
+                <img src="/build/img/icon_whatsapp.svg" alt="Icono WhatsApp">
                 Contáctanos vía WhatsApp
             </a>
         </section>
 
         <picture class="imagen-contacto">
-            <source srcset="../build/img/contacto.avif" type="image/avif">
-            <source srcset="../build/img/contacto.webp" type="image/webp">
-            <source srcset="./build/img/contacto.png" type="image/png">
-            <img loading="lazy" src="../build/img/contacto.png" alt="Imagen Contacto">
+            <source srcset="/build/img/contacto.avif" type="image/avif">
+            <source srcset="/build/img/contacto.webp" type="image/webp">
+            <source srcset="/build/img/contacto.png" type="image/png">
+            <img loading="lazy" src="/build/img/contacto.png" alt="Imagen Contacto">
         </picture>
     </div>
 </div>
@@ -118,10 +118,10 @@
         <article class="entrada-blog">
             <div class="imagen">
                 <picture>
-                    <source srcset="build/img/entrada1.avif" type="image/avif">
-                    <source srcset="build/img/entrada1.webp" type="image/webp">
-                    <source srcset="build/img/entrada1.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/entrada1.jpg" alt="Imagen entrada">
+                    <source srcset="/build/img/entrada1.avif" type="image/avif">
+                    <source srcset="/build/img/entrada1.webp" type="image/webp">
+                    <source srcset="/build/img/entrada1.jpg" type="image/jpeg">
+                    <img loading="lazy" src="/build/img/entrada1.jpg" alt="Imagen entrada">
                 </picture>
             </div>
 
@@ -137,10 +137,10 @@
         <article class="entrada-blog">
             <div class="imagen">
                 <picture>
-                    <source srcset="build/img/entrada1.avif" type="image/avif">
-                    <source srcset="build/img/entrada1.webp" type="image/webp">
-                    <source srcset="build/img/entrada1.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/entrada1.jpg" alt="Imagen entrada">
+                    <source srcset="/build/img/entrada1.avif" type="image/avif">
+                    <source srcset="/build/img/entrada1.webp" type="image/webp">
+                    <source srcset="/build/img/entrada1.jpg" type="image/jpeg">
+                    <img loading="lazy" src="/build/img/entrada1.jpg" alt="Imagen entrada">
                 </picture>
             </div>
 
@@ -155,10 +155,10 @@
         <article class="entrada-blog">
             <div class="imagen">
                 <picture>
-                    <source srcset="build/img/entrada1.avif" type="image/avif">
-                    <source srcset="build/img/entrada1.webp" type="image/webp">
-                    <source srcset="build/img/entrada1.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/entrada1.jpg" alt="Imagen entrada">
+                    <source srcset="/build/img/entrada1.avif" type="image/avif">
+                    <source srcset="/build/img/entrada1.webp" type="image/webp">
+                    <source srcset="/build/img/entrada1.jpg" type="image/jpeg">
+                    <img loading="lazy" src="/build/img/entrada1.jpg" alt="Imagen entrada">
                 </picture>
             </div>
 
@@ -174,10 +174,10 @@
         <article class="entrada-blog">
             <div class="imagen">
                 <picture>
-                    <source srcset="build/img/entrada1.avif" type="image/avif">
-                    <source srcset="build/img/entrada1.webp" type="image/webp">
-                    <source srcset="build/img/entrada1.jpg" type="image/jpeg">
-                    <img loading="lazy" src="build/img/entrada1.jpg" alt="Imagen entrada">
+                    <source srcset="/build/img/entrada1.avif" type="image/avif">
+                    <source srcset="/build/img/entrada1.webp" type="image/webp">
+                    <source srcset="/build/img/entrada1.jpg" type="image/jpeg">
+                    <img loading="lazy" src="/build/img/entrada1.jpg" alt="Imagen entrada">
                 </picture>
             </div>
 
