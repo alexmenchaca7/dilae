@@ -7,9 +7,12 @@
     use Model\Subcategoria;
 
     // Obtener todas las categorías con sus subcategorías
-    $categoriasMenu = Categoria::all();
+    $categoriasMenu = Categoria::ordenar('posicion', 'ASC');
     foreach ($categoriasMenu as $categoria) {
-        $categoria->subcategorias = Subcategoria::whereField('categoriaId', $categoria->id);
+        $categoria->subcategorias = Subcategoria::metodoSQL([
+            'condiciones' => ["categoriaId = '{$categoria->id}'"],
+            'orden' => 'posicion ASC'
+        ]);
     }
 
     // Inicializar variables (asumiendo que vienen del controlador)

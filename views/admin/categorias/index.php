@@ -51,6 +51,23 @@
                                         <li>
                                             <?php echo $subcategoria->nombre; ?>
 
+                                            <!-- Botones de movimiento -->
+                                            <div class="acciones-mover">
+                                                <form method="POST" action="/admin/subcategorias/mover-arriba">
+                                                    <input type="hidden" name="id" value="<?php echo $subcategoria->id; ?>">
+                                                    <button type="submit" class="boton-mover">
+                                                        <i class="fas fa-chevron-up"></i>
+                                                    </button>
+                                                </form>
+                                                
+                                                <form method="POST" action="/admin/subcategorias/mover-abajo">
+                                                    <input type="hidden" name="id" value="<?php echo $subcategoria->id; ?>">
+                                                    <button type="submit" class="boton-mover">
+                                                        <i class="fas fa-chevron-down"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+
                                             <!-- Enlaces de acciones: Editar y Eliminar -->
                                             <div class="table__td--acciones-subcategorias">
                                                 <a class="table__accion table__accion--editar" href="/admin/subcategorias/editar?id=<?php echo $subcategoria->id; ?>">
@@ -71,6 +88,23 @@
                         </td>
 
                         <td class="table__td--acciones">
+                            <!-- Botones de movimiento -->
+                            <div class="acciones-mover">
+                                <form method="POST" action="/admin/categorias/mover-arriba">
+                                    <input type="hidden" name="id" value="<?php echo $categoria->id; ?>">
+                                    <button type="submit" class="boton-mover">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </button>
+                                </form>
+                                
+                                <form method="POST" action="/admin/categorias/mover-abajo">
+                                    <input type="hidden" name="id" value="<?php echo $categoria->id; ?>">
+                                    <button type="submit" class="boton-mover">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </form>
+                            </div>
+
                             <a class="table__accion table__accion--editar" href="/admin/categorias/editar?id=<?php echo $categoria->id; ?>">
                                 <i class="fa-solid fa-user-pen"></i>
                                 Editar

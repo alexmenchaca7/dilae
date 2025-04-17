@@ -21,9 +21,13 @@ class PaginasController {
     }
 
     public static function productos(Router $router, $categoria_slug = null, $subcategoria_slug = null) {
-        $categorias = Categoria::all();
+        $categorias = Categoria::ordenar('posicion', 'ASC');
+
         foreach ($categorias as $categoria) {
-            $categoria->subcategorias = Subcategoria::whereField('categoriaId', $categoria->id);
+            $categoria->subcategorias = Subcategoria::metodoSQL([
+                'condiciones' => ["categoriaId = '{$categoria->id}'"],
+                'orden' => 'posicion ASC'
+            ]);
         }
 
         $condiciones = [];
@@ -156,9 +160,12 @@ class PaginasController {
         }
 
         // Obtener datos
-        $categorias = Categoria::all();
+        $categorias = Categoria::ordenar('posicion', 'ASC');
         foreach ($categorias as $cat) {
-            $cat->subcategorias = Subcategoria::whereField('categoriaId', $cat->id);
+            $cat->subcategorias = Subcategoria::metodoSQL([
+                'condiciones' => ["categoriaId = '{$cat->id}'"],
+                'orden' => 'posicion ASC'
+            ]);
         }
 
         $producto->imagenes = ImagenProducto::whereField('productoId', $producto->id);

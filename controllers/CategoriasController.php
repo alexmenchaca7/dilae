@@ -55,7 +55,7 @@ class CategoriasController {
         // Obtener registros
         $params = [
             'condiciones' => $condiciones,
-            'orden' => 'nombre ASC',
+            'orden' => 'posicion ASC',
             'limite' => $registros_por_pagina,
             'offset' => $paginacion->offset(),
         ];
@@ -63,8 +63,7 @@ class CategoriasController {
         $categorias = Categoria::metodoSQL($params);
 
         // Obtener subcategorías agrupadas
-        $subcategorias = Subcategoria::all();
-        $subcategoriasPorCategoria = [];
+        $subcategorias = Subcategoria::ordenar('posicion', 'ASC');
         foreach ($subcategorias as $subcategoria) {
             $subcategoriasPorCategoria[$subcategoria->categoriaId][] = $subcategoria;
         }
@@ -78,6 +77,55 @@ class CategoriasController {
             'busqueda' => $busqueda
         ], 'admin-layout');
     }
+
+    public static function moverArriba(Router $router) {
+        if (!is_auth()) header('Location: /login');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+            $categoriaActual = Categoria::find($id);
+            
+            if ($categoriaActual) {
+                // Buscar la categoría que está arriba
+                $categoriaAnterior = Categoria::where('posicion', $categoriaActual->posicion - 1);
+                
+                if ($categoriaAnterior) {
+                    // Intercambiar posiciones
+                    $categoriaActual->posicion--;
+                    $categoriaAnterior->posicion++;
+                    
+                    $categoriaActual->guardar();
+                    $categoriaAnterior->guardar();
+                }
+            }
+            header('Location: /admin/categorias');
+        }
+    }
+    
+    public static function moverAbajo(Router $router) {
+        if (!is_auth()) header('Location: /login');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+            $categoriaActual = Categoria::find($id);
+            
+            if ($categoriaActual) {
+                // Buscar la categoría que está abajo
+                $categoriaSiguiente = Categoria::where('posicion', $categoriaActual->posicion + 1);
+                
+                if ($categoriaSiguiente) {
+                    // Intercambiar posiciones
+                    $categoriaActual->posicion++;
+                    $categoriaSiguiente->posicion--;
+                    
+                    $categoriaActual->guardar();
+                    $categoriaSiguiente->guardar();
+                }
+            }
+            header('Location: /admin/categorias');
+        }
+    }    
+    
 
     public static function crear(Router $router) {
         if (!is_auth()) {
@@ -96,6 +144,10 @@ class CategoriasController {
             $alertas = $categoria->validar();
     
             if (empty($alertas)) {
+                // Obtener la máxima posición actual
+                $maxPosicion = (int)Categoria::max('posicion');
+                $categoria->posicion = $maxPosicion + 1;
+                
                 $resultado = $categoria->guardar();
     
                 if ($resultado) {

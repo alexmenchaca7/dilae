@@ -32,6 +32,18 @@
         padding: 1.5rem 1rem;
         vertical-align: middle; // IMPORTANTE: Centra verticalmente todo en la celda
 
+        ul.subcategorias-lista {
+            li {
+                position: relative;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid color.adjust(v.$gris, $lightness: 30%);
+                
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+        }
+
         &--imagen {
             width: 10rem;
             text-align: center;
@@ -100,6 +112,78 @@
 
         &:hover {
             cursor: pointer;
+        }
+    }
+}
+
+.acciones-mover {
+    display: inline-flex;
+    gap: 0.5rem;
+    margin-right: 1.5rem;
+    
+    form {
+        display: inline-block;
+    }
+}
+
+.boton-mover {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: v.$gris;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.3rem;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        color: v.$gris-oscuro;
+        background-color: color.adjust(v.$gris, $lightness: 40%);
+    }
+    
+    i {
+        font-size: 1.4rem;
+        vertical-align: middle;
+    }
+}
+
+.table__td--acciones-subcategorias {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-left: auto;
+    
+    .table__accion {
+        font-size: 1.3rem;
+        padding: 0.4rem 0.8rem;
+        
+        &--editar {
+            color: color.adjust(v.$primario, $lightness: -10%);
+        }
+        
+        &--eliminar {
+            color: color.adjust(v.$rojo, $lightness: -10%);
+        }
+    }
+}
+
+// Ajustes específicos para las subcategorías
+.subcategorias-lista {
+    li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        
+        > :first-child {
+            flex-grow: 1;
+            padding-right: 1rem;
+        }
+        
+        .acciones-mover {
+            order: -1;
+        }
+        
+        &:hover {
+            background-color: color.adjust(v.$blanco, $lightness: -2%);
         }
     }
 }

@@ -56,12 +56,16 @@ $router->get('/admin/productos/verificar-ficha', [ProductosController::class, 'v
 $router->get('/admin/dashboard', [DashboardController::class, 'index']);
 
 $router->get('/admin/categorias', [CategoriasController::class, 'index']);
+$router->post('/admin/categorias/mover-arriba', [CategoriasController::class, 'moverArriba']);
+$router->post('/admin/categorias/mover-abajo', [CategoriasController::class, 'moverAbajo']);
 $router->get('/admin/categorias/crear', [CategoriasController::class, 'crear']);
 $router->post('/admin/categorias/crear', [CategoriasController::class, 'crear']);
 $router->get('/admin/categorias/editar', [CategoriasController::class, 'editar']);
 $router->post('/admin/categorias/editar', [CategoriasController::class, 'editar']);
 $router->post('/admin/categorias/eliminar', [CategoriasController::class, 'eliminar']);
 
+$router->post('/admin/subcategorias/mover-arriba', [SubcategoriasController::class, 'moverArriba']);
+$router->post('/admin/subcategorias/mover-abajo', [SubcategoriasController::class, 'moverAbajo']);
 $router->get('/admin/subcategorias/crear', [SubcategoriasController::class, 'crear']);
 $router->post('/admin/subcategorias/crear', [SubcategoriasController::class, 'crear']);
 $router->get('/admin/subcategorias/editar', [SubcategoriasController::class, 'editar']);

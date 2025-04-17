@@ -9,6 +9,60 @@ use Model\Subcategoria;
 use Model\SubcategoriaAtributo;
 
 class SubcategoriasController {
+    public static function moverArriba(Router $router) {
+        if (!is_auth()) header('Location: /login');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+            $subcategoria = Subcategoria::find($id);
+            
+            if ($subcategoria) {
+                // Buscar subcategoría anterior dentro de la misma categoría
+                $subcategoriaAnterior = Subcategoria::whereArray([
+                    'categoriaId' => $subcategoria->categoriaId,
+                    'posicion' => $subcategoria->posicion - 1
+                ]);
+                
+                if (!empty($subcategoriaAnterior)) {
+                    $subcategoriaAnterior = $subcategoriaAnterior[0];
+                    $subcategoria->posicion--;
+                    $subcategoriaAnterior->posicion++;
+                    
+                    $subcategoria->guardar();
+                    $subcategoriaAnterior->guardar();
+                }
+            }
+            header('Location: /admin/categorias');
+        }
+    }
+
+    public static function moverAbajo(Router $router) {
+        if (!is_auth()) header('Location: /login');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+            $subcategoria = Subcategoria::find($id);
+            
+            if ($subcategoria) {
+                // Buscar subcategoría siguiente dentro de la misma categoría
+                $subcategoriaSiguiente = Subcategoria::whereArray([
+                    'categoriaId' => $subcategoria->categoriaId,
+                    'posicion' => $subcategoria->posicion + 1
+                ]);
+                
+                if (!empty($subcategoriaSiguiente)) {
+                    $subcategoriaSiguiente = $subcategoriaSiguiente[0];
+                    $subcategoria->posicion++;
+                    $subcategoriaSiguiente->posicion--;
+                    
+                    $subcategoria->guardar();
+                    $subcategoriaSiguiente->guardar();
+                }
+            }
+            header('Location: /admin/categorias');
+        }
+    }
+
     public static function crear(Router $router) {
         if(!is_auth()) {
             header('Location: /login');
@@ -31,6 +85,10 @@ class SubcategoriasController {
             $alertas = $subcategoria->validar();
     
             if(empty($alertas)) {
+                // Obtener máxima posición dentro de la categoría
+                $maxPosicion = (int)Subcategoria::max('posicion', ['categoriaId' => $subcategoria->categoriaId]);
+                $subcategoria->posicion = $maxPosicion + 1;
+                
                 $resultado = $subcategoria->guardar();
     
                 if($resultado) {

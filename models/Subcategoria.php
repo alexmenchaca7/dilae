@@ -5,7 +5,7 @@ namespace Model;
 class Subcategoria extends ActiveRecord {
     
     // Arreglo de columnas para identificar que forma van a tener los datos
-    protected static $columnasDB = ['id', 'nombre', 'slug', 'categoriaId'];
+    protected static $columnasDB = ['id', 'nombre', 'slug', 'categoriaId', 'posicion'];
     protected static $tabla = 'subcategorias';  
 
     // Propiedad con las columnas a buscar
@@ -16,6 +16,7 @@ class Subcategoria extends ActiveRecord {
     public $nombre;
     public $slug;
     public $categoriaId;
+    public $posicion;
 
 
     public function __construct($args = [])
@@ -24,6 +25,7 @@ class Subcategoria extends ActiveRecord {
         $this->nombre = $args['nombre'] ?? '';
         $this->slug = $args['slug'] ?? '';
         $this->categoriaId = $args['categoriaId'] ?? '';
+        $this->posicion = $args['posicion'] ?? null;
     }
 
     // Validar formulario   

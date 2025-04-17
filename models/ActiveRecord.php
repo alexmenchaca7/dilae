@@ -382,4 +382,20 @@ class ActiveRecord {
         
         return $condiciones;
     }
+
+    public static function max($columna, $condiciones = []) {
+        $query = "SELECT MAX($columna) as max FROM " . static::$tabla;
+        
+        if (!empty($condiciones)) {
+            $where = [];
+            foreach ($condiciones as $key => $value) {
+                $where[] = "$key = '" . self::$conexion->escape_string($value) . "'";
+            }
+            $query .= " WHERE " . implode(' AND ', $where);
+        }
+        
+        $resultado = self::$conexion->query($query);
+        $max = $resultado->fetch_assoc();
+        return $max['max'] ?? 0;
+    }     
 }
