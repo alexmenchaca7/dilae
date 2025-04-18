@@ -229,11 +229,14 @@ class PaginasController {
             if(!$atributo) continue;
             
             if(!isset($atributos[$atributo->nombre])) {
-                $atributos[$atributo->nombre] = [];
+                $atributos[$atributo->nombre] = [
+                    'valores' => [],
+                    'unidad' => $atributo->unidad
+                ];
             }
             
             $valor = !empty($pa->valor_texto) ? $pa->valor_texto : $pa->valor_numero;
-            $atributos[$atributo->nombre][] = $valor;
+            $atributos[$atributo->nombre]['valores'][] = $valor;
         }
         
         return $atributos;
@@ -250,6 +253,7 @@ class PaginasController {
             if(!isset($atributos[$atributo->nombre])) {
                 $atributos[$atributo->nombre] = [
                     'tipo' => $atributo->tipo,
+                    'unidad' => $atributo->unidad,
                     'valores' => []
                 ];
             }

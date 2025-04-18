@@ -126,31 +126,76 @@
             <!-- Contenedor de productos -->
             <div class="productos">
                 <?php foreach ($productos as $producto): ?>
-                    <a class="producto" href="/productos/<?= 
-                        $producto->categoria->slug ?>/<?= 
-                        $producto->subcategoria ? $producto->subcategoria->slug : 'sin-subcategoria' ?>/<?= 
-                        $producto->slug ?>">
-                    <div class="imagen">
-                        <?php if($producto->imagen_principal): ?>
-                        <img loading="lazy" src="/img/productos/<?= $producto->imagen_principal->url ?>.webp" 
-                            alt="<?= $producto->nombre ?>">
-                        <?php else: ?>
-                        <img loading="lazy" src="/img/productos/default.webp" alt="Producto sin imagen">
-                        <?php endif; ?>
-                        <div class="linea"></div>
-                        <h3><?= $producto->nombre ?></h3>
-                    </div>
-                    <div class="detalles">
-                        <?php foreach ($producto->atributos as $nombre => $valores): ?>
-                        <div class="detalle">
-                            <p class="detalle-titulo"><?= $nombre ?></p>
-                            <p><?= implode(', ', $valores) ?></p>
+                    <div class="producto">
+                        <div class="producto-contenido">
+                            <a href="/productos/<?= $producto->categoria->slug ?>/<?= $producto->subcategoria ? $producto->subcategoria->slug : 'sin-subcategoria' ?>/<?= $producto->slug ?>" class="producto-link">
+                                <div class="imagen">
+                                    <?php if($producto->imagen_principal): ?>
+                                    <img loading="lazy" src="/img/productos/<?= $producto->imagen_principal->url ?>.webp" 
+                                        alt="<?= $producto->nombre ?>">
+                                    <?php else: ?>
+                                    <img loading="lazy" src="/img/productos/default.webp" alt="Producto sin imagen">
+                                    <?php endif; ?>
+                                    <div class="linea"></div>
+                                    <h3><?= $producto->nombre ?></h3>
+                                </div>
+                            </a>
+
+                            <button class="toggle-detalles" aria-expanded="false">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+
+                            <div class="detalles">
+                                <?php foreach ($producto->atributos as $nombre => $atributo): ?>
+                                <div class="detalle">
+                                    <p class="detalle-titulo"><?= htmlspecialchars($nombre) ?></p>
+                                    <p>
+                                        <?php 
+                                            $valores = $atributo['valores'];
+                                            $unidad = $atributo['unidad'];
+                                            $valoresConUnidad = array_map(function($valor) use ($unidad) {
+                                                // Convertir a float y verificar decimales
+                                                $numero = (float)$valor;
+                                                
+                                                // Formatear: eliminar .00 si es entero
+                                                $valorFormateado = $numero == (int)$numero 
+                                                                 ? (int)$numero 
+                                                                 : number_format($numero, 2, '.', '');
+                                                
+                                                // Agregar unidad si existe
+                                                return $unidad 
+                                                       ? htmlspecialchars($valorFormateado) . ' ' . htmlspecialchars($unidad)
+                                                       : htmlspecialchars($valorFormateado);
+                                            }, $valores);
+                                            
+                                            echo implode(', ', $valoresConUnidad);
+                                        ?>
+                                    </p>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                        <?php endforeach; ?>
                     </div>
-                </a>
                 <?php endforeach; ?>
             </div>
         </div>
     </div>
 </main>
+
+<script>
+    document.addEventListener("DOMContentLoaded" , () => {
+        document.querySelectorAll('.toggle-detalles').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const detalles = this.nextElementSibling;
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                
+                // Alternar la clase 'activo' en los detalles
+                detalles.classList.toggle('activo', !isExpanded);
+                this.setAttribute('aria-expanded', !isExpanded);
+            });
+        });
+    });
+</script>

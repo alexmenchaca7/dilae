@@ -64,11 +64,30 @@
                         <h3 class="titulo"><?= $producto->nombre ?></h3>
                         <p class="descripcion"><?= $producto->descripcion ?></p>
                         
-                        <?php foreach ($producto->atributos as $nombre => $atributo): ?>
+                        <?php foreach ($producto->atributos as $nombre => $atributoData): ?>
                         <div class="atributo">
-                            <h4><?= $nombre ?></h4>
+                            <h4><?= htmlspecialchars($nombre) ?></h4>
                             <div class="valores">
-                                <?= implode(', ', $atributo['valores']) ?>
+                                <?php 
+                                    $valores = $atributoData['valores'];
+                                    $unidad = $atributoData['unidad'];
+                                    $valoresConUnidad = array_map(function($valor) use ($unidad) {
+                                        // Convertir a float y verificar decimales
+                                        $numero = (float)$valor;
+                                        
+                                        // Formatear: eliminar .00 si es entero
+                                        $valorFormateado = $numero == (int)$numero 
+                                                         ? (int)$numero 
+                                                         : number_format($numero, 2, '.', '');
+                                        
+                                        // Agregar unidad si existe
+                                        return $unidad 
+                                               ? htmlspecialchars($valorFormateado) . ' ' . htmlspecialchars($unidad)
+                                               : htmlspecialchars($valorFormateado);
+                                    }, $valores);
+                                    
+                                    echo implode(', ', $valoresConUnidad);
+                                ?>
                             </div>
                         </div>
                         <?php endforeach; ?>

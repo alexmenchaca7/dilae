@@ -314,6 +314,54 @@
             border: 1px solid v.$gris-claro;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             position: relative;
+
+            .producto-link {
+                position: relative; // Añadir posición relativa
+                z-index: 2; // Colocar por encima del pseudo-elemento
+                display: block;
+                text-decoration: none;
+                color: inherit;
+                cursor: pointer; // Forzar cursor
+
+                // Asegurar que la imagen herede el cursor
+                img {
+                    cursor: pointer;
+                }
+            }
+
+            .detalles {
+                max-height: 0;
+                overflow: hidden;
+                background-color: color.adjust(v.$gris-claro, $lightness: 13%);
+                @include m.grid(2, 5rem, 2rem);
+                padding: 0 1.5rem;
+                
+                &.activo {
+                    max-height: 1000px; // Altura máxima estimada
+                    padding: 1.5rem;
+                }
+            }
+
+            .toggle-detalles {
+                position: absolute;
+                bottom: 1rem;
+                right: 1rem;
+                background: v.$blanco;
+                border: 1px solid v.$gris-claro;
+                border-radius: 50%;
+                padding: 0.5rem;
+                transition: transform 0.3s ease;
+                z-index: 2;
+                cursor: pointer;
+                
+                i {
+                    transition: transform 0.3s ease;
+                }
+                
+                &[aria-expanded="true"] i {
+                    transform: rotate(180deg);
+                }
+            }
         
             // Imagen del producto
             .imagen {
@@ -362,14 +410,6 @@
                 &::before {
                     background: color.change(v.$primario, $alpha: 0.10); // Aparece con opacidad 30%
                 }
-            }
-        
-            // Detalles del producto
-            .detalles {
-                background-color: color.adjust(v.$gris-claro, $lightness: 13%);
-                @include m.grid(2, 5rem, 2rem);
-                padding: 1.5rem;
-                
             }
         
             .detalle {

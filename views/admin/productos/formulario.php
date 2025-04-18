@@ -554,18 +554,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('agregar-valor')) {
-            const grupoAtributo = e.target.closest('.atributo-group');
-            const atributoId = grupoAtributo.dataset.atributoId;
-            const atributo = todosAtributos.find(a => a.id == atributoId);
-            
-            if (atributo) {
-                const nuevoInput = createInput(atributo);
-                grupoAtributo.querySelector('.atributo-inputs').appendChild(nuevoInput);
-            }
-        }
-    });
 });
 </script>
