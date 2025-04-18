@@ -546,7 +546,7 @@
 
             .valores {
                 @include m.grid(2, auto);
-                place-items: center;
+                place-items: left;
             
                 @include m.telefono {
                     @include m.grid(3, auto);

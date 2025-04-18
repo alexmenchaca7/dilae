@@ -265,10 +265,6 @@ document.addEventListener('DOMContentLoaded', function() {
             addButton.type = 'button';
             addButton.className = 'agregar-valor';
             addButton.textContent = '+ Agregar Valor';
-            addButton.addEventListener('click', () => {
-                const newInput = createInput(atributo);
-                inputsContainer.appendChild(newInput);
-            });
 
             group.appendChild(inputsContainer);
             group.appendChild(addButton);
@@ -284,16 +280,18 @@ document.addEventListener('DOMContentLoaded', function() {
         input.type = atributo.tipo === 'numero' ? 'number' : 'text';
         input.name = `atributos[${atributo.id}][]`;
         input.placeholder = atributo.nombre;
-        input.step = atributo.tipo === 'numero' ? 'any' : '';
+        if (atributo.tipo === 'numero') {
+            input.step = 'any';
+        }
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'eliminar-valor';
         removeBtn.textContent = '×';
-        removeBtn.addEventListener('click', () => wrapper.remove());
 
         wrapper.appendChild(input);
         wrapper.appendChild(removeBtn);
+        
         return wrapper;
     }
 
@@ -553,6 +551,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 contenedorFicha.remove();
             }
         });
+    });
+
+    document.addEventListener('click', function(e) {
+        // Eliminar valor
+        if (e.target.classList.contains('eliminar-valor')) {
+            e.target.closest('.input-wrapper').remove();
+        }
+        
+        // Agregar nuevo valor
+        if (e.target.classList.contains('agregar-valor')) {
+            const grupoAtributo = e.target.closest('.atributo-group');
+            const atributoId = grupoAtributo.dataset.atributoId;
+            const inputsContainer = grupoAtributo.querySelector('.atributo-inputs');
+            
+            // Buscar el atributo en todosAtributos
+            const atributo = todosAtributos.find(a => a.id == atributoId);
+            if (atributo) {
+                const nuevoInput = createInput(atributo);
+                inputsContainer.appendChild(nuevoInput);
+            }
+        }
     });
 });
 </script>
