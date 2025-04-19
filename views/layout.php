@@ -222,6 +222,6 @@
     </div>
 
     <script src="//code.tidio.co/ks94cvclexq9b0equflo49xrjn9oahg3.js" async></script>
-    <script src="/build/js/app.js"></script>
+    <script src="/build/js/app.js?v=<?= time() ?>"></script>
 </body>
 </html>
