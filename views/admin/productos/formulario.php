@@ -72,7 +72,7 @@
 </fieldset>
 
 <fieldset class="formulario__fieldset">
-    <legend class="formulario__legend">Imágenes del Producto (Máximo 5)</legend>
+    <legend class="formulario__legend">Imágenes del Producto</legend>
     
     <div class="contenedor-imagenes" id="contenedor-imagenes">
         <?php foreach($imagenes as $imagen): ?>
@@ -104,7 +104,12 @@
                         $atributosProcesados[$atributo->id] = true;
                 ?>
                 <div class="atributo-group" data-atributo-id="<?= $atributo->id ?>" data-renderizado-php="true">
-                    <label class="formulario__label"><?= htmlspecialchars($atributo->nombre)?> (<?php echo $atributo->unidad; ?>)</label>
+                <label class="formulario__label">
+                    <?= htmlspecialchars($atributo->nombre) ?>
+                    <?php if (!empty($atributo->unidad) && trim($atributo->unidad) !== ''): ?>
+                        (<?= htmlspecialchars($atributo->unidad) ?>)
+                    <?php endif; ?>
+                </label>
                     <div class="atributo-inputs">
                         <?php 
                             $valores = $atributosValores[$atributo->id] ?? [''];
@@ -115,7 +120,11 @@
                                 type="<?= $atributo->tipo === 'numero' ? 'number' : 'text' ?>" 
                                 name="atributos[<?= $atributo->id ?>][]"
                                 placeholder="<?= htmlspecialchars($atributo->nombre) ?>"
-                                value="<?= htmlspecialchars($valor) ?>"
+                                value="<?= htmlspecialchars(
+                                    ($atributo->tipo === 'numero' && is_numeric($valor)) 
+                                        ? rtrim(rtrim(number_format((float)$valor, 2, '.', ''), '0'), '.') 
+                                        : $valor 
+                                ) ?>"
                                 <?= $atributo->tipo === 'numero' ? 'step="any"' : '' ?>
                             >
                             <button type="button" class="eliminar-valor">×</button>

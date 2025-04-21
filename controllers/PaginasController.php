@@ -230,8 +230,9 @@ class PaginasController {
             
             if(!isset($atributos[$atributo->nombre])) {
                 $atributos[$atributo->nombre] = [
-                    'valores' => [],
-                    'unidad' => $atributo->unidad
+                    'tipo' => $atributo->tipo, 
+                    'unidad' => $atributo->unidad,
+                    'valores' => []
                 ];
             }
             
@@ -252,7 +253,7 @@ class PaginasController {
             
             if(!isset($atributos[$atributo->nombre])) {
                 $atributos[$atributo->nombre] = [
-                    'tipo' => $atributo->tipo,
+                    'tipo' => $atributo->tipo, 
                     'unidad' => $atributo->unidad,
                     'valores' => []
                 ];

@@ -491,14 +491,17 @@ class ProductosController {
             }
 
             $producto->sincronizar($_POST);
+
+            // Convertir subcategoriaId vacío a null
+            if ($producto->subcategoriaId === '') {
+                $producto->subcategoriaId = null;
+            }
+
             $alertas = $producto->validar();
 
             // Validar subcategoría
             if($producto->categoriaId && empty($producto->subcategoriaId)) {
                 $tieneSubcategorias = !empty($subcategoriasPorCategoria[$producto->categoriaId]);
-                if($tieneSubcategorias) {
-                    $alertas['error'][] = 'Debes seleccionar una subcategoría';
-                }
             }
 
             // Validar fichas técnicas

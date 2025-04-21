@@ -71,22 +71,22 @@
                                 <?php 
                                     $valores = $atributoData['valores'];
                                     $unidad = $atributoData['unidad'];
-                                    $valoresConUnidad = array_map(function($valor) use ($unidad) {
-                                        // Convertir a float y verificar decimales
-                                        $numero = (float)$valor;
-                                        
-                                        // Formatear: eliminar .00 si es entero
-                                        $valorFormateado = $numero == (int)$numero 
-                                                         ? (int)$numero 
-                                                         : number_format($numero, 2, '.', '');
-                                        
-                                        // Agregar unidad si existe
-                                        return $unidad 
-                                               ? htmlspecialchars($valorFormateado) . ' ' . htmlspecialchars($unidad)
-                                               : htmlspecialchars($valorFormateado);
+                                    $tipo = $atributoData['tipo'];
+                                    
+                                    $valoresMostrar = array_map(function($valor) use ($unidad, $tipo) {
+                                        if ($tipo === 'numero' && is_numeric($valor)) {
+                                            $numero = (float)$valor;
+                                            $valorFormateado = $numero == (int)$numero 
+                                                            ? (int)$numero 
+                                                            : number_format($numero, 2, '.', '');
+                                            return $unidad 
+                                                ? htmlspecialchars($valorFormateado) . htmlspecialchars($unidad)
+                                                : htmlspecialchars($valorFormateado);
+                                        }
+                                        return htmlspecialchars($valor);
                                     }, $valores);
                                     
-                                    echo implode(', ', $valoresConUnidad);
+                                    echo implode(', ', $valoresMostrar);
                                 ?>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                             <?php foreach ($producto->fichas as $ficha): ?>
                             <a class="ficha" href="/fichas/<?= $ficha->url ?>" target="_blank">
                                 <img src="/build/img/icon_pdf.svg" alt="Icono PDF">
-                                <p><?= $producto->nombre ?> - <?= basename($ficha->url, '.pdf') ?></p>
+                                <p><?= basename($ficha->url, '.pdf') ?></p>
                             </a>
                             <?php endforeach; ?>
                         </div>

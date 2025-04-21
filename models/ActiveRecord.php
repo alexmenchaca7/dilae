@@ -89,12 +89,13 @@ class ActiveRecord {
 
         // Recorriendo el arreglo como un arreglo asociativo (tanto llave como valor)
         foreach($atributos as $key => $value) {
-            if ($value === null || $value === '') {
-                $sanitizado[$key] = null; // Convertir a NULL
+            // Convertir cadenas vacías a null
+            if ($value === '' || $value === null) {
+                $sanitizado[$key] = null;
             } else {
                 $sanitizado[$key] = self::$conexion->escape_string($value);
             }
-        }
+        }    
 
         return $sanitizado;
     }
@@ -236,22 +237,24 @@ class ActiveRecord {
         // Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
 
-        $columnas = join(', ', array_keys($atributos)); // Crear un string a partir de las llaves del arreglo
+        $columnas = [];
         $filas = [];
 
         // Reemplazar los valores NULL por la palabra 'NULL' en la consulta
-        foreach (array_values($atributos) as $value) {
+        foreach ($atributos as $key => $value) {
+            $columnas[] = $key;
             if ($value === null) {
-                $filas[] = 'NULL'; // Si el valor es NULL, se agrega 'NULL' a la consulta
+                $valores[] = "NULL";
             } else {
-                $filas[] = "'" . self::$conexion->escape_string($value) . "'"; // Si no es NULL, escapamos y agregamos comillas
+                $valores[] = "'" . self::$conexion->escape_string($value) . "'";
             }
         }
-
-        $filas = join(", ", $filas); // Convertir el array a un string de valores
+    
+        $columnasStr = join(', ', $columnas);
+        $valoresStr = join(', ', $valores);
 
         // Reemplazar las comillas adicionales antes de insertar en la consulta
-        $query = "INSERT INTO " . static::$tabla . " ($columnas) VALUES ($filas)";
+        $query = "INSERT INTO " . static::$tabla . " ($columnasStr) VALUES ($valoresStr)";
 
         // Ejecutar la consulta
         $resultado = self::$conexion->query($query); 
@@ -272,7 +275,12 @@ class ActiveRecord {
         // Iterar para ir agregando cada campo de la BD
         $valores = [];
         foreach($atributos as $key => $value) {
-            $valores[] = "$key = '$value'";
+            // Manejar valores NULL
+            if ($value === null) {
+                $valores[] = "$key = NULL";
+            } else {
+                $valores[] = "$key = '" . self::$conexion->escape_string($value) . "'";
+            }
         }
 
         // Consulta SQL

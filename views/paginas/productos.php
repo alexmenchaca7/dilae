@@ -146,26 +146,26 @@
                             </button>
 
                             <div class="detalles">
-                                <?php foreach ($producto->atributos as $nombre => $atributo): ?>
+                            <?php foreach ($producto->atributos as $nombre => $atributo): ?>
                                 <div class="detalle">
                                     <p class="detalle-titulo"><?= htmlspecialchars($nombre) ?></p>
                                     <p>
                                         <?php 
                                             $valores = $atributo['valores'];
                                             $unidad = $atributo['unidad'];
-                                            $valoresConUnidad = array_map(function($valor) use ($unidad) {
-                                                // Convertir a float y verificar decimales
-                                                $numero = (float)$valor;
-                                                
-                                                // Formatear: eliminar .00 si es entero
-                                                $valorFormateado = $numero == (int)$numero 
-                                                                 ? (int)$numero 
-                                                                 : number_format($numero, 2, '.', '');
-                                                
-                                                // Agregar unidad si existe
-                                                return $unidad 
-                                                       ? htmlspecialchars($valorFormateado) . ' ' . htmlspecialchars($unidad)
-                                                       : htmlspecialchars($valorFormateado);
+                                            $valoresConUnidad = array_map(function($valor) use ($unidad, $atributo) {
+                                                // Verificar si es numérico
+                                                if ($atributo['tipo'] === 'numero' && is_numeric($valor)) {
+                                                    $numero = (float)$valor;
+                                                    $valorFormateado = $numero == (int)$numero 
+                                                                    ? (int)$numero 
+                                                                    : number_format($numero, 2, '.', '');
+                                                    return $unidad 
+                                                        ? htmlspecialchars($valorFormateado) . htmlspecialchars($unidad)
+                                                        : htmlspecialchars($valorFormateado);
+                                                }
+                                                // Para texto, devolver el valor original
+                                                return htmlspecialchars($valor);
                                             }, $valores);
                                             
                                             echo implode(', ', $valoresConUnidad);
