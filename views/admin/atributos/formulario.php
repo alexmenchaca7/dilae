@@ -25,6 +25,15 @@
             placeholder="Ej: W, V, Lm"
             value="<?php echo $atributo->unidad ?? ''; ?>"
         >
+
+        <label class="formulario__label checkbox-label">
+            <input 
+                type="checkbox" 
+                name="espacio_unidad" 
+                <?= isset($atributo->espacio_unidad) && $atributo->espacio_unidad ? 'checked' : '' ?>
+            >
+            ¿Agregar espacio antes de la unidad?
+        </label>
     </div>
 
     <!-- Selección del Tipo de Atributo -->

@@ -232,6 +232,7 @@ class PaginasController {
                 $atributos[$atributo->nombre] = [
                     'tipo' => $atributo->tipo, 
                     'unidad' => $atributo->unidad,
+                    'espacio_unidad' => $atributo->espacio_unidad,
                     'valores' => []
                 ];
             }
@@ -255,6 +256,7 @@ class PaginasController {
                 $atributos[$atributo->nombre] = [
                     'tipo' => $atributo->tipo, 
                     'unidad' => $atributo->unidad,
+                    'espacio_unidad' => $atributo->espacio_unidad,
                     'valores' => []
                 ];
             }

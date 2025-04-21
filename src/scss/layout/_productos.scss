@@ -365,11 +365,13 @@
         
             // Imagen del producto
             .imagen {
+                position: relative; // Añadir esto
                 background-color: v.$fondo;
                 width: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                z-index: 0;
         
                 img {
                     width: 100%;
@@ -525,6 +527,7 @@
         p {
             margin: 0;
             font-size: 1.6rem;
+            text-align: justify;
         }
 
         .titulo {
@@ -545,16 +548,7 @@
             }
 
             .valores {
-                @include m.grid(2, auto);
-                place-items: left;
-            
-                @include m.telefono {
-                    @include m.grid(3, auto);
-                }
-
-                @include m.tablet {
-                    @include m.grid(6, auto);
-                }
+                
             }
 
             img {

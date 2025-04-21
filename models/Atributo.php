@@ -5,7 +5,7 @@ namespace Model;
 class Atributo extends ActiveRecord {
     
     // Arreglo de columnas para identificar que forma van a tener los datos
-    protected static $columnasDB = ['id', 'nombre', 'tipo', 'unidad'];
+    protected static $columnasDB = ['id', 'nombre', 'tipo', 'unidad', 'espacio_unidad'];
     protected static $tabla = 'atributos';  
 
     // Propiedad con las columnas a buscar
@@ -16,6 +16,7 @@ class Atributo extends ActiveRecord {
     public $nombre;
     public $tipo;
     public $unidad;
+    public $espacio_unidad;
 
 
     public function __construct($args = [])
@@ -24,6 +25,8 @@ class Atributo extends ActiveRecord {
         $this->nombre = $args['nombre'] ?? '';
         $this->tipo = $args['tipo'] ?? 'texto';
         $this->unidad = $args['unidad'] ?? '';
+        $this->espacio_unidad = $args['espacio_unidad'] ?? 0;
+        
     }
 
 

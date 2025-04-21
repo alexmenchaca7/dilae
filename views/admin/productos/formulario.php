@@ -112,8 +112,13 @@
                 </label>
                     <div class="atributo-inputs">
                         <?php 
-                            $valores = $atributosValores[$atributo->id] ?? [''];
-                            foreach($valores as $valor): 
+                            // Inicializar con array vacío si no hay valores
+                            $valores = $atributosValores[$atributo->id] ?? [];
+                            // Si está vacío y es renderizado PHP, agregar un valor vacío
+                            if (empty($valores) && isset($atributo->renderizado_php)) {
+                                $valores = [''];
+                            }
+                            foreach($valores as $valor):  
                         ?>
                         <div class="input-wrapper">
                             <input 

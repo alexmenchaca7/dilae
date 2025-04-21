@@ -61,8 +61,8 @@
                     </div>
 
                     <div class="producto-info">
-                        <h3 class="titulo"><?= $producto->nombre ?></h3>
-                        <p class="descripcion"><?= $producto->descripcion ?></p>
+                        <h3 class="titulo"><?= htmlspecialchars($producto->nombre) ?></h3>
+                        <p class="descripcion"><?= htmlspecialchars($producto->descripcion) ?></p>
                         
                         <?php foreach ($producto->atributos as $nombre => $atributoData): ?>
                         <div class="atributo">
@@ -70,20 +70,31 @@
                             <div class="valores">
                                 <?php 
                                     $valores = $atributoData['valores'];
-                                    $unidad = $atributoData['unidad'];
+                                    $unidad = $atributoData['unidad'] ?? '';
                                     $tipo = $atributoData['tipo'];
                                     
-                                    $valoresMostrar = array_map(function($valor) use ($unidad, $tipo) {
+                                    $valoresMostrar = array_map(function($valor) use ($unidad, $tipo, $atributoData) {
                                         if ($tipo === 'numero' && is_numeric($valor)) {
                                             $numero = (float)$valor;
-                                            $valorFormateado = $numero == (int)$numero 
-                                                            ? (int)$numero 
-                                                            : number_format($numero, 2, '.', '');
-                                            return $unidad 
-                                                ? htmlspecialchars($valorFormateado) . htmlspecialchars($unidad)
-                                                : htmlspecialchars($valorFormateado);
+                                            $decimales = ($numero == floor($numero)) ? 0 : 2;
+                                            $valorFormateado = number_format($numero, $decimales, '.', ',');
+                                            $texto = htmlspecialchars($valorFormateado);
+                                            
+                                            // Agregar unidad SI EXISTE (incluyendo espacio según espacio_unidad)
+                                            if ($unidad) {
+                                                $espacio = (isset($atributoData['espacio_unidad']) && $atributoData['espacio_unidad'] == 1) ? ' ' : '';
+                                                $texto .= $espacio . htmlspecialchars($unidad);
+                                            }
+                                            
+                                            return $texto;
+                                        } else {
+                                            $texto = htmlspecialchars((string)$valor);
+                                            if ($unidad) {
+                                                $espacio = (isset($atributoData['espacio_unidad']) && $atributoData['espacio_unidad'] == 1) ? ' ' : '';
+                                                $texto .= $espacio . htmlspecialchars($unidad);
+                                            }
+                                            return $texto;
                                         }
-                                        return htmlspecialchars($valor);
                                     }, $valores);
                                     
                                     echo implode(', ', $valoresMostrar);

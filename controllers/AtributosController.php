@@ -76,6 +76,9 @@ class AtributosController {
         $alertas = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Convertir checkbox a booleano
+            $_POST['espacio_unidad'] = isset($_POST['espacio_unidad']) ? 1 : 0;
+
             $atributo->sincronizar($_POST);
             $alertas = $atributo->validar();
 
@@ -112,6 +115,9 @@ class AtributosController {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Convertir checkbox a booleano
+            $_POST['espacio_unidad'] = isset($_POST['espacio_unidad']) ? 1 : 0;
+            
             $atributo->sincronizar($_POST);
             $alertas = $atributo->validar();
 

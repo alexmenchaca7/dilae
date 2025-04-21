@@ -56,7 +56,7 @@
                 
                 <?php foreach ($numericAttributes as $attr): ?>
                     <div class="filtro-rango">
-                        <label><?= htmlspecialchars($attr->nombre) ?></label>
+                        <label><?= htmlspecialchars($attr->nombre ?? '') ?></label>
                         <div class="rango-inputs">
                             <input type="number" name="min_<?= $attr->id ?>" 
                                 placeholder="Mín" 
@@ -85,7 +85,7 @@
                             <input type="hidden" name="subcategoria_slug" value="<?= $subcategoria_slug ?>">
                         <?php endif; ?>
                         <?php if ($busqueda): ?>
-                            <input type="hidden" name="busqueda" value="<?= htmlspecialchars($busqueda) ?>">
+                            <input type="hidden" name="busqueda" value="<?= htmlspecialchars($busqueda ?? '') ?>">
                         <?php endif; ?>
                         
                         <?php if (!empty($numericAttributes)): ?>
@@ -148,7 +148,7 @@
                             <div class="detalles">
                             <?php foreach ($producto->atributos as $nombre => $atributo): ?>
                                 <div class="detalle">
-                                    <p class="detalle-titulo"><?= htmlspecialchars($nombre) ?></p>
+                                    <p class="detalle-titulo"><?= htmlspecialchars($nombre ?? '') ?></p>
                                     <p>
                                         <?php 
                                             $valores = $atributo['valores'];
@@ -157,15 +157,25 @@
                                                 // Verificar si es numérico
                                                 if ($atributo['tipo'] === 'numero' && is_numeric($valor)) {
                                                     $numero = (float)$valor;
-                                                    $valorFormateado = $numero == (int)$numero 
-                                                                    ? (int)$numero 
-                                                                    : number_format($numero, 2, '.', '');
-                                                    return $unidad 
-                                                        ? htmlspecialchars($valorFormateado) . htmlspecialchars($unidad)
-                                                        : htmlspecialchars($valorFormateado);
+                                                    $decimales = ($numero == floor($numero)) ? 0 : 2;
+                                                    $valorFormateado = number_format($numero, $decimales, '.', ',');
+                                                    $texto = htmlspecialchars($valorFormateado ?? '');
+                                                    
+                                                    // Agregar unidad SI EXISTE (incluyendo espacio según espacio_unidad)
+                                                    if ($unidad) {
+                                                        $espacio = (isset($atributo['espacio_unidad']) && $atributo['espacio_unidad'] == 1) ? ' ' : '';
+                                                        $texto .= $espacio . htmlspecialchars($unidad ?? '');
+                                                    }
+                                                    
+                                                    return $texto;
+                                                } else {
+                                                    $texto = htmlspecialchars($valor ?? '');
+                                                    if ($unidad) {
+                                                        $espacio = (isset($atributo['espacio_unidad']) && $atributo['espacio_unidad'] == 1) ? ' ' : '';
+                                                        $texto .= $espacio . htmlspecialchars($unidad ?? '');
+                                                    }
+                                                    return $texto;
                                                 }
-                                                // Para texto, devolver el valor original
-                                                return htmlspecialchars($valor);
                                             }, $valores);
                                             
                                             echo implode(', ', $valoresConUnidad);
