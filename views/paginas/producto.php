@@ -3,13 +3,24 @@
             <!-- Barra lateral de categorías -->
             <aside class="barra-lateral">
                 <h2>Categorías</h2>
-
                 <nav>
                     <ul class="lista">
-                        <?php foreach ($categorias as $categoria): ?>
+                        <?php foreach ($categorias as $categoria): 
+                            // Verificar si tiene subcategoría activa
+                            $tiene_subactiva = false;
+                            if (!empty($categoria->subcategorias) && isset($subcategoria_slug)) {
+                                foreach ($categoria->subcategorias as $subcategoria) {
+                                    if ($subcategoria_slug == $subcategoria->slug) {
+                                        $tiene_subactiva = true;
+                                        break;
+                                    }
+                                }
+                            }       
+                        ?>
                         <li class="lista-item">
-                            <div class="lista-boton <?= $categoriaId == $categoria->id ? 'activo' : '' ?>">
-                                <a href="/productos?categoria=<?= $categoria->id ?>">
+                            <div class="lista-boton <?= 
+                                ($categoria_slug == $categoria->slug || $tiene_subactiva) ? 'activo' : '' ?>">
+                                <a href="/productos/<?= $categoria->slug ?>">
                                     <?= $categoria->nombre ?>
                                 </a>
                                 <?php if(!empty($categoria->subcategorias)): ?>
@@ -21,8 +32,8 @@
                             <ul class="lista-show">
                                 <?php foreach ($categoria->subcategorias as $subcategoria): ?>
                                 <li>
-                                    <a href="/productos?subcategoria=<?= $subcategoria->id ?>"
-                                    class="<?= $subcategoriaId == $subcategoria->id ? 'activo' : '' ?>">
+                                    <a href="/productos/<?= $categoria->slug ?>/<?= $subcategoria->slug ?>" 
+                                    class="<?= $subcategoria_slug == $subcategoria->slug ? 'activo' : '' ?>">
                                         <?= $subcategoria->nombre ?>
                                     </a>
                                 </li>

@@ -45,9 +45,7 @@
         border: 1px solid v.$gris-claro;
         width: auto;
 
-        @include m.desktop {
-            width: 30rem; // Ancho fijo para la barra lateral
-        }
+
 
         a {
             color: v.$negro;

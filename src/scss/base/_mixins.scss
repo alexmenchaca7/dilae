@@ -50,6 +50,7 @@
 /** Grid **/
 @mixin grid($columnas, $espaciado_columna, $espaciado_fila : $espaciado_columna ) {
     display: grid;
+    min-width: 0;
     grid-template-columns: repeat($columnas, 1fr);
     column-gap: $espaciado_columna;
     row-gap: $espaciado_fila;
