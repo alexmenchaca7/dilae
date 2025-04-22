@@ -43,7 +43,11 @@
 
     nav {
         border: 1px solid v.$gris-claro;
-        width: 100%;
+        width: auto;
+
+        @include m.desktop {
+            width: 30rem; // Ancho fijo para la barra lateral
+        }
 
         a {
             color: v.$negro;
@@ -168,16 +172,80 @@
         }
     }
 
-    .rango-inputs {
-        max-width: 100%;
-        display: flex;
-        flex-direction: row;
-        gap: 1rem;
+    form {
+        border: 1px solid v.$gris-claro;
+        padding: 2rem;
+        margin-top: 1rem;
+        width: auto;
 
-        input {
-            width: 100%;
+        @include m.desktop {
+            width: 30rem; // Ancho fijo para la barra lateral
         }
-    }
+    
+        .filtro-rango {
+            margin-bottom: 3rem;
+            
+            &:last-child {
+                margin-bottom: 2rem;
+            }
+    
+            label {
+                display: block;
+                font-weight: v.$bold;
+                text-transform: uppercase;
+                color: v.$negro;
+                margin-bottom: 1rem;
+                font-size: 1.4rem;
+            }
+    
+            .rango-inputs {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+    
+                input {
+                    flex: 1;
+                    padding: 1rem;
+                    border: 1px solid v.$gris-claro;
+                    background-color: v.$fondo;
+                    font-size: 1.4rem;
+                    text-align: center;
+                    min-width: 0;
+                    
+                    &::placeholder {
+                        color: color.adjust(v.$gris, $lightness: 20%);
+                        opacity: 1;
+                    }
+    
+                    &:focus {
+                        outline: none;
+                        border-color: v.$primario;
+                    }
+                }
+    
+                span {
+                    color: v.$gris;
+                    font-weight: v.$bold;
+                }
+            }
+        }
+    
+        .boton {
+            @include m.boton(v.$primario, v.$blanco);
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            font-weight: v.$bold;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+    
+            &:hover {
+                background-color: color.adjust(v.$primario, $lightness: -15%);
+                transform: translateY(-1px);
+            }
+        }
+    }    
 }
 
 

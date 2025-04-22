@@ -56,7 +56,7 @@
                 
                 <?php foreach ($numericAttributes as $attr): ?>
                     <div class="filtro-rango">
-                        <label><?= htmlspecialchars($attr->nombre ?? '') ?></label>
+                        <label><?= htmlspecialchars($attr->nombre ?? '') ?><?= isset($attr->unidad) && $attr->unidad !== '' ? ' (' . htmlspecialchars($attr->unidad) . ')' : '' ?></label>
                         <div class="rango-inputs">
                             <input type="number" name="min_<?= $attr->id ?>" 
                                 placeholder="Mín" 

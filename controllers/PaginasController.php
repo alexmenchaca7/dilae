@@ -57,12 +57,24 @@ class PaginasController {
                     FROM atributos a
                     INNER JOIN productos_atributos pa ON a.id = pa.atributoId
                     INNER JOIN productos p ON pa.productoId = p.id
-                    WHERE p.categoriaId = '{$categoriaObj->id}' ";
-            if ($subcategoriaObj) {
-                $sql .= " AND p.subcategoriaId = '{$subcategoriaObj->id}' ";
+                    WHERE a.tipo = 'numero'";
+            if ($categoriaObj) {
+                $sql .= " AND p.categoriaId = '{$categoriaObj->id}'";
+                if ($subcategoriaObj) {
+                    $sql .= " AND p.subcategoriaId = '{$subcategoriaObj->id}'";
+                }
             }
-            $sql .= " AND a.tipo = 'numero'";
             $numericAttributes = Atributo::consultarSQL($sql) ?: [];
+        }
+
+        // Antes del procesamiento de filtros:
+        foreach ($_GET as $key => $value) {
+            if (strpos($key, 'min_') === 0 || strpos($key, 'max_') === 0) {
+                $_GET[$key] = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                if ($_GET[$key] === '') {
+                    unset($_GET[$key]); // Eliminar parámetros vacíos
+                }
+            }
         }
 
         // Procesar filtros numéricos
@@ -71,9 +83,9 @@ class PaginasController {
             $maxParam = 'max_' . $attr->id;
             $min = isset($_GET[$minParam]) ? (float)$_GET[$minParam] : null;
             $max = isset($_GET[$maxParam]) ? (float)$_GET[$maxParam] : null;
-
+        
             if ($min !== null || $max !== null) {
-                $cond = "EXISTS (SELECT 1 FROM producto_atributo WHERE productoId = productos.id AND atributoId = '{$attr->id}' ";
+                $cond = "EXISTS (SELECT 1 FROM productos_atributos WHERE productoId = productos.id AND atributoId = '{$attr->id}' ";
                 $conditions = [];
                 if ($min !== null) {
                     $conditions[] = "valor_numero >= {$min}";
@@ -81,10 +93,14 @@ class PaginasController {
                 if ($max !== null) {
                     $conditions[] = "valor_numero <= {$max}";
                 }
-                $cond .= " AND " . implode(' AND ', $conditions) . ")";
+                if (!empty($conditions)) {
+                    $cond .= " AND " . implode(' AND ', $conditions);
+                }
+
+                $cond .= ")";
                 $condiciones[] = $cond;
             }
-        }
+        }       
 
         // Procesar ordenamiento
         $orden = $_GET['orden'] ?? 'nombre_asc';
