@@ -96,5 +96,21 @@ class Producto extends ActiveRecord {
     
     public function subcategoria() {
         return $this->subcategoriaId ? Subcategoria::find($this->subcategoriaId) : null;
-    }    
+    }   
+    
+    public static function buscar($termino) {
+        $condiciones = [];
+        $termino = self::$conexion->escape_string($termino);
+        
+        if (!empty($termino) && !empty(static::$buscarColumns)) {
+            $buscarConditions = [];
+            foreach (static::$buscarColumns as $columna) {
+                $buscarConditions[] = "LOWER($columna) LIKE '%" . mb_strtolower($termino, 'UTF-8') . "%'";
+            }
+            $condiciones[] = "(" . implode(' OR ', $buscarConditions) . ")";
+        }
+        
+        return $condiciones;
+    }
+    
 }

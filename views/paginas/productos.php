@@ -190,6 +190,12 @@
             </div>
         </div>
     </div>
+
+    <?php if(isset($paginacion)): ?>
+        <div class="paginacion">
+            <?php echo $paginacion->paginacion(); ?>
+        </div>
+    <?php endif; ?>
 </main>
 
 <script>

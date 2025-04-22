@@ -5,6 +5,7 @@ use MVC\Router;
 use Model\Atributo;
 use Model\Producto;
 use Model\Categoria;
+use Classes\Paginacion;
 use Model\Subcategoria;
 use Model\FichaProducto;
 use Model\ImagenProducto;
@@ -49,7 +50,7 @@ class PaginasController {
             }
         }
 
-        // Obtener atributos numéricos de la categoría/subcategoría actual
+        // Obtener atributos numéricos
         $numericAttributes = [];
         if ($categoriaObj) {
             $sql = "SELECT DISTINCT a.* 
@@ -98,15 +99,35 @@ class PaginasController {
                 $ordenSQL = 'nombre ASC';
         }
 
-        // Parámetro de búsqueda
+        // Búsqueda
         $busqueda = $_GET['busqueda'] ?? '';
         if($busqueda) {
             $condiciones = array_merge($condiciones, Producto::buscar($busqueda));
         }
 
+        // Paginación
+        $pagina_actual = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT) ?: 1;
+        if($pagina_actual < 1) {
+            header('Location: /productos?page=1');
+            exit();
+        }
+
+        $registros_por_pagina = 12;
+        $total = Producto::totalCondiciones($condiciones);
+        
+        $paginacion = new Paginacion($pagina_actual, $registros_por_pagina, $total);
+        
+        if ($paginacion->total_paginas() < $pagina_actual && $pagina_actual > 1) {
+            header('Location: /productos?page=1');
+            exit();
+        }
+
+        // Obtener productos con paginación
         $productos = Producto::metodoSQL([
             'condiciones' => $condiciones,
-            'orden' => 'nombre ASC'
+            'orden' => $ordenSQL,
+            'limite' => $registros_por_pagina,
+            'offset' => $paginacion->offset()
         ]);
 
         foreach ($productos as $producto) {
@@ -116,7 +137,6 @@ class PaginasController {
             $producto->subcategoria = $producto->subcategoria();
         }
 
-        // Construir título dinámico
         $titulo = 'Productos';
         if ($subcategoriaObj) {
             $titulo = $subcategoriaObj->nombre;
@@ -132,8 +152,9 @@ class PaginasController {
             'subcategoria_slug' => $subcategoria_slug,
             'busqueda' => $busqueda,
             'numericAttributes' => $numericAttributes,
-            'categoria_slug' => $categoria_slug,  
-            'subcategoria_slug' => $subcategoria_slug 
+            'paginacion' => $paginacion,
+            'categoria_slug' => $categoria_slug,
+            'subcategoria_slug' => $subcategoria_slug
         ]);
     }
 
