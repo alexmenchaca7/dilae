@@ -17,17 +17,20 @@ class SubcategoriasController {
             $subcategoria = Subcategoria::find($id);
             
             if ($subcategoria) {
-                // Buscar subcategoría anterior dentro de la misma categoría
+                // Buscar la subcategoría anterior
                 $subcategoriaAnterior = Subcategoria::whereArray([
                     'categoriaId' => $subcategoria->categoriaId,
                     'posicion' => $subcategoria->posicion - 1
                 ]);
-                
+
                 if (!empty($subcategoriaAnterior)) {
                     $subcategoriaAnterior = $subcategoriaAnterior[0];
+
+                    // Intercambiar posiciones
                     $subcategoria->posicion--;
                     $subcategoriaAnterior->posicion++;
-                    
+
+                    // Guardar cambios
                     $subcategoria->guardar();
                     $subcategoriaAnterior->guardar();
                 }
@@ -35,7 +38,7 @@ class SubcategoriasController {
             header('Location: /admin/categorias');
         }
     }
-
+    
     public static function moverAbajo(Router $router) {
         if (!is_auth()) header('Location: /login');
         
@@ -44,17 +47,20 @@ class SubcategoriasController {
             $subcategoria = Subcategoria::find($id);
             
             if ($subcategoria) {
-                // Buscar subcategoría siguiente dentro de la misma categoría
+                // Buscar la subcategoría siguiente
                 $subcategoriaSiguiente = Subcategoria::whereArray([
                     'categoriaId' => $subcategoria->categoriaId,
                     'posicion' => $subcategoria->posicion + 1
                 ]);
-                
+
                 if (!empty($subcategoriaSiguiente)) {
                     $subcategoriaSiguiente = $subcategoriaSiguiente[0];
+
+                    // Intercambiar posiciones
                     $subcategoria->posicion++;
                     $subcategoriaSiguiente->posicion--;
-                    
+
+                    // Guardar cambios
                     $subcategoria->guardar();
                     $subcategoriaSiguiente->guardar();
                 }
@@ -62,6 +68,17 @@ class SubcategoriasController {
             header('Location: /admin/categorias');
         }
     }
+
+    private static function normalizarPosiciones($categoriaId) {
+        $subcategorias = Subcategoria::whereArray(['categoriaId' => $categoriaId], 'posicion ASC');
+        $posicion = 1;
+
+        foreach ($subcategorias as $subcategoria) {
+            $subcategoria->posicion = $posicion++;
+            $subcategoria->guardar();
+        }
+    }
+
 
     public static function crear(Router $router) {
         if(!is_auth()) {
@@ -85,13 +102,19 @@ class SubcategoriasController {
             $alertas = $subcategoria->validar();
     
             if(empty($alertas)) {
-                // Obtener máxima posición dentro de la categoría
-                $maxPosicion = (int)Subcategoria::max('posicion', ['categoriaId' => $subcategoria->categoriaId]);
+                // Obtener máxima posición actual (aunque haya huecos)
+                $maxPosicion = (int) Subcategoria::max('posicion', [
+                    'categoriaId' => $subcategoria->categoriaId
+                ]);
+
+                // Asignar posición temporal al final
                 $subcategoria->posicion = $maxPosicion + 1;
-                
                 $resultado = $subcategoria->guardar();
     
                 if($resultado) {
+                    // Normalizar todas las posiciones de la categoría
+                    self::normalizarPosiciones($subcategoria->categoriaId);
+
                     // Procesar el array de atributos seleccionados
                     if(isset($_POST['atributos']) && !empty($_POST['atributos'])) {
                         foreach($_POST['atributos'] as $atributoId) {
@@ -216,19 +239,19 @@ class SubcategoriasController {
             $subcategoria = Subcategoria::find($id);
     
             // Validar que la subcategoría exista
-            if (!$subcategoria) {
-                header('Location: /admin/categorias');
+            if ($subcategoria) {
+                $categoriaId = $subcategoria->categoriaId; // Guardar referencia
+                
+                // Eliminar relaciones primero
+                SubcategoriaAtributo::eliminarPorSubcategoria($subcategoria->id);
+                
+                // Eliminar subcategoría
+                if ($subcategoria->eliminar()) {
+                    // Re-normalizar posiciones de la categoría
+                    self::normalizarPosiciones($categoriaId);
+                }
             }
-    
-            // Primero, eliminar las asociaciones en la tabla subcategoria_atributos
-            SubcategoriaAtributo::eliminarPorSubcategoria($subcategoria->id);
-    
-            // Luego, eliminar la subcategoría
-            $resultado = $subcategoria->eliminar();
-    
-            if ($resultado) {
-                header('Location: /admin/categorias');
-            }
+            header('Location: /admin/categorias');
         }
     }    
 }
