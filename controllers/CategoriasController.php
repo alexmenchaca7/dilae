@@ -79,7 +79,10 @@ class CategoriasController {
     }
 
     public static function moverArriba(Router $router) {
-        if (!is_auth()) header('Location: /login');
+        if (!is_auth()) {
+            header('HTTP/1.1 403 Forbidden');
+            exit;
+        }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'] ?? null;
@@ -98,12 +101,15 @@ class CategoriasController {
                     $categoriaAnterior->guardar();
                 }
             }
-            header('Location: /admin/categorias');
+            exit;
         }
     }
     
     public static function moverAbajo(Router $router) {
-        if (!is_auth()) header('Location: /login');
+        if (!is_auth()) {
+            header('HTTP/1.1 403 Forbidden');
+            exit;
+        }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id'] ?? null;
@@ -122,7 +128,7 @@ class CategoriasController {
                     $categoriaSiguiente->guardar();
                 }
             }
-            header('Location: /admin/categorias');
+            exit;
         }
     }    
     

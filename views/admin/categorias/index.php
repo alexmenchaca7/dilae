@@ -53,14 +53,22 @@
 
                                             <!-- Botones de movimiento -->
                                             <div class="acciones-mover">
-                                                <form method="POST" action="/admin/subcategorias/mover-arriba">
+                                                <form 
+                                                    method="POST" 
+                                                    action="/admin/subcategorias/mover-arriba"
+                                                    class="form-mover"
+                                                >
                                                     <input type="hidden" name="id" value="<?php echo $subcategoria->id; ?>">
                                                     <button type="submit" class="boton-mover">
                                                         <i class="fas fa-chevron-up"></i>
                                                     </button>
                                                 </form>
                                                 
-                                                <form method="POST" action="/admin/subcategorias/mover-abajo">
+                                                <form 
+                                                    method="POST" 
+                                                    action="/admin/subcategorias/mover-abajo"
+                                                    class="form-mover"
+                                                >
                                                     <input type="hidden" name="id" value="<?php echo $subcategoria->id; ?>">
                                                     <button type="submit" class="boton-mover">
                                                         <i class="fas fa-chevron-down"></i>
@@ -90,14 +98,22 @@
                         <td class="table__td--acciones">
                             <!-- Botones de movimiento -->
                             <div class="acciones-mover">
-                                <form method="POST" action="/admin/categorias/mover-arriba">
+                                <form 
+                                    method="POST" 
+                                    action="/admin/categorias/mover-arriba"
+                                    class="form-mover"
+                                >
                                     <input type="hidden" name="id" value="<?php echo $categoria->id; ?>">
                                     <button type="submit" class="boton-mover">
                                         <i class="fas fa-chevron-up"></i>
                                     </button>
                                 </form>
                                 
-                                <form method="POST" action="/admin/categorias/mover-abajo">
+                                <form 
+                                    method="POST" 
+                                    action="/admin/categorias/mover-abajo"
+                                    class="form-mover"
+                                >
                                     <input type="hidden" name="id" value="<?php echo $categoria->id; ?>">
                                     <button type="submit" class="boton-mover">
                                         <i class="fas fa-chevron-down"></i>
@@ -182,5 +198,88 @@
         if (currentForm) {
             currentForm.submit();
         }
+    });
+
+    // Función única para manejar movimientos
+    async function handleMove(e) {
+        e.preventDefault();
+        const form = e.target.closest('form');
+        const formData = new FormData(form);
+        
+        try {
+            // 1. Ejecutar movimiento
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) throw new Error('Error en movimiento');
+            
+            // 2. Actualizar contenido
+            await refreshContent();
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al procesar el movimiento');
+        }
+    }
+
+    // Función para recargar contenido
+    async function refreshContent() {
+        const currentScroll = window.scrollY || document.documentElement.scrollTop;
+        
+        try {
+            const response = await fetch(window.location.href);
+            const html = await response.text();
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+            
+            // Actualizar secciones principales
+            document.querySelector('.dashboard__contenedor').innerHTML = 
+                newDoc.querySelector('.dashboard__contenedor').innerHTML;
+            
+            // Actualizar paginación si existe
+            const newPagination = newDoc.querySelector('.paginacion');
+            if (newPagination) {
+                document.querySelector('.paginacion').innerHTML = newPagination.innerHTML;
+            }
+            
+            window.scrollTo(0, currentScroll);
+            attachMoveListeners();
+            
+        } catch (error) {
+            console.error('Error al recargar contenido:', error);
+        }
+    }
+
+    // Conectar listeners de movimiento
+    function attachMoveListeners() {
+        document.querySelectorAll('.form-mover').forEach(form => {
+            form.removeEventListener('submit', handleMove); // Limpiar listeners antiguos
+            form.addEventListener('submit', handleMove);
+        });
+    }
+
+    // Eventos iniciales
+    document.addEventListener('DOMContentLoaded', () => {
+        // Eventos del modal
+        document.getElementById('cancelDelete').addEventListener('click', () => {
+            document.getElementById('deleteModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', (event) => {
+            if (event.target === document.getElementById('deleteModal')) {
+                document.getElementById('deleteModal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        document.getElementById('confirmDelete').addEventListener('click', () => {
+            if (currentForm) currentForm.submit();
+        });
+
+        // Iniciar listeners de movimiento
+        attachMoveListeners();
     });
 </script>
