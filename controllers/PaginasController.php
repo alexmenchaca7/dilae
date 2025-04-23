@@ -10,6 +10,8 @@ use Model\Subcategoria;
 use Model\FichaProducto;
 use Model\ImagenProducto;
 use Model\ProductoAtributo;
+use Model\CategoriaAtributo;
+use Model\SubcategoriaAtributo;
 
 class PaginasController {
     public static function index(Router $router) {
@@ -148,7 +150,12 @@ class PaginasController {
 
         foreach ($productos as $producto) {
             $producto->imagen_principal = ImagenProducto::obtenerPrincipalPorProductoId($producto->id);
-            $producto->atributos = self::obtenerAtributosPrincipales($producto->id);
+            // Obtener atributos ordenados según posición en categoría/subcategoría
+            $producto->atributos = self::obtenerAtributosPrincipales(
+                $producto->id,
+                $categoriaObj ? $categoriaObj->id : null,
+                $subcategoriaObj ? $subcategoriaObj->id : null
+            );
             $producto->categoria = $producto->categoria();
             $producto->subcategoria = $producto->subcategoria();
         }
@@ -206,7 +213,12 @@ class PaginasController {
         }
 
         $producto->imagenes = ImagenProducto::whereField('productoId', $producto->id);
-        $producto->atributos = self::obtenerAtributosDetallados($producto->id);
+        // Atributos ordenados en detalle
+        $producto->atributos = self::obtenerAtributosDetallados(
+            $producto->id,
+            $producto->categoriaId,
+            $producto->subcategoriaId
+        );
         $producto->fichas = FichaProducto::whereField('productoId', $producto->id);
 
         $router->render('paginas/producto', [
@@ -257,51 +269,55 @@ class PaginasController {
     }
 
 
-    private static function obtenerAtributosPrincipales($productoId) {
-        $atributos = [];
+    private static function obtenerAtributosPrincipales($productoId, $categoriaId = null, $subcategoriaId = null) {
+        $raw = [];
         $productoAtributos = ProductoAtributo::whereField('productoId', $productoId);
-        
-        foreach($productoAtributos as $pa) {
+        foreach ($productoAtributos as $pa) {
             $atributo = Atributo::find($pa->atributoId);
-            if(!$atributo) continue;
-            
-            if(!isset($atributos[$atributo->nombre])) {
-                $atributos[$atributo->nombre] = [
-                    'tipo' => $atributo->tipo, 
+            if (!$atributo) continue;
+            $id = $atributo->id;
+            if (!isset($raw[$id])) {
+                $raw[$id] = [
+                    'nombre' => $atributo->nombre,
+                    'tipo' => $atributo->tipo,
                     'unidad' => $atributo->unidad,
                     'espacio_unidad' => $atributo->espacio_unidad,
                     'valores' => []
                 ];
             }
-            
             $valor = !empty($pa->valor_texto) ? $pa->valor_texto : $pa->valor_numero;
-            $atributos[$atributo->nombre]['valores'][] = $valor;
+            $raw[$id]['valores'][] = $valor;
         }
-        
-        return $atributos;
+
+        // Determinar orden según subcategoría o categoría
+        if ($subcategoriaId) {
+            $ordenIds = SubcategoriaAtributo::getAtributosPorSubcategoria($subcategoriaId);
+        } elseif ($categoriaId) {
+            $ordenIds = CategoriaAtributo::getAtributosPorCategoria($categoriaId);
+        } else {
+            $ordenIds = array_keys($raw);
+        }
+
+        // Armar arreglo ordenado
+        $atributosOrdenados = [];
+        foreach ($ordenIds as $id) {
+            if (isset($raw[$id])) {
+                $nombre = $raw[$id]['nombre'];
+                $atributosOrdenados[$nombre] = $raw[$id];
+            }
+        }
+        // Agregar atributos sin posición definida al final
+        foreach ($raw as $id => $data) {
+            if (!in_array($id, $ordenIds)) {
+                $atributosOrdenados[$data['nombre']] = $data;
+            }
+        }
+
+        return $atributosOrdenados;
     }
 
-    private static function obtenerAtributosDetallados($productoId) {
-        $atributos = [];
-        $productoAtributos = ProductoAtributo::whereField('productoId', $productoId);
-        
-        foreach($productoAtributos as $pa) {
-            $atributo = Atributo::find($pa->atributoId);
-            if(!$atributo) continue;
-            
-            if(!isset($atributos[$atributo->nombre])) {
-                $atributos[$atributo->nombre] = [
-                    'tipo' => $atributo->tipo, 
-                    'unidad' => $atributo->unidad,
-                    'espacio_unidad' => $atributo->espacio_unidad,
-                    'valores' => []
-                ];
-            }
-            
-            $valor = !empty($pa->valor_texto) ? $pa->valor_texto : $pa->valor_numero;
-            $atributos[$atributo->nombre]['valores'][] = $valor;
-        }
-        
-        return $atributos;
+    private static function obtenerAtributosDetallados($productoId, $categoriaId = null, $subcategoriaId = null) {
+        // Lógica idéntica a obtenerAtributosPrincipales
+        return self::obtenerAtributosPrincipales($productoId, $categoriaId, $subcategoriaId);
     }
 }
