@@ -159,15 +159,18 @@ class CategoriasController {
                 if ($resultado) {
                     // Si se han seleccionado atributos (array de IDs)
                     if (isset($_POST['atributos']) && !empty($_POST['atributos'])) {
-                        foreach ($_POST['atributos'] as $atributoId) {
+                        foreach ($_POST['atributos'] as $index => $atributoId) { // Agregar índice
                             if (!empty($atributoId)) {
                                 $catAtributo = new CategoriaAtributo([
                                     'categoriaId' => $categoria->id,
-                                    'atributoId'  => $atributoId
+                                    'atributoId'  => $atributoId,
+                                    'posicion'    => $index + 1 // Nueva posición
                                 ]);
                                 $catAtributo->guardar();
                             }
                         }
+                        // Normalizar posiciones
+                        CategoriaAtributo::normalizarPosiciones($categoria->id);
                     }
                     header('Location: /admin/categorias');
                 }
@@ -228,15 +231,18 @@ class CategoriasController {
 
                     // Procesar el array de atributos seleccionados
                     if (isset($_POST['atributos']) && !empty($_POST['atributos'])) {
-                        foreach ($_POST['atributos'] as $atributoId) {
+                        foreach ($_POST['atributos'] as $index => $atributoId) { // Agregar índice
                             if (!empty($atributoId)) {
                                 $catAtributo = new CategoriaAtributo([
                                     'categoriaId' => $categoria->id,
-                                    'atributoId'  => $atributoId
+                                    'atributoId'  => $atributoId,
+                                    'posicion'    => $index + 1 // Nueva posición
                                 ]);
                                 $catAtributo->guardar();
                             }
                         }
+                        // Normalizar posiciones
+                        CategoriaAtributo::normalizarPosiciones($categoria->id);
                     }
                     header('Location: /admin/categorias');
                 }

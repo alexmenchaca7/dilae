@@ -48,4 +48,15 @@ class Atributo extends ActiveRecord {
         
         return self::$alertas;
     }
+
+    public static function whereInOrdered($campo, $valores) {
+        $valores = array_map([self::$conexion, 'escape_string'], $valores);
+        $valoresString = implode("', '", $valores);
+        
+        $query = "SELECT * FROM " . static::$tabla . " 
+                WHERE $campo IN ('" . $valoresString . "')
+                ORDER BY FIELD($campo, '" . $valoresString . "')";
+                
+        return self::consultarSQL($query);
+    }
 }

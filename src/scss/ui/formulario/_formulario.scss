@@ -135,6 +135,10 @@
         }
     }
 
+    .dragging {
+        opacity: 0.5;
+    }
+
     #search-attributes {
         margin-bottom: 2rem;
         border-radius: 1rem;

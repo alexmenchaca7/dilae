@@ -95,49 +95,53 @@
 
 <fieldset class="formulario__fieldset"> 
     <legend class="formulario__legend">Atributos del Producto</legend>
-    <div id="atributos-container">
+    <div id="atributos-container" data-orden="<?= !empty($atributosDisponibles) ? htmlspecialchars(json_encode(array_column($atributosDisponibles, 'id'))) : '' ?>">
         <?php if (!empty($atributosDisponibles)): ?>
-            <?php foreach($atributosDisponibles as $atributo): ?>
+            <?php 
+            // Mantener el orden original de los IDs
+            $ordenAtributos = array_column($atributosDisponibles, 'id');
+            ?>
+            <?php foreach($ordenAtributos as $atributoId): ?>
                 <?php 
-                    // Añadir verificación para evitar atributos duplicados
-                    if (!isset($atributosProcesados[$atributo->id])): 
-                        $atributosProcesados[$atributo->id] = true;
-                ?>
-                <div class="atributo-group" data-atributo-id="<?= $atributo->id ?>" data-renderizado-php="true">
-                <label class="formulario__label">
-                    <?= htmlspecialchars($atributo->nombre) ?>
-                    <?php if (!empty($atributo->unidad) && trim($atributo->unidad) !== ''): ?>
-                        (<?= htmlspecialchars($atributo->unidad) ?>)
-                    <?php endif; ?>
-                </label>
-                    <div class="atributo-inputs">
-                        <?php 
-                            // Inicializar con array vacío si no hay valores
-                            $valores = $atributosValores[$atributo->id] ?? [];
-                            // Si está vacío y es renderizado PHP, agregar un valor vacío
-                            if (empty($valores) && isset($atributo->renderizado_php)) {
-                                $valores = [''];
-                            }
-                            foreach($valores as $valor):  
-                        ?>
-                        <div class="input-wrapper">
-                            <input 
-                                type="<?= $atributo->tipo === 'numero' ? 'number' : 'text' ?>" 
-                                name="atributos[<?= $atributo->id ?>][]"
-                                placeholder="<?= htmlspecialchars($atributo->nombre) ?>"
-                                value="<?= htmlspecialchars(
-                                    ($atributo->tipo === 'numero' && is_numeric($valor)) 
-                                        ? rtrim(rtrim(number_format((float)$valor, 2, '.', ''), '0'), '.') 
-                                        : $valor 
-                                ) ?>"
-                                <?= $atributo->tipo === 'numero' ? 'step="any"' : '' ?>
-                            >
-                            <button type="button" class="eliminar-valor">×</button>
+                $atributo = current(array_filter($atributosDisponibles, function($a) use ($atributoId) {
+                    return $a->id == $atributoId;
+                }));
+                if ($atributo) : ?>
+                    <div class="atributo-group" data-atributo-id="<?= $atributo->id ?>">
+                        <label class="formulario__label">
+                            <?= htmlspecialchars($atributo->nombre) ?>
+                            <?php if (!empty($atributo->unidad) && trim($atributo->unidad) !== ''): ?>
+                                (<?= htmlspecialchars($atributo->unidad) ?>)
+                            <?php endif; ?>
+                        </label>
+                        <div class="atributo-inputs">
+                            <?php 
+                                // Inicializar con array vacío si no hay valores
+                                $valores = $atributosValores[$atributo->id] ?? [];
+                                // Si está vacío y es renderizado PHP, agregar un valor vacío
+                                if (empty($valores) && isset($atributo->renderizado_php)) {
+                                    $valores = [''];
+                                }
+                                foreach($valores as $valor):  
+                            ?>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="<?= $atributo->tipo === 'numero' ? 'number' : 'text' ?>" 
+                                    name="atributos[<?= $atributo->id ?>][]"
+                                    placeholder="<?= htmlspecialchars($atributo->nombre) ?>"
+                                    value="<?= htmlspecialchars(
+                                        ($atributo->tipo === 'numero' && is_numeric($valor)) 
+                                            ? rtrim(rtrim(number_format((float)$valor, 2, '.', ''), '0'), '.') 
+                                            : $valor 
+                                    ) ?>"
+                                    <?= $atributo->tipo === 'numero' ? 'step="any"' : '' ?>
+                                >
+                                <button type="button" class="eliminar-valor">×</button>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endforeach; ?>
+                        <button type="button" class="agregar-valor">+ Agregar Valor</button>
                     </div>
-                    <button type="button" class="agregar-valor">+ Agregar Valor</button>
-                </div>
                 <?php endif; ?>
             <?php endforeach; ?>
         <?php else: ?>
@@ -230,17 +234,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // Determinar si la categoría tiene subcategorías
         const tieneSubcategorias = subcategoriasPorCategoria[categoriaId]?.length > 0;
 
-        if (tieneSubcategorias && subcategoriaId) {
-            // Obtener de subcategoría
-            atributosIds = relacionesAtributos.subcategorias[subcategoriaId] || [];
-        } else if (!tieneSubcategorias) {
-            // Obtener de categoría
-            atributosIds = relacionesAtributos.categorias[categoriaId] || [];
+        // 1. Agregar atributos de categoría en ORDEN
+        if (relacionesAtributos.categorias[categoriaId]) {
+            atributosIds = [...relacionesAtributos.categorias[categoriaId]];
         }
 
-        // Filtrar atributos permitidos
-        const atributosPermitidos = todosAtributos.filter(atributo => {
-            return atributosIds.some(id => id === atributo.id);
+        // 2. Agregar atributos de subcategoría en ORDEN (si aplica)
+        if (tieneSubcategorias && subcategoriaId && relacionesAtributos.subcategorias[subcategoriaId]) {
+            const subcategoriaAtributos = relacionesAtributos.subcategorias[subcategoriaId];
+            subcategoriaAtributos.forEach(atributoId => {
+                if (!atributosIds.includes(atributoId)) {
+                    atributosIds.push(atributoId);
+                }
+            });
+        }
+
+        // Filtrar y mantener orden
+        const atributosPermitidos = todosAtributos.filter(atributo => 
+            atributosIds.includes(atributo.id)
+        ).sort((a, b) => {
+            return atributosIds.indexOf(a.id) - atributosIds.indexOf(b.id);
         });
 
         actualizarAtributosEnFormulario(atributosPermitidos);

@@ -66,52 +66,68 @@
     </div>
 </fieldset>
 
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const searchInput = document.getElementById('search-attributes');
         const availableTags = document.getElementById('available-tags');
         const selectedTags = document.getElementById('selected-tags');
 
-        function filterAttributes(searchText) {
-            const tags = availableTags.querySelectorAll('.tag');
-            tags.forEach(tag => {
-                const text = tag.textContent.toLowerCase();
-                const isVisible = text.includes(searchText.toLowerCase());
-                tag.style.display = isVisible ? 'flex' : 'none';
-            });
-        }
-
-        searchInput.addEventListener('input', function(e) {
-            filterAttributes(e.target.value);
-        });
-
-        availableTags.addEventListener('click', function(e) {
-            const tag = e.target.closest('.tag:not(.selected)');
-            if (tag) {
-                tag.classList.add('selected');
-                
-                const removeSpan = document.createElement('span');
-                removeSpan.className = 'remove-tag';
-                removeSpan.innerHTML = '&times;';
-                
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'atributos[]';
-                hiddenInput.value = tag.dataset.id;
-                
-                tag.appendChild(removeSpan);
-                tag.appendChild(hiddenInput);
-                selectedTags.appendChild(tag);
+        // Inicializar Sortable
+        const sortable = new Sortable(selectedTags, {
+            animation: 150,
+            handle: '.tag',
+            ghostClass: 'dragging',
+            onUpdate: function() {
+                actualizarOrdenInputs();
             }
         });
 
-        selectedTags.addEventListener('click', function(e) {
+        function actualizarOrdenInputs() {
+            const tags = selectedTags.querySelectorAll('.tag');
+            tags.forEach((tag, index) => {
+                const input = tag.querySelector('input[name="atributos[]"]');
+                if (input) {
+                    input.value = tag.dataset.id;
+                }
+            });
+        }
+
+        function filterAttributes(searchText) {
+            const tags = availableTags.querySelectorAll('.tag:not(.selected)');
+            tags.forEach(tag => {
+                const text = tag.textContent.toLowerCase();
+                tag.style.display = text.includes(searchText.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => filterAttributes(e.target.value));
+
+        availableTags.addEventListener('click', (e) => {
+            const tag = e.target.closest('.tag:not(.selected)');
+            if (!tag) return;
+
+            tag.classList.add('selected');
+            const clone = tag.cloneNode(true);
+            clone.innerHTML = `
+                ${tag.innerHTML}
+                <span class="remove-tag">&times;</span>
+                <input type="hidden" name="atributos[]" value="${tag.dataset.id}">
+            `;
+            
+            selectedTags.appendChild(clone);
+            actualizarOrdenInputs();
+        });
+
+        selectedTags.addEventListener('click', (e) => {
             const tag = e.target.closest('.tag.selected');
-            if (tag) {
-                tag.querySelector('input')?.remove();
-                tag.querySelector('.remove-tag')?.remove();
-                tag.classList.remove('selected');
-                availableTags.appendChild(tag);
+            const removeBtn = e.target.closest('.remove-tag');
+            
+            if (tag && removeBtn) {
+                const originalTag = availableTags.querySelector(`.tag[data-id="${tag.dataset.id}"]`);
+                if (originalTag) originalTag.classList.remove('selected');
+                tag.remove();
+                actualizarOrdenInputs();
             }
         });
     });

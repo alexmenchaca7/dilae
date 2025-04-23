@@ -179,16 +179,24 @@ class ActiveRecord {
 
     // Busqueda Where con Múltiples opciones
     public static function whereArray($array = []) {
-        $query = "SELECT * FROM " . static::$tabla . " WHERE ";
-        foreach($array as $key => $value) {
-            if($key == array_key_last($array)) {
-                $query .= " $key = '$value'";
-            } else {
-                $query .= " $key = '$value' AND ";
+        $query = "SELECT * FROM " . static::$tabla;
+    
+        // Construir WHERE solo si hay condiciones
+        if (!empty($array)) {
+            $query .= " WHERE ";
+            $conditions = [];
+            foreach ($array as $key => $value) {
+                $conditions[] = "$key = '" . self::$conexion->escape_string($value) . "'";
             }
+            $query .= implode(' AND ', $conditions);
         }
-        $resultado = self::consultarSQL($query);
-        return $resultado;
+        
+        // Agregar ORDER BY si se especifica
+        if (!empty($order)) {
+            $query .= " ORDER BY " . $order;
+        }
+        
+        return self::consultarSQL($query);
     }
 
     // Retornar los registros por un orden

@@ -74,45 +74,47 @@
                     <div class="producto-info">
                         <h3 class="titulo"><?= htmlspecialchars($producto->nombre) ?></h3>
                         <p class="descripcion"><?= htmlspecialchars($producto->descripcion) ?></p>
-                        
-                        <?php foreach ($producto->atributos as $nombre => $atributoData): ?>
-                        <div class="atributo">
-                            <h4><?= htmlspecialchars($nombre) ?></h4>
-                            <div class="valores">
-                                <?php 
-                                    $valores = $atributoData['valores'];
-                                    $unidad = $atributoData['unidad'] ?? '';
-                                    $tipo = $atributoData['tipo'];
-                                    
-                                    $valoresMostrar = array_map(function($valor) use ($unidad, $tipo, $atributoData) {
-                                        if ($tipo === 'numero' && is_numeric($valor)) {
-                                            $numero = (float)$valor;
-                                            $decimales = ($numero == floor($numero)) ? 0 : 2;
-                                            $valorFormateado = number_format($numero, $decimales, '.', ',');
-                                            $texto = htmlspecialchars($valorFormateado);
-                                            
-                                            // Agregar unidad SI EXISTE (incluyendo espacio según espacio_unidad)
-                                            if ($unidad) {
-                                                $espacio = (isset($atributoData['espacio_unidad']) && $atributoData['espacio_unidad'] == 1) ? ' ' : '';
-                                                $texto .= $espacio . htmlspecialchars($unidad);
+
+                        <div class="atributos">
+                            <?php foreach ($producto->atributos as $nombre => $atributoData): ?>
+                            <div class="atributo">
+                                <h4><?= htmlspecialchars($nombre) ?></h4>
+                                <div class="valores">
+                                    <?php 
+                                        $valores = $atributoData['valores'];
+                                        $unidad = $atributoData['unidad'] ?? '';
+                                        $tipo = $atributoData['tipo'];
+                                        
+                                        $valoresMostrar = array_map(function($valor) use ($unidad, $tipo, $atributoData) {
+                                            if ($tipo === 'numero' && is_numeric($valor)) {
+                                                $numero = (float)$valor;
+                                                $decimales = ($numero == floor($numero)) ? 0 : 2;
+                                                $valorFormateado = number_format($numero, $decimales, '.', ',');
+                                                $texto = htmlspecialchars($valorFormateado);
+                                                
+                                                // Agregar unidad SI EXISTE (incluyendo espacio según espacio_unidad)
+                                                if ($unidad) {
+                                                    $espacio = (isset($atributoData['espacio_unidad']) && $atributoData['espacio_unidad'] == 1) ? ' ' : '';
+                                                    $texto .= $espacio . htmlspecialchars($unidad);
+                                                }
+                                                
+                                                return $texto;
+                                            } else {
+                                                $texto = htmlspecialchars((string)$valor);
+                                                if ($unidad) {
+                                                    $espacio = (isset($atributoData['espacio_unidad']) && $atributoData['espacio_unidad'] == 1) ? ' ' : '';
+                                                    $texto .= $espacio . htmlspecialchars($unidad);
+                                                }
+                                                return $texto;
                                             }
-                                            
-                                            return $texto;
-                                        } else {
-                                            $texto = htmlspecialchars((string)$valor);
-                                            if ($unidad) {
-                                                $espacio = (isset($atributoData['espacio_unidad']) && $atributoData['espacio_unidad'] == 1) ? ' ' : '';
-                                                $texto .= $espacio . htmlspecialchars($unidad);
-                                            }
-                                            return $texto;
-                                        }
-                                    }, $valores);
-                                    
-                                    echo implode(', ', $valoresMostrar);
-                                ?>
+                                        }, $valores);
+                                        
+                                        echo implode(', ', $valoresMostrar);
+                                    ?>
+                                </div>
                             </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endforeach; ?>
                     </div>
 
                     <?php if(!empty($producto->fichas)): ?>

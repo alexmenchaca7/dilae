@@ -399,7 +399,8 @@
                 max-height: 0;
                 overflow: hidden;
                 background-color: color.adjust(v.$gris-claro, $lightness: 13%);
-                @include m.grid(2, 5rem, 2rem);
+                @include m.grid(2, 5rem, 1rem);
+                align-items: center;
                 padding: 0 1.5rem;
                 
                 &.activo {
@@ -609,14 +610,22 @@
             }
         }
 
+        .atributos {
+            align-items: center; // Centra verticalmente (opcional según necesidades)
+
+            @include m.desktopS {
+                @include m.grid (2, 3rem, 0);
+            }
+
+            @include m.desktop {
+                @include m.grid (3, 2rem, 0);
+            }
+        }
+
         .atributo {
             h4 {
                 margin-bottom: 1.5rem;
                 font-size: 2rem;
-            }
-
-            .valores {
-                
             }
 
             img {

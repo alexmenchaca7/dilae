@@ -85,6 +85,9 @@ class SubcategoriasController {
         }
     }
 
+    private static function normalizarPosicionesAtributos($subcategoriaId) {
+        SubcategoriaAtributo::normalizarPosiciones($subcategoriaId);
+    }    
 
     public static function crear(Router $router) {
         if(!is_auth()) {
@@ -123,15 +126,18 @@ class SubcategoriasController {
 
                     // Procesar el array de atributos seleccionados
                     if(isset($_POST['atributos']) && !empty($_POST['atributos'])) {
-                        foreach($_POST['atributos'] as $atributoId) {
+                        foreach($_POST['atributos'] as $index => $atributoId) {
                             if(!empty($atributoId)) {
                                 $subCatAtributo = new SubcategoriaAtributo([
                                     'subcategoriaId' => $subcategoria->id,
-                                    'atributoId'     => $atributoId
+                                    'atributoId'     => $atributoId,
+                                    'posicion'       => $index + 1 // Nueva posición basada en orden
                                 ]);
                                 $subCatAtributo->guardar();
                             }
                         }
+                        // Normalizar posiciones de atributos
+                        self::normalizarPosicionesAtributos($subcategoria->id);
                     }
                     header('Location: /admin/categorias');
                 }
@@ -173,14 +179,17 @@ class SubcategoriasController {
         // Obtener todas las categorías
         $categorias = Categoria::all();
         // Obtener todos los atributos existentes (para el select)
-        $atributos = \Model\Atributo::all();
+        $atributos = Atributo::all();
     
         // Obtener IDs de atributos asociados previamente
-        $oldAtributoIds = \Model\SubcategoriaAtributo::getAtributosPorSubcategoria($subcategoria->id);
+        $oldAtributos = SubcategoriaAtributo::whereArray([
+            'subcategoriaId' => $subcategoria->id
+        ], 'posicion ASC'); // Ordenar por posición
+        
         // Cargar objetos Atributo asociados para prellenar el formulario
         $atributosAsociados = [];
-        foreach ($oldAtributoIds as $atributoId) {
-            $atributosAsociados[] = \Model\Atributo::find($atributoId);
+        foreach ($oldAtributos as $relacion) {
+            $atributosAsociados[] = Atributo::find($relacion->atributoId);
         }
         
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -200,15 +209,18 @@ class SubcategoriasController {
     
                     // Procesar el array de atributos seleccionados
                     if(isset($_POST['atributos']) && !empty($_POST['atributos'])) {
-                        foreach($_POST['atributos'] as $atributoId) {
+                        foreach($_POST['atributos'] as $index => $atributoId) {
                             if(!empty($atributoId)) {
-                                $subCatAtributo = new \Model\SubcategoriaAtributo([
+                                $subCatAtributo = new SubcategoriaAtributo([
                                     'subcategoriaId' => $subcategoria->id,
-                                    'atributoId'     => $atributoId
+                                    'atributoId'     => $atributoId,
+                                    'posicion'       => $index + 1 // Nueva posición basada en orden
                                 ]);
                                 $subCatAtributo->guardar();
                             }
                         }
+                        // Normalizar posiciones de atributos
+                        self::normalizarPosicionesAtributos($subcategoria->id);
                     }
                     header('Location: /admin/categorias');
                 }

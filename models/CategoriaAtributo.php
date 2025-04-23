@@ -5,13 +5,14 @@ namespace Model;
 class CategoriaAtributo extends ActiveRecord {
     
     // Arreglo de columnas para identificar que forma van a tener los datos
-    protected static $columnasDB = ['id', 'categoriaId', 'atributoId'];
+    protected static $columnasDB = ['id', 'categoriaId', 'atributoId', 'posicion'];
     protected static $tabla = 'categoria_atributos';  
 
 
     public $id;
     public $categoriaId;
     public $atributoId;
+    public $posicion;
 
 
     public function __construct($args = [])
@@ -19,6 +20,7 @@ class CategoriaAtributo extends ActiveRecord {
         $this->id = $args['id'] ?? null;
         $this->categoriaId = $args['categoriaId'] ?? null;
         $this->atributoId = $args['atributoId'] ?? null;
+        $this->posicion = $args['posicion'] ?? 0;
     }
 
     // Validar: por ejemplo, que tanto la categoría como el atributo existan
@@ -35,7 +37,11 @@ class CategoriaAtributo extends ActiveRecord {
     // Obtiene los IDs de los atributos asociados a la categoría
     public static function getAtributosPorCategoria($categoriaId) {
         $categoriaId = self::$conexion->escape_string($categoriaId);
-        $query = "SELECT atributoId FROM " . static::$tabla . " WHERE categoriaId = '$categoriaId'";
+        $query = "SELECT atributoId 
+                FROM " . static::$tabla . " 
+                WHERE categoriaId = '$categoriaId' 
+                ORDER BY posicion ASC"; // Agregar orden
+                
         $resultado = self::$conexion->query($query);
         $atributos = [];
         while($row = $resultado->fetch_assoc()) {
@@ -50,5 +56,18 @@ class CategoriaAtributo extends ActiveRecord {
         $query = "DELETE FROM " . static::$tabla . " WHERE categoriaId = '$categoriaId'";
         $resultado = self::$conexion->query($query);
         return $resultado;
+    }
+
+    public static function normalizarPosiciones($categoriaId) {
+        $relaciones = self::whereArray(['categoriaId' => $categoriaId], 'posicion ASC');
+        $posicion = 1;
+        
+        foreach ($relaciones as $relacion) {
+            if($relacion->posicion != $posicion) {
+                $relacion->posicion = $posicion;
+                $relacion->guardar();
+            }
+            $posicion++;
+        }
     }
 }

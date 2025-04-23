@@ -140,7 +140,7 @@ class ProductosController {
         ];
     
         // Cargar relaciones categoría-atributo
-        $categoriasAtributos = CategoriaAtributo::all();
+        $categoriasAtributos = CategoriaAtributo::whereArray([], 'posicion ASC');
         foreach ($categoriasAtributos as $ca) {
             if(!isset($relacionesAtributos['categorias'][$ca->categoriaId])) {
                 $relacionesAtributos['categorias'][$ca->categoriaId] = [];
@@ -149,7 +149,7 @@ class ProductosController {
         }
     
         // Cargar relaciones subcategoría-atributo
-        $subcategoriasAtributos = SubcategoriaAtributo::all();
+        $subcategoriasAtributos = SubcategoriaAtributo::whereArray([], 'posicion ASC');
         foreach ($subcategoriasAtributos as $sa) {
             if(!isset($relacionesAtributos['subcategorias'][$sa->subcategoriaId])) {
                 $relacionesAtributos['subcategorias'][$sa->subcategoriaId] = [];
@@ -468,7 +468,7 @@ class ProductosController {
         ];
         
         // Cargar relaciones categoría-atributo
-        $categoriasAtributos = CategoriaAtributo::all();
+        $categoriasAtributos = CategoriaAtributo::whereArray([], 'posicion ASC');
         foreach ($categoriasAtributos as $ca) {
             if(!isset($relacionesAtributos['categorias'][$ca->categoriaId])) {
                 $relacionesAtributos['categorias'][$ca->categoriaId] = [];
@@ -477,7 +477,7 @@ class ProductosController {
         }
         
         // Cargar relaciones subcategoría-atributo
-        $subcategoriasAtributos = SubcategoriaAtributo::all();
+        $subcategoriasAtributos = SubcategoriaAtributo::whereArray([], 'posicion ASC');
         foreach ($subcategoriasAtributos as $sa) {
             if(!isset($relacionesAtributos['subcategorias'][$sa->subcategoriaId])) {
                 $relacionesAtributos['subcategorias'][$sa->subcategoriaId] = [];
@@ -722,25 +722,35 @@ class ProductosController {
 
 
     private static function obtenerAtributosDisponibles($categoriaId, $subcategoriaId = null) {
-        $atributosIds = [];
         $categoriaId = (int)$categoriaId;
         $subcategoriaId = $subcategoriaId ? (int)$subcategoriaId : null;
     
-        // 1. Siempre obtener atributos de la CATEGORÍA principal
-        $categoriaAtributos = CategoriaAtributo::whereField('categoriaId', $categoriaId);
-        foreach ($categoriaAtributos as $ca) {
-            $atributosIds[] = (int)$ca->atributoId;
-        }
+        // 1. Obtener atributos de CATEGORÍA ordenados
+        $atributosCategoria = CategoriaAtributo::whereArray(
+            ['categoriaId' => $categoriaId], 
+            'posicion ASC'
+        );
+        $atributosIds = array_map(function($ca) {
+            return (int)$ca->atributoId;
+        }, $atributosCategoria);
     
-        // 2. Si hay subcategoría, agregar sus atributos
+        // 2. Si hay subcategoría, obtener sus atributos ordenados
+        $atributosSubcategoria = [];
         if ($subcategoriaId) {
-            $subcategoriaAtributos = SubcategoriaAtributo::whereField('subcategoriaId', $subcategoriaId);
-            foreach ($subcategoriaAtributos as $sa) {
-                $atributosIds[] = (int)$sa->atributoId;
+            $atributosSubcategoria = SubcategoriaAtributo::whereArray(
+                ['subcategoriaId' => $subcategoriaId], 
+                'posicion ASC'
+            );
+        }
+
+        // Combinar manteniendo orden y sin duplicados
+        foreach ($atributosSubcategoria as $sa) {
+            $atributoId = (int)$sa->atributoId;
+            if (!in_array($atributoId, $atributosIds)) {
+                $atributosIds[] = $atributoId;
             }
         }
     
-        $atributosIdsUnicos = array_unique($atributosIds);
-        return Atributo::whereIn('id', $atributosIdsUnicos) ?? [];
+        return Atributo::whereInOrdered('id', $atributosIds) ?? [];
     }
 }
