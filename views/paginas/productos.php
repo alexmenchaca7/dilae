@@ -68,7 +68,10 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <button type="submit" class="boton">Aplicar Filtros</button>
+                <div class="botones-filtros">
+                    <button type="submit" class="boton">Aplicar Filtros</button>
+                    <a href="<?= $cleanUrl ?>" class="boton boton-secundario">Limpiar Filtros</a>
+                </div>
             </form>
             <?php endif; ?>
         </aside>

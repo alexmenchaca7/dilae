@@ -69,6 +69,9 @@ class PaginasController {
             $numericAttributes = Atributo::consultarSQL($sql) ?: [];
         }
 
+        // Guardar GET original antes de modificaciones
+        $originalGet = $_GET;
+
         // Antes del procesamiento de filtros:
         foreach ($_GET as $key => $value) {
             if (strpos($key, 'min_') === 0 || strpos($key, 'max_') === 0) {
@@ -167,6 +170,36 @@ class PaginasController {
             $titulo = $categoriaObj->nombre;
         }
 
+        // Redirección para limpiar URL si hubo cambios
+        if ($_GET != $originalGet) {
+            $path = '/productos';
+            if ($categoria_slug) {
+                $path .= '/' . $categoria_slug;
+                if ($subcategoria_slug) {
+                    $path .= '/' . $subcategoria_slug;
+                }
+            }
+            $query = http_build_query($_GET);
+            $redirectUrl = $path . ($query ? '?'.$query : '');
+            header("Location: $redirectUrl");
+            exit;
+        }
+
+        // Calcular URL limpia para el botón
+        $cleanParams = array_filter($_GET, function($key) {
+            return strpos($key, 'min_') !== 0 && strpos($key, 'max_') !== 0;
+        }, ARRAY_FILTER_USE_KEY);
+        
+        $cleanPath = '/productos';
+        if ($categoria_slug) {
+            $cleanPath .= '/' . $categoria_slug;
+            if ($subcategoria_slug) {
+                $cleanPath .= '/' . $subcategoria_slug;
+            }
+        }
+        $cleanQuery = http_build_query($cleanParams);
+        $cleanUrl = $cleanPath . ($cleanQuery ? '?'.$cleanQuery : '');
+
         $router->render('paginas/productos', [
             'titulo' => $titulo,
             'categorias' => $categorias,
@@ -177,7 +210,8 @@ class PaginasController {
             'numericAttributes' => $numericAttributes,
             'paginacion' => $paginacion,
             'categoria_slug' => $categoria_slug,
-            'subcategoria_slug' => $subcategoria_slug
+            'subcategoria_slug' => $subcategoria_slug,
+            'cleanUrl' => $cleanUrl
         ]);
     }
 

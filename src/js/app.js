@@ -74,10 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const submenuContenedores = document.querySelectorAll(".submenu-contenedor");
 
     submenuContenedores.forEach(submenuContenedor => {
-        const submenuBtn = submenuContenedor.querySelector(".submenu-btn");
+        const submenuToggle = submenuContenedor.querySelector(".submenu-toggle");
 
-        if (submenuBtn) {
-            submenuBtn.addEventListener("click", function (event) {
+        if (submenuToggle) {
+            submenuToggle.addEventListener("click", function (event) {
                 event.preventDefault();
                 event.stopPropagation();
 

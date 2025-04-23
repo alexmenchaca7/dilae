@@ -262,13 +262,23 @@
             all: unset;
             position: relative;
 
-            .submenu-toggle {
+            >.submenu-toggle {
                 all: unset;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
                 cursor: pointer;
                 padding: 1.5rem 0;
+
+                &:hover {
+                    a {
+                        color: v.$primario;
+                    }
+
+                    .submenu-btn {
+                        color: v.$primario;
+                    }
+                }
 
                 a {
                     all: unset;
@@ -290,10 +300,6 @@
                     align-items: center;
                     padding: 0.5rem 0;
                     transition: 0.3s all ease;
-
-                    &:hover {
-                        color: v.$primario;
-                    }
 
                     i {
                         transform: rotate(0deg);
@@ -338,27 +344,40 @@
                     list-style: none;
 
                     > .submenu-toggle {
-                        padding: 0.8rem 1.5rem;
+                        all: unset;
                         display: flex;
                         align-items: center;
+                        gap: 0.5rem;
+                        padding: 0.8rem 1.5rem;
                         justify-content: space-between;
                         cursor: default;
 
+                        // Nuevo hover solo para el enlace
+                        a:hover {
+                            color: v.$primario;
+                        }
+
+                        // Mantenemos el hover para el botón si es necesario
+                        .subsubmenu-btn:hover {
+                            color: v.$primario;
+                        }
+
                         a {
+                            all: unset;
+                            color: v.$negro;
+                            font-weight: v.$bold;
+                            font-size: 1.5rem;
                             display: inline-block;
                             cursor: pointer;
                             padding: 0.5rem 0;
                             transition: 0.3s all ease;
-
-                            &:hover {
-                                color: v.$primario;
-                            }
                         }
 
                         .subsubmenu-btn {
                             all: unset;
                             cursor: pointer;
                             align-self: center;
+                            transition: 0.3s all ease;
 
                             i {
                                 font-size: 1.2rem;

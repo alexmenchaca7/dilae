@@ -227,6 +227,11 @@
                 }
             }
         }
+
+        .botones-filtros {
+            display: flex;
+            flex-direction: column;
+        }
     
         .boton {
             @include m.boton(v.$primario, v.$blanco);
@@ -242,6 +247,11 @@
                 background-color: color.adjust(v.$primario, $lightness: -15%);
                 transform: translateY(-1px);
             }
+        }
+
+        .boton-secundario {
+            @include m.boton(v.$dashboard, v.$blanco);
+            width: 100%;
         }
     }    
 }
