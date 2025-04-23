@@ -537,17 +537,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (productoSubcategoriaId) {
             subcategoriaSelect.value = productoSubcategoriaId;
         }
-    }
 
-    // Configurar imágenes existentes
-    document.querySelectorAll('.contenedor-imagen:not([data-existente="true"])').forEach(contenedor => {
-        const preview = contenedor.querySelector('.imagen-preview');
-        const input = contenedor.querySelector('input[type="file"]');
-        if (preview && input) {
-            preview.addEventListener('click', () => input.click());
-            input.addEventListener('change', previewImage);
-        }
-    });
+        // Configurar imágenes existentes
+        document.querySelectorAll('.contenedor-imagen:not([data-existente="true"])').forEach(contenedor => {
+            const preview = contenedor.querySelector('.imagen-preview');
+            const input = contenedor.querySelector('input[type="file"]');
+            if (preview && input) {
+                preview.addEventListener('click', () => input.click());
+                input.addEventListener('change', previewImage);
+            }
+        });
+    }
 
     document.querySelectorAll('.contenedor-imagen[data-existente]').forEach(contenedor => {
         const btnEliminar = contenedor.querySelector('.eliminar-imagen');
