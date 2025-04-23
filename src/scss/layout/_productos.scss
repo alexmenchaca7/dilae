@@ -440,7 +440,9 @@
                 z-index: 0;
         
                 img {
-                    width: 100%;
+                    min-width: 0;
+                    max-width: 30rem;
+                    max-height: 30rem;
                     padding: 3rem;
                     mix-blend-mode: multiply; // Hace que la imagen interactúe con el color de fondo
                 }
