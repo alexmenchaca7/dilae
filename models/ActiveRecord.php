@@ -178,7 +178,7 @@ class ActiveRecord {
     }
 
     // Busqueda Where con Múltiples opciones
-    public static function whereArray($array = []) {
+    public static function whereArray($array = [], $order = '') {
         $query = "SELECT * FROM " . static::$tabla;
     
         // Construir WHERE solo si hay condiciones

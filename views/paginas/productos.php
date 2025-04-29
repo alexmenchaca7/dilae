@@ -134,7 +134,8 @@
                             <a href="/productos/<?= $producto->categoria->slug ?>/<?= $producto->subcategoria ? $producto->subcategoria->slug : 'sin-subcategoria' ?>/<?= $producto->slug ?>" class="producto-link">
                                 <div class="imagen">
                                     <?php if($producto->imagen_principal): ?>
-                                    <img loading="lazy" src="/img/productos/<?= $producto->imagen_principal->url ?>.webp" 
+                                    <img loading="lazy" 
+                                        src="/img/productos/<?= $producto->imagen_principal->url ?>.webp" 
                                         alt="<?= $producto->nombre ?>">
                                     <?php else: ?>
                                     <img loading="lazy" src="/img/productos/default.webp" alt="Producto sin imagen">

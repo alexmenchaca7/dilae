@@ -61,6 +61,13 @@
                             
                             <?php if(count($producto->imagenes) > 1): ?>
                                 <div class="miniaturas">
+                                    <?php 
+                                    // Ordenar las imágenes por posición
+                                    $imagenes_ordenadas = $producto->imagenes;
+                                    usort($imagenes_ordenadas, function($a, $b) {
+                                        return $a->posicion <=> $b->posicion;
+                                    });
+                                    ?>
                                     <?php foreach ($producto->imagenes as $index => $imagen): ?>
                                     <img class="miniatura <?= $index === 0 ? 'active' : '' ?>" 
                                         src="/img/productos/<?= $imagen->url ?>.webp" 

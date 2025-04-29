@@ -246,7 +246,11 @@ class PaginasController {
             ]);
         }
 
-        $producto->imagenes = ImagenProducto::whereField('productoId', $producto->id);
+        $producto->imagenes = ImagenProducto::whereArray(
+            ['productoId' => $producto->id], 
+            'posicion ASC'  // <- Ordenar por posición
+        );
+        
         // Atributos ordenados en detalle
         $producto->atributos = self::obtenerAtributosDetallados(
             $producto->id,

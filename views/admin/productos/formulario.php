@@ -73,14 +73,26 @@
 
 <fieldset class="formulario__fieldset">
     <legend class="formulario__legend">Imágenes del Producto</legend>
+
+    <!-- Input oculto para el orden -->
+    <input type="hidden" id="orden_imagenes" name="orden_imagenes" value="">
     
     <div class="contenedor-imagenes" id="contenedor-imagenes">
         <?php foreach($imagenes as $imagen): ?>
-            <div class="formulario__campo contenedor-imagen" data-existente="true">
+            <div class="formulario__campo contenedor-imagen" data-existente="true" data-id="<?= $imagen->id ?>">
                 <div class="contenedor-imagen-preview">
                     <div class="imagen-preview">
                         <img src="/img/productos/<?= $imagen->url ?>.webp" alt="<?php echo $producto->nombre; ?>">
                         <input type="hidden" name="imagenes_existentes[]" value="<?= $imagen->id ?>">
+
+                        <!-- Input para reemplazar -->
+                        <input 
+                            type="file"
+                            class="imagen-input"
+                            name="imagenes_reemplazo[<?= $imagen->id ?>]"
+                            accept="image/*"
+                            style="display: none;"
+                        >
                     </div>
                     <button type="button" class="formulario__accion--secundario eliminar-imagen">Eliminar</button>
                 </div>
@@ -171,6 +183,7 @@
     </button>
 </fieldset>
 
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // ------------- Variables globales -------------
@@ -401,6 +414,44 @@ document.addEventListener('DOMContentLoaded', function() {
         contenedor.remove();
     }
 
+    function previewReemplazoImagen(e) {
+        const input = e.target;
+        const preview = input.closest('.imagen-preview');
+        const img = preview.querySelector('img');
+        const file = input.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.classList.add('imagen-reemplazada');
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+
+    // ------------- Ordenamiento de imágenes -------------
+    const inputOrden = document.getElementById('orden_imagenes');
+
+    // Inicializar Sortable
+    const sortable = new Sortable(contenedorImagenes, {
+        animation: 150,
+        handle: '.contenedor-imagen-preview',
+        ghostClass: 'imagen-fantasma',
+        onUpdate: function(evt) {
+            actualizarOrdenImagenes();
+        }
+    });
+
+    function actualizarOrdenImagenes() {
+        const ids = Array.from(contenedorImagenes.querySelectorAll('[data-id]'))
+                       .map(img => img.getAttribute('data-id'))
+                       .join(',');
+        document.getElementById('orden_imagenes').value = ids;
+
+    }
+
     // ------------- Funciones para fichas tecnicas -------------
     function agregarEventListenerAFicha(contenedor) {
         const inputFile = contenedor.querySelector('.ficha-input');
@@ -539,13 +590,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Configurar imágenes existentes
-        document.querySelectorAll('.contenedor-imagen:not([data-existente="true"])').forEach(contenedor => {
+        document.querySelectorAll('.contenedor-imagen[data-existente="true"]').forEach(contenedor => {
             const preview = contenedor.querySelector('.imagen-preview');
-            const input = contenedor.querySelector('input[type="file"]');
-            if (preview && input) {
-                preview.addEventListener('click', () => input.click());
-                input.addEventListener('change', previewImage);
-            }
+            const inputFile = contenedor.querySelector('.imagen-input');
+            
+            preview.addEventListener('click', () => inputFile.click());
+            inputFile.addEventListener('change', previewReemplazoImagen);
         });
     }
 

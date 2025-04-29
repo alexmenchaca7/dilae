@@ -309,6 +309,8 @@ class ProductosController {
                 $resultado = $producto->guardar();
     
                 if($resultado) {
+                    $posicion = 1;
+
                     // Procesar imágenes
                     $manager = new ImageManager(new Driver());
                     $carpetaFinal = '../public/img/productos';
@@ -330,7 +332,8 @@ class ProductosController {
                             
                             $imagenProducto = new ImagenProducto([
                                 'url' => $nombreUnico,
-                                'productoId' => $producto->id
+                                'productoId' => $producto->id,
+                                'posicion' => $posicion++ 
                             ]);
                             $imagenProducto->guardar();
                             
@@ -431,6 +434,12 @@ class ProductosController {
             exit;
         }
 
+        // Obtener imágenes ordenadas por posición
+        $imagenes = ImagenProducto::whereArray(
+            ['productoId' => $producto->id], 
+            'posicion ASC'
+        );
+
         // Obtener datos relacionados
         $atributosDisponibles = array_unique(
             self::obtenerAtributosDisponibles(
@@ -449,7 +458,6 @@ class ProductosController {
         }
 
         // Elementos existentes
-        $imagenes = ImagenProducto::whereField('productoId', $producto->id);
         $fichas = FichaProducto::whereField('productoId', $producto->id);
         $categorias = Categoria::all();
         $subcategorias = Subcategoria::all();
@@ -563,6 +571,23 @@ class ProductosController {
                             }
                         }
                     }
+                    // Actualizar orden de imágenes existentes
+                    if (!empty($_POST['orden_imagenes'])) {
+                        $idsOrdenados = explode(',', $_POST['orden_imagenes']);
+                        $posicion = 1;
+                        
+                        foreach ($idsOrdenados as $idImagen) {
+                            $imagen = ImagenProducto::find($idImagen);
+                            if ($imagen && $imagen->productoId == $producto->id) {
+                                $imagen->posicion = $posicion++;
+                                $imagen->guardar();
+                            }
+                        }
+                    }
+
+                    // Obtener última posición para nuevas imágenes
+                    $maxPosicion = ImagenProducto::max('posicion', ['productoId' => $producto->id]) ?? 0;
+                    $posicionNuevas = $maxPosicion + 1;
     
                     // Procesar NUEVAS imágenes
                     if(isset($_FILES['nuevas_imagenes'])) {
@@ -584,7 +609,8 @@ class ProductosController {
                                     
                                     $imagenProducto = new ImagenProducto([
                                         'url' => $nombreUnico,
-                                        'productoId' => $producto->id
+                                        'productoId' => $producto->id,
+                                        'posicion' => $posicionNuevas++
                                     ]);
                                     $imagenProducto->guardar();
                                 } catch (Exception $e) {
@@ -629,9 +655,60 @@ class ProductosController {
                     if(!empty($_POST['imagenes_eliminadas'])) {
                         foreach($_POST['imagenes_eliminadas'] as $id) {
                             $imagen = ImagenProducto::find($id);
-                            if($imagen) $imagen->eliminar();
+                            if ($imagen) {
+                                // Eliminar archivos físicos
+                                $rutaWebp = "../public/img/productos/{$imagen->url}.webp";
+                                $rutaPng = "../public/img/productos/{$imagen->url}.png";
+                    
+                                if (file_exists($rutaWebp)) unlink($rutaWebp);
+                                if (file_exists($rutaPng)) unlink($rutaPng);
+                    
+                                // Eliminar registro de la base de datos
+                                $imagen->eliminar();
+                            }
                         }
                     }
+
+                    if (!empty($_FILES['imagenes_reemplazo'])) {
+                        $manager = new ImageManager(new Driver());
+                        $carpetaFinal = '../public/img/productos';
+                        
+                        foreach ($_FILES['imagenes_reemplazo']['tmp_name'] as $imagenId => $tmpName) {
+                            if (is_uploaded_file($tmpName)) {
+                                $imagenExistente = ImagenProducto::find((int)$imagenId);
+                                
+                                if ($imagenExistente) {
+                                    // Eliminar archivos antiguos
+                                    $nombreViejo = $imagenExistente->url;
+                                    $archivos = [
+                                        "$carpetaFinal/$nombreViejo.webp",
+                                        "$carpetaFinal/$nombreViejo.png"
+                                    ];
+                                    
+                                    foreach ($archivos as $archivo) {
+                                        if (file_exists($archivo)) unlink($archivo);
+                                    }
+                    
+                                    // Generar nuevo nombre único
+                                    $nuevoNombre = md5(uniqid(rand(), true));
+                                    
+                                    try {
+                                        $imagen = $manager->read($tmpName);
+                                        $imagen->contain(800, 800);
+                                        $imagen->toWebp(85)->save("$carpetaFinal/$nuevoNombre.webp");
+                                        $imagen->toPng()->save("$carpetaFinal/$nuevoNombre.png");
+                    
+                                        // Actualizar BD
+                                        $imagenExistente->url = $nuevoNombre;
+                                        $imagenExistente->guardar();
+                                    } catch (Exception $e) {
+                                        error_log("Error reemplazando imagen: " . $e->getMessage());
+                                        $alertas['error'][] = 'Error al actualizar una imagen';
+                                    }
+                                }
+                            }
+                        }
+                    }                    
     
                     // Actualizar atributos
                     ProductoAtributo::eliminarTodos($producto->id);
