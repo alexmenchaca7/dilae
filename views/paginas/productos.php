@@ -112,10 +112,11 @@
                 </div>
         
                 <div class="busqueda">
-                    <form method="GET" action="">
+                    <form method="GET" action="" id="search-form">
                         <input 
                             type="text" 
-                            name="busqueda" 
+                            name="busqueda"
+                            id="busqueda-input" 
                             placeholder="Introduce aquí tu búsqueda..."
                             value="<?= htmlspecialchars($busqueda ?? '') ?>"
                         >
@@ -128,94 +129,204 @@
         
             <!-- Contenedor de productos -->
             <div class="productos">
-                <?php foreach ($productos as $producto): ?>
-                    <div class="producto">
-                        <div class="producto-contenido">
-                            <a href="/productos/<?= $producto->categoria->slug ?>/<?= $producto->subcategoria ? $producto->subcategoria->slug : 'sin-subcategoria' ?>/<?= $producto->slug ?>" class="producto-link">
-                                <div class="imagen">
-                                    <?php if($producto->imagen_principal): ?>
-                                    <img loading="lazy" 
-                                        src="/img/productos/<?= $producto->imagen_principal->url ?>.webp" 
-                                        alt="<?= $producto->nombre ?>">
-                                    <?php else: ?>
-                                    <img loading="lazy" src="/img/productos/default.webp" alt="Producto sin imagen">
-                                    <?php endif; ?>
-                                    <div class="linea"></div>
-                                    <h3><?= $producto->nombre ?></h3>
-                                </div>
-                            </a>
-
-                            <button class="toggle-detalles" aria-expanded="false">
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </button>
-
-                            <div class="detalles">
-                            <?php foreach ($producto->atributos as $nombre => $atributo): ?>
-                                <div class="detalle">
-                                    <p class="detalle-titulo"><?= htmlspecialchars($nombre ?? '') ?></p>
-                                    <p>
-                                        <?php 
-                                            $valores = $atributo['valores'];
-                                            $unidad = $atributo['unidad'];
-                                            $valoresConUnidad = array_map(function($valor) use ($unidad, $atributo) {
-                                                // Verificar si es numérico
-                                                if ($atributo['tipo'] === 'numero' && is_numeric($valor)) {
-                                                    $numero = (float)$valor;
-                                                    $decimales = ($numero == floor($numero)) ? 0 : 2;
-                                                    $valorFormateado = number_format($numero, $decimales, '.', ',');
-                                                    $texto = htmlspecialchars($valorFormateado ?? '');
-                                                    
-                                                    // Agregar unidad SI EXISTE (incluyendo espacio según espacio_unidad)
-                                                    if ($unidad) {
-                                                        $espacio = (isset($atributo['espacio_unidad']) && $atributo['espacio_unidad'] == 1) ? ' ' : '';
-                                                        $texto .= $espacio . htmlspecialchars($unidad ?? '');
-                                                    }
-                                                    
-                                                    return $texto;
-                                                } else {
-                                                    $texto = htmlspecialchars($valor ?? '');
-                                                    if ($unidad) {
-                                                        $espacio = (isset($atributo['espacio_unidad']) && $atributo['espacio_unidad'] == 1) ? ' ' : '';
-                                                        $texto .= $espacio . htmlspecialchars($unidad ?? '');
-                                                    }
-                                                    return $texto;
-                                                }
-                                            }, $valores);
-                                            
-                                            echo implode(', ', $valoresConUnidad);
-                                        ?>
-                                    </p>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                <?php include __DIR__ . '/_lista-productos.php'; ?>
             </div>
         </div>
     </div>
 
     <?php if(isset($paginacion)): ?>
         <div class="paginacion">
-            <?php echo $paginacion->paginacion(); ?>
+            <?php include __DIR__ . '/_paginacion.php'; ?>
         </div>
     <?php endif; ?>
 </main>
 
 <script>
-    document.addEventListener("DOMContentLoaded" , () => {
-        document.querySelectorAll('.toggle-detalles').forEach(button => {
-            button.addEventListener('click', function(e) {
+document.addEventListener("DOMContentLoaded" , () => {
+    const searchInput = document.getElementById('busqueda-input');
+    const searchForm = document.getElementById('search-form'); // Para prevenir submit tradicional
+    const productosContainer = document.querySelector('.productos');
+    const paginacionContainer = document.querySelector('.paginacion');
+    const ordenForm = document.getElementById('orden-form');
+
+    let debounceTimer;
+
+    // Función para manejar los toggles de detalles (usando delegación de eventos)
+    function initializeDetailToggles(container) {
+        container.addEventListener('click', function(e) {
+            const button = e.target.closest('.toggle-detalles');
+            if (button) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                const detalles = this.nextElementSibling;
-                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                const detalles = button.nextElementSibling;
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
                 
-                // Alternar la clase 'activo' en los detalles
                 detalles.classList.toggle('activo', !isExpanded);
-                this.setAttribute('aria-expanded', !isExpanded);
-            });
+                button.setAttribute('aria-expanded', !isExpanded);
+
+                // Cambiar el icono
+                const icon = button.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-chevron-down', isExpanded);
+                    icon.classList.toggle('fa-chevron-up', !isExpanded);
+                }
+            }
         });
+    }
+
+    // Inicializar toggles para la carga inicial
+    if (productosContainer) {
+        initializeDetailToggles(productosContainer);
+    }
+
+    async function fetchProductos(url) {
+        try {
+            // Mostrar un loader (opcional)
+            if(productosContainer) productosContainer.innerHTML = '<p class="text-center">Cargando...</p>';
+            if(paginacionContainer) paginacionContainer.innerHTML = '';
+
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Para que el backend sepa que es AJAX
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (productosContainer) {
+                productosContainer.innerHTML = data.productos_html;
+            }
+            if (paginacionContainer) {
+                paginacionContainer.innerHTML = data.paginacion_html;
+            }
+            
+            // Actualizar la URL en el navegador sin recargar
+            history.pushState(null, '', url);
+
+        } catch (error) {
+            console.error('Error al cargar productos:', error);
+            if(productosContainer) productosContainer.innerHTML = '<p class="text-center error">Error al cargar productos. Intenta de nuevo.</p>';
+        }
+    }
+
+    function getUpdatedUrl() {
+        const baseUrl = window.location.pathname; // Mantiene la categoría/subcategoría actual
+        const params = new URLSearchParams();
+
+        // Búsqueda
+        if (searchInput.value.trim() !== '') {
+            params.set('busqueda', searchInput.value.trim());
+        }
+
+        // Orden
+        if (ordenForm && ordenForm.orden.value) {
+            params.set('orden', ordenForm.orden.value);
+        }
+        
+        // Mantener otros parámetros GET existentes que no sean 'page'
+        const currentParams = new URLSearchParams(window.location.search);
+        currentParams.forEach((value, key) => {
+            if (key !== 'busqueda' && key !== 'orden' && key !== 'page' && !key.startsWith('min_') && !key.startsWith('max_')) {
+                 // Conservar slugs si están en query params (aunque normalmente están en el path)
+                 // Conservar otros filtros que no gestionemos activamente aquí
+                if (!params.has(key)) {
+                    params.set(key, value);
+                }
+            }
+        });
+        
+        // Filtros numéricos del sidebar (asumiendo que están en el GET actual)
+        const filtroForm = document.querySelector('.barra-lateral form');
+        if (filtroForm) {
+            const filtroData = new FormData(filtroForm);
+            filtroData.forEach((value, key) => {
+                if (value.trim() !== '' && (key.startsWith('min_') || key.startsWith('max_'))) {
+                     params.set(key, value);
+                }
+            });
+        }
+
+
+        const queryString = params.toString();
+        return `${baseUrl}${queryString ? '?' + queryString : ''}`;
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const url = getUpdatedUrl();
+                fetchProductos(url);
+            }, 500); // Espera 500ms después de que el usuario deja de escribir
+        });
+    }
+
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevenir envío tradicional del formulario
+            clearTimeout(debounceTimer); // Limpiar timer si estaba activo
+            const url = getUpdatedUrl();
+            fetchProductos(url);
+        });
+    }
+    
+    // Para la ordenación
+    if (ordenForm) {
+        ordenForm.addEventListener('change', () => {
+            const url = getUpdatedUrl();
+            fetchProductos(url);
+        });
+    }
+
+    // Para la paginación (usando delegación de eventos en el contenedor)
+    if (paginacionContainer) {
+        paginacionContainer.addEventListener('click', (e) => {
+            const link = e.target.closest('a'); // Busca el enlace más cercano al clic
+            if (link && link.matches('.paginacion a')) { // Asegúrate que es un link de paginación
+                e.preventDefault();
+                const url = link.getAttribute('href');
+                if (url) {
+                    fetchProductos(url);
+                }
+            }
+        });
+    }
+    
+    // Para los filtros de la barra lateral (si el form tiene un ID 'filtros-laterales-form')
+    const filtrosLateralesForm = document.querySelector('.barra-lateral form'); // Asume que solo hay un form
+    if (filtrosLateralesForm) {
+        filtrosLateralesForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const url = getUpdatedUrl(); // getUpdatedUrl ahora lee estos filtros
+            fetchProductos(url);
+        });
+
+        // Para el botón "Limpiar Filtros"
+        const limpiarFiltrosBtn = filtrosLateralesForm.querySelector('a.boton-secundario');
+        if (limpiarFiltrosBtn) {
+            limpiarFiltrosBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Resetear los inputs del formulario de filtros
+                filtrosLateralesForm.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+                
+                const cleanUrl = limpiarFiltrosBtn.getAttribute('href'); // El PHP ya genera la URL limpia
+                fetchProductos(cleanUrl);
+            });
+        }
+    }
+
+
+    // Manejar el botón "atrás/adelante" del navegador
+    window.addEventListener('popstate', () => {
+        // La URL ya cambió, solo necesitamos cargar el contenido para esa URL
+        fetchProductos(window.location.href);
     });
+});
 </script>

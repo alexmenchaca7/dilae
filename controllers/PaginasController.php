@@ -200,6 +200,27 @@ class PaginasController {
         $cleanQuery = http_build_query($cleanParams);
         $cleanUrl = $cleanPath . ($cleanQuery ? '?'.$cleanQuery : '');
 
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            // Es una petición AJAX
+            ob_start();
+            // Incluir un "partial" para la lista de productos
+            include __DIR__ . '/../views/paginas/_lista-productos.php';
+            $productos_html = ob_get_clean();
+        
+            ob_start();
+            // Incluir un "partial" para la paginación
+            include __DIR__ . '/../views/paginas/_paginacion.php';
+            $paginacion_html = ob_get_clean();
+        
+            header('Content-Type: application/json');
+            echo json_encode([
+                'productos_html' => $productos_html,
+                'paginacion_html' => $paginacion_html,
+                'titulo' => $titulo // Opcional, si quieres actualizar el título de la página dinámicamente
+            ]);
+            exit; // Importante para no renderizar el resto de la plantilla
+        }
+
         $router->render('paginas/productos', [
             'titulo' => $titulo,
             'categorias' => $categorias,
