@@ -50,28 +50,25 @@
                 <div class="contenedor-producto">
                     <div class="producto-imagenes">
                         <div class="contenedor-imagenes">
-                            <div class="imagen-principal">
-                                <?php if(!empty($producto->imagenes)): ?>
+                        <div class="imagen-principal">
+                            <?php if(!empty($producto->imagenes)): ?>
                                 <img id="imagenGrande" src="/img/productos/<?= $producto->imagenes[0]->url ?>.webp" 
                                     alt="<?= $producto->nombre ?>">
-                                <?php else: ?>
-                                <img id="imagenGrande" src="/img/productos/default.webp" alt="Producto sin imagen">
+                                
+                                <?php if(count($producto->imagenes) > 1): ?>
+                                    <button class="flecha prev" onclick="cambiarImagenPrev()">‹</button>
+                                    <button class="flecha next" onclick="cambiarImagenNext()">›</button>
                                 <?php endif; ?>
-                            </div>
+                            <?php else: ?>
+                                <img id="imagenGrande" src="/img/productos/default.webp" alt="Producto sin imagen">
+                            <?php endif; ?>
+                        </div>
                             
                             <?php if(count($producto->imagenes) > 1): ?>
-                                <div class="miniaturas">
-                                    <?php 
-                                    // Ordenar las imágenes por posición
-                                    $imagenes_ordenadas = $producto->imagenes;
-                                    usort($imagenes_ordenadas, function($a, $b) {
-                                        return $a->posicion <=> $b->posicion;
-                                    });
-                                    ?>
+                                <div class="puntos-indicadores">
                                     <?php foreach ($producto->imagenes as $index => $imagen): ?>
-                                    <img class="miniatura <?= $index === 0 ? 'active' : '' ?>" 
-                                        src="/img/productos/<?= $imagen->url ?>.webp" 
-                                        onclick="cambiarImagen(this, <?= $index ?>)">
+                                    <button class="punto-indicador <?= $index === 0 ? 'active' : '' ?>" 
+                                        onclick="cambiarImagen(<?= $index ?>)"></button>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
@@ -145,19 +142,30 @@
 
 <script>
 let currentIndex = 0;
+const imagenes = <?= json_encode(array_column($producto->imagenes, 'url')) ?>;
 
-function cambiarImagen(elemento, index) {
+function cambiarImagen(index) {
     const imagenGrande = document.getElementById('imagenGrande');
-    const miniaturas = document.querySelectorAll('.miniatura');
+    const puntos = document.querySelectorAll('.punto-indicador');
     
-    // Remover clase active de todas las miniaturas
-    miniaturas.forEach(miniatura => miniatura.classList.remove('active'));
-    
-    // Agregar clase active a la miniatura clickeada
-    elemento.classList.add('active');
-    
-    // Actualizar imagen principal
-    imagenGrande.src = elemento.src;
-    currentIndex = index;
+    if (index >= 0 && index < imagenes.length) {
+        // Actualizar imagen principal
+        imagenGrande.src = `/img/productos/${imagenes[index]}.webp`;
+        currentIndex = index;
+        
+        // Actualizar puntos indicadores
+        puntos.forEach(punto => punto.classList.remove('active'));
+        puntos[index].classList.add('active');
+    }
+}
+
+function cambiarImagenPrev() {
+    currentIndex = (currentIndex - 1 + imagenes.length) % imagenes.length;
+    cambiarImagen(currentIndex);
+}
+
+function cambiarImagenNext() {
+    currentIndex = (currentIndex + 1) % imagenes.length;
+    cambiarImagen(currentIndex);
 }
 </script>

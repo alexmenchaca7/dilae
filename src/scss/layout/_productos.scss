@@ -562,6 +562,19 @@
                 cursor: pointer;
                 z-index: 1;
                 border-radius: 5px;
+                transition: background 0.3s ease;
+                
+                &:hover {
+                    background: rgba(0, 0, 0, 0.8);
+                }
+        
+                &.prev {
+                    left: 1rem;
+                }
+        
+                &.next {
+                    right: 1rem;
+                }
             }
 
             .prev {
@@ -596,6 +609,32 @@
 
             img:hover {
                 opacity: 1;
+            }
+        }
+    }
+
+    .puntos-indicadores {
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        padding: 1rem;
+    
+        .punto-indicador {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 50%;
+            border: none;
+            background-color: v.$gris-claro;
+            cursor: pointer;
+            padding: 0;
+            
+            &.active {
+                background-color: v.$primario;
+                transform: scale(1.2);
+            }
+            
+            &:hover {
+                background-color: color.adjust(v.$primario, $lightness: -15%);
             }
         }
     }
@@ -647,6 +686,10 @@
 
     .contenedor-fichas {
         flex-basis: 100%; // Ocupa todo el ancho disponible
+        max-width: 100%; // Asegura que no exceda el ancho del contenedor principal
+        overflow-x: hidden; // Evita el desbordamiento horizontal
+        padding: 1rem; // Añade un poco de espacio interno
+        box-sizing: border-box; // Incluye padding y borde en el tamaño total
 
         h4 {
             margin-top: 0;
@@ -654,24 +697,34 @@
         }
 
         .fichas {
-            @include m.grid(2, auto);
+            @include m.grid(2, 5rem);
             
             @include m.telefono {
-                @include m.grid(3, auto);
+                @include m.grid(3, 5rem);
             }
 
             @include m.tablet {
-                @include m.grid(6, auto);
+                @include m.grid(6, 5rem);
             }
 
             .ficha {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                max-width: 100%;
 
                 img {
                     width: 3.5rem;
                     height: 100%;
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 1.6rem;
+                    text-align: center;
+                    word-wrap: break-word; // Permite que las palabras largas se dividan en varias líneas
+                    overflow-wrap: break-word; // Compatibilidad adicional para dividir palabras largas
+                    max-width: 15rem; // Asegura que el texto no exceda el ancho del contenedor
                 }
 
                 &:hover {
