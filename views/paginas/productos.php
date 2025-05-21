@@ -322,7 +322,6 @@ document.addEventListener("DOMContentLoaded" , () => {
         }
     }
 
-
     // Manejar el botón "atrás/adelante" del navegador
     window.addEventListener('popstate', () => {
         // La URL ya cambió, solo necesitamos cargar el contenido para esa URL

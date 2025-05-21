@@ -9,7 +9,7 @@ class Producto extends ActiveRecord {
     protected static $tabla = 'productos';  
 
     // Propiedad con las columnas a buscar
-    protected static $buscarColumns = ['nombre'];
+    protected static $buscarColumnasDirectas = ['nombre', 'descripcion']; 
 
     public $id;
     public $nombre;
@@ -99,18 +99,62 @@ class Producto extends ActiveRecord {
     }   
     
     public static function buscar($termino) {
-        $condiciones = [];
-        $termino = self::$conexion->escape_string($termino);
-        
-        if (!empty($termino) && !empty(static::$buscarColumns)) {
-            $buscarConditions = [];
-            foreach (static::$buscarColumns as $columna) {
-                $buscarConditions[] = "LOWER($columna) LIKE '%" . mb_strtolower($termino, 'UTF-8') . "%'";
+        $condicionesGenerales = [];
+        $terminoGeneral = trim($termino);
+
+        if (empty($terminoGeneral)) {
+            return $condicionesGenerales; // No hay término, no hay condiciones.
+        }
+
+        // Dividir el término de búsqueda en palabras individuales
+        // Esto permite una búsqueda tipo "AND" entre palabras (ej. "rojo metal" busca productos con "rojo" Y "metal")
+        $palabrasBusqueda = explode(' ', $terminoGeneral);
+        $palabrasBusqueda = array_filter($palabrasBusqueda); // Eliminar elementos vacíos
+
+        if (empty($palabrasBusqueda)) {
+            return $condicionesGenerales;
+        }
+
+        foreach ($palabrasBusqueda as $palabra) {
+            $palabraEscapada = self::$conexion->escape_string($palabra);
+            $palabraLower = mb_strtolower($palabraEscapada, 'UTF-8');
+
+            $condicionesParaEstaPalabra = [];
+
+            // 1. Búsqueda en columnas directas de la tabla 'productos'
+            if (!empty(static::$buscarColumnasDirectas)) {
+                foreach (static::$buscarColumnasDirectas as $columna) {
+                    // Es importante usar el alias de la tabla 'productos' si otras partes de la query lo usan,
+                    // o si hay riesgo de ambigüedad con otras tablas (aunque con EXISTS es menos problemático).
+                    // Por ahora, asumimos que la query principal selecciona de `productos`.
+                    $condicionesParaEstaPalabra[] = "LOWER(productos.{$columna}) LIKE '%" . $palabraLower . "%'";
+                }
             }
-            $condiciones[] = "(" . implode(' OR ', $buscarConditions) . ")";
+
+            // 2. Búsqueda en atributos del producto (tabla 'productos_atributos')
+            // Se usa un SUBQUERY con EXISTS para verificar si algún atributo del producto coincide.
+            // `productos.id` se refiere al ID del producto de la consulta principal.
+            $condicionesParaEstaPalabra[] = "EXISTS (
+                SELECT 1
+                FROM productos_atributos pa
+                WHERE pa.productoId = productos.id
+                AND (
+                    LOWER(pa.valor_texto) LIKE '%" . $palabraLower . "%' 
+                    OR LOWER(CAST(pa.valor_numero AS CHAR)) LIKE '%" . $palabraLower . "%'
+                    /* Si tienes otros campos de valor en productos_atributos (ej. valor_booleano como texto), añádelos aquí */
+                )
+            )";
+            
+            // Unimos las condiciones para ESTA palabra con OR:
+            // La palabra debe estar en el nombre O en la descripción O en un atributo.
+            if (!empty($condicionesParaEstaPalabra)) {
+                $condicionesGenerales[] = "(" . implode(' OR ', $condicionesParaEstaPalabra) . ")";
+            }
         }
         
-        return $condiciones;
+        // Las condiciones de cada palabra se unen con AND implícitamente 
+        // por cómo `metodoSQL` o `totalCondiciones` usan el array de condiciones.
+        // Ejemplo: (nombre LIKE %pal1% OR attr LIKE %pal1%) AND (nombre LIKE %pal2% OR attr LIKE %pal2%)
+        return $condicionesGenerales;
     }
-    
 }
