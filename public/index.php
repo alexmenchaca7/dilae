@@ -7,6 +7,7 @@ use Controllers\AuthController;
 use Controllers\PaginasController;
 use Controllers\UsuariosController;
 use Controllers\AtributosController;
+use Controllers\BlogsController;
 use Controllers\DashboardController;
 use Controllers\ProductosController;
 use Controllers\ProyectosController;
@@ -85,6 +86,8 @@ $router->post('/admin/productos/crear', [ProductosController::class, 'crear']);
 $router->get('/admin/productos/editar', [ProductosController::class, 'editar']);
 $router->post('/admin/productos/editar', [ProductosController::class, 'editar']);
 $router->post('/admin/productos/eliminar', [ProductosController::class, 'eliminar']);
+
+$router->get('/admin/blogs', [BlogsController::class, 'index']);
 
 $router->get('/admin/proyectos', [ProyectosController::class, 'index']);
 

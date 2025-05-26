@@ -32,6 +32,14 @@
             </span>  
         </a>
 
+        <a href="/admin/blogs" class="dashboard__enlace <?php echo pagina_actual('/blogs') ? 'dashboard__enlace--actual' : ''; ?>">
+            <i class="fa-solid fa-clipboard dashboard__icono"></i>
+
+            <span class="dashboard__menu-texto">
+                Blogs
+            </span>  
+        </a>
+
         <a href="/admin/proyectos" class="dashboard__enlace <?php echo pagina_actual('/proyectos') ? 'dashboard__enlace--actual' : ''; ?>">
             <i class="fa-solid fa-hammer dashboard__icono"></i>
 

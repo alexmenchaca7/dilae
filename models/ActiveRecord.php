@@ -22,6 +22,10 @@ class ActiveRecord {
         self::$conexion = $database; // Self hace referencia a los atributos estaticos de esta misma clase
     }
 
+    public static function getDbConnection() {
+        return self::$conexion; 
+    }
+
     // Setear un tipo de Alerta
     public static function setAlerta($tipo, $mensaje) {
         static::$alertas[$tipo][] = $mensaje;

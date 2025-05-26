@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use 'sass:color';
 
 /* =========== ESTILOS EXCLUSIVOS PARA MÓVIL/TABLET =========== */
 .barra {
@@ -210,6 +211,7 @@
             all: unset;
             display: flex;
             align-items: center;
+            position: relative;
 
             input {
                 padding: 0.8rem 1.5rem;
@@ -449,6 +451,180 @@
                     transform: rotate(90deg);
                 }
             }
+        }
+    }
+}
+
+
+/* ================================================== */
+/* =========== BUSCADOR GLOBAL (Layout) =========== */
+/* ================================================== */
+
+.buscar {
+    position: relative; // Para posicionar el desplegable de resultados
+    display: flex;
+    align-items: center;
+
+    // --- Botón para abrir/cerrar el buscador ---
+    .global-search-toggle {
+        all: unset; // Resetea estilos de botón
+        cursor: pointer;
+        font-size: 2.2rem; // Ajusta según el tamaño de tus otros iconos
+        color: v.$negro;   // O el color que uses para iconos en la barra
+        padding: 1rem;     // Similar al de la hamburguesa
+        line-height: 1;
+        display: block; // Por defecto visible
+
+        i {
+            display: block;
+        }
+
+        @include m.desktop {
+            display: none; // En escritorio, el input estará siempre visible o se integra diferente
+        }
+    }
+
+    // --- Área que contiene el input y los resultados ---
+    .global-search-input-area {
+        display: none; // Controlado por JS para mostrar/ocultar
+        background-color: v.$blanco;
+        border-radius: 1rem; // Asumiendo que tienes una variable para esto
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        z-index: 1050; // Encima de otros elementos
+        
+        // Estilos para móvil (cuando se abre con el toggle)
+        position: fixed; // Ocupa la pantalla o una parte
+        top: 0; // O ajusta para que esté debajo de la barra si la barra no se oculta
+        left: 0;
+        width: 100%;
+        height: 100%; // Ocupa toda la pantalla en móvil
+        padding: 1.5rem;
+        box-sizing: border-box; // Para que el padding no aumente el width/height
+        overflow-y: auto; // Para scroll si el contenido es largo
+
+        form {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid v.$gris-claro;
+            padding-bottom: 1rem;
+        }
+
+        @include m.desktop {
+            // En escritorio, se integra con el .buscar existente o se posiciona diferente
+            all: unset; // Reseteamos los estilos de móvil
+            position: absolute; // Relativo al .buscar (que estará dentro de .buscar)
+            top: calc(100% + 10px); // Debajo del input de búsqueda
+            right: 0; // Alineado a la derecha del input
+            min-width: 300px; // Ancho mínimo del desplegable
+            max-width: 450px; // Ancho máximo
+            background-color: v.$blanco;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            padding: 0.5rem; // Menos padding interno
+            // display: none; sigue siendo controlado por JS
+        }
+    }
+
+    // --- Input de búsqueda ---
+    #global-search-input {
+        flex-grow: 1;
+        background-color: v.$fondo; // O v.$blanco si prefieres
+        padding: 1rem 1.2rem;
+        border: 1px solid v.$gris-claro;
+        border-radius: 0.5rem;
+        font-size: 1.6rem; // Ajusta
+        color: v.$negro;
+        outline: none;
+        margin-right: 1rem;
+
+        &::placeholder {
+            color: v.$gris-oscuro;
+            opacity: 0.7;
+        }
+
+        &:focus {
+            border-color: v.$primario;
+            box-shadow: 0 0 0 2px rgba(v.$primario, 0.2);
+        }
+
+        @include m.desktop {
+            // En escritorio, este input podría ser el mismo que ya tienes en .barra .buscar
+            // Si decides tener un input separado para el autocompletado:
+            padding: 0.8rem 1.5rem;
+            font-size: 1.4rem;
+            width: 100%; // Ocupa el ancho del form dentro de .global-search-input-area
+        }
+    }
+    
+    // --- Botón para cerrar el área de búsqueda (principalmente en móvil) ---
+    .global-search-close {
+        all: unset;
+        cursor: pointer;
+        font-size: 2rem; // Ajusta
+        color: v.$gris-oscuro;
+        padding: 0.5rem;
+        line-height: 1;
+
+        i {
+            display: block;
+        }
+
+        @include m.desktop {
+            display: none; // En escritorio, se cierra haciendo clic fuera o con Esc
+        }
+    }
+
+    // --- Lista de resultados del autocompletado ---
+    #global-search-results {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: calc(100vh - 120px); // En móvil, para dejar espacio al input y padding
+        overflow-y: auto;
+
+        @include m.desktop {
+            max-height: 350px; // Límite de altura para scroll en escritorio
+            border-top: 1px solid v.$gris-claro; // Separador en escritorio
+            margin-top: 0.5rem; // Espacio sobre la lista en escritorio
+        }
+
+        a {
+            display: block;
+            padding: 1.2rem 1rem;
+            text-decoration: none;
+            color: v.$negro;
+            font-size: 1.5rem;
+            border-bottom: 1px solid color.adjust(v.$gris-claro, $lightness: 5%); // Borde sutil
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: background-color 0.2s ease;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover,
+            &.selected { // Para navegación con teclado
+                background-color: color.adjust(v.$blanco, $lightness: -5%); // Un hover sutil
+                color: v.$primario;
+            }
+
+            .search-result-item-type {
+                font-size: 0.8em;
+                color: v.$gris-oscuro;
+                margin-left: 8px;
+                font-style: italic;
+            }
+        }
+        
+        .search-no-results,
+        .search-loading {
+            padding: 1.5rem 1rem;
+            color: v.$gris-oscuro;
+            text-align: center;
+            font-style: italic;
         }
     }
 }

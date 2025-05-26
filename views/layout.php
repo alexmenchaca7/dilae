@@ -2,7 +2,7 @@
     if(!isset($inicio)) {
         $inicio = false;
     }
-
+    
     use Model\Categoria;
     use Model\Subcategoria;
 
@@ -110,7 +110,20 @@
                     </nav>
     
                     <div class="buscar" id="buscar">
-                        <button><i class="fa-solid fa-search"></i></button>
+                        <button class="global-search-toggle" id="global-search-toggle" aria-label="Abrir búsqueda">
+                            <i class="fa-solid fa-search"></i>
+                        </button>
+                        <div class="global-search-input-area" id="global-search-input-area" style="display: none;">
+                            <form id="global-search-form" action="#" method="GET" role="search">
+                                <input type="text" id="global-search-input" name="term" placeholder="Buscar en todo el sitio..." autocomplete="off" aria-label="Campo de búsqueda global">
+                                <button type="button" class="global-search-close" id="global-search-close" aria-label="Cerrar búsqueda">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </form>
+                            <div id="global-search-results" class="global-search-results-list">
+                                <!-- Los resultados dinámicos se insertarán aquí por JavaScript -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -223,5 +236,172 @@
 
     <script src="//code.tidio.co/ks94cvclexq9b0equflo49xrjn9oahg3.js" async></script>
     <script src="/build/js/app.js?v=<?= time() ?>"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchContainer = document.getElementById('buscar');
+            if (!searchContainer) return;
+
+            const searchToggleBtn = document.getElementById('global-search-toggle');
+            const searchInputArea = document.getElementById('global-search-input-area');
+            const searchInput = document.getElementById('global-search-input');
+            const searchCloseBtn = document.getElementById('global-search-close');
+            const searchResultsList = document.getElementById('global-search-results');
+            const searchForm = document.getElementById('global-search-form');
+
+            let debounceTimer;
+            let currentFocus = -1; // Para navegación con teclado
+
+            function openSearchUI() {
+                searchInputArea.style.display = 'block';
+                searchToggleBtn.style.display = 'none';
+                searchInput.focus();
+                document.addEventListener('keydown', handleEscKey);
+            }
+
+            function closeSearchUI() {
+                searchInputArea.style.display = 'none';
+                searchToggleBtn.style.display = 'inline-block'; // o flex, según tu CSS original
+                searchResultsList.innerHTML = '';
+                searchInput.value = '';
+                currentFocus = -1;
+                document.removeEventListener('keydown', handleEscKey);
+            }
+
+            function handleEscKey(e) {
+                if (e.key === 'Escape') {
+                    closeSearchUI();
+                }
+            }
+
+            searchToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openSearchUI();
+            });
+
+            searchCloseBtn.addEventListener('click', closeSearchUI);
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const term = searchInput.value.trim();
+                
+                // Limpiar resultados anteriores y resetear foco
+                searchResultsList.innerHTML = '';
+                currentFocus = -1;
+
+                if (term.length < 2) { // Mínimo 2 caracteres para buscar
+                    return;
+                }
+
+                searchResultsList.innerHTML = '<div class="search-loading">Buscando...</div>';
+
+                debounceTimer = setTimeout(async () => {
+                    if (searchInput.value.trim().length < 2) { // Doble chequeo por si se borró mientras esperaba el debounce
+                        searchResultsList.innerHTML = '';
+                        return;
+                    }
+                    try {
+                        const response = await fetch(`/api/global_search.php?term=${encodeURIComponent(term)}`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const results = await response.json();
+                        renderResults(results);
+                    } catch (error) {
+                        console.error('Error al obtener resultados de búsqueda:', error);
+                        searchResultsList.innerHTML = '<div class="search-no-results">Error al buscar. Inténtalo de nuevo.</div>';
+                    }
+                }, 300); // Espera 300ms después de que el usuario deja de escribir
+            });
+
+            function renderResults(results) {
+                searchResultsList.innerHTML = ''; // Limpiar loader o resultados previos
+                if (!results || results.length === 0) {
+                    searchResultsList.innerHTML = '<div class="search-no-results">No se encontraron resultados.</div>';
+                    return;
+                }
+
+                results.forEach(result => {
+                    const link = document.createElement('a');
+                    link.href = result.url;
+                    // Usamos innerHTML para poder añadir el span del tipo fácilmente
+                    link.innerHTML = `${escapeHTML(result.label)} <span class="search-result-item-type">(${escapeHTML(result.type)})</span>`;
+                    
+                    link.addEventListener('mousedown', (e) => { // Usar mousedown para que se dispare antes que el blur del input
+                        e.preventDefault(); // Prevenir que el input pierda el foco inmediatamente y cierre los resultados
+                        window.location.href = result.url; // Redirigir
+                    });
+                    searchResultsList.appendChild(link);
+                });
+            }
+
+            // Función para escapar HTML simple y prevenir XSS básico en los resultados
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.appendChild(document.createTextNode(str));
+                return div.innerHTML;
+            }
+            
+            // Prevenir que el form haga un submit tradicional, que no es necesario aquí
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Si hay un elemento seleccionado por teclado, ir a él
+                const activeItem = searchResultsList.querySelector('a.selected');
+                if (activeItem) {
+                    window.location.href = activeItem.href;
+                } else if (searchResultsList.firstChild && searchResultsList.firstChild.href) {
+                    // Opcional: si se presiona Enter sin seleccionar, ir al primer resultado
+                    window.location.href = searchResultsList.firstChild.href;
+                }
+            });
+
+            // Navegación con teclado
+            searchInput.addEventListener('keydown', function(e) {
+                const items = searchResultsList.getElementsByTagName('a');
+                if (items.length === 0 && e.key !== 'Escape') return; // Si no hay items (y no es Escape), no hacer nada
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    currentFocus++;
+                    setActive(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    currentFocus--;
+                    setActive(items);
+                } else if (e.key === 'Enter') {
+                    // El submit del form ya lo maneja si hay un item activo
+                    // Si no hay submit de form o por alguna razón no funciona:
+                    if (currentFocus > -1 && items[currentFocus]) {
+                        e.preventDefault(); // Prevenir doble submit si el form también actúa
+                        items[currentFocus].dispatchEvent(new MouseEvent('mousedown', {bubbles: true})); // Simular mousedown para redirigir
+                    }
+                }
+                // El Escape ya lo maneja el listener en document
+            });
+
+            function setActive(items) {
+                if (!items || items.length === 0) return;
+                removeActive(items);
+                if (currentFocus >= items.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = items.length - 1;
+                items[currentFocus].classList.add('selected');
+                // Opcional: scroll para asegurar que el item seleccionado esté visible
+                items[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function removeActive(items) {
+                for (let i = 0; i < items.length; i++) {
+                    items[i].classList.remove('selected');
+                }
+            }
+
+            // Cerrar el desplegable de búsqueda si se hace clic fuera de él
+            document.addEventListener('click', (e) => {
+                // Si el área de input está visible Y el clic NO fue dentro del contenedor principal de búsqueda
+                if (searchInputArea.style.display === 'block' && !searchContainer.contains(e.target)) {
+                    closeSearchUI();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
